@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/brand/Logo";
+import { TransitionLink } from "@/components/loader/RouteTransition";
 import { EASE_PREMIUM } from "@/lib/motion";
 
 const LINKS = ["Models", "Technology", "About", "Experience"];
@@ -29,10 +31,10 @@ export function Navbar() {
           : "bg-white/0"
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between">
-        <span className="font-display text-lg font-bold tracking-tight">
-          MOVE ON
-        </span>
+      <nav data-intro="nav" className="mx-auto flex max-w-7xl items-center justify-between">
+        <TransitionLink href="/" aria-label="MoveOn home">
+          <Logo header className="block h-7 w-auto sm:h-8" />
+        </TransitionLink>
 
         <ul className="hidden items-center gap-9 md:flex">
           {LINKS.map((link) => (
@@ -51,6 +53,13 @@ export function Navbar() {
           Book test ride
         </Button>
       </nav>
+
+      {/* Route-change progress line (see RouteTransition). */}
+      <div
+        data-route-progress
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 bg-lime"
+      />
     </motion.header>
   );
 }

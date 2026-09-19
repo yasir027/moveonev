@@ -37,6 +37,66 @@
   }
 }
 
+/*
+ * Brand loader. An inline script in the root layout sets html[data-loader] before
+ * first paint: "home" (the Assembly), "page" (Logo Assembly) or "fade" (seen this visit).
+ * These rules cover the page until the loader hydrates, and every one of them has a
+ * failsafe so the site still shows if JavaScript never runs.
+ */
+.brand-cover {
+  display: none;
+}
+
+html[data-loader="home"] .brand-cover,
+html[data-loader="page"] .brand-cover {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 48%, rgb(255 255 255 / 0.07), transparent 70%),
+    #0b0c0a;
+  animation: loader-failsafe 0s 10s forwards;
+}
+
+html[data-loader="home"],
+html[data-loader="page"] {
+  overflow: hidden;
+}
+
+/* What each loader brings in itself: the Assembly lands on the hero, the Logo Assembly on the page. */
+html[data-loader="home"] [data-intro="nav"],
+html[data-loader="home"] [data-intro="hero"],
+html[data-loader="home"] [data-hero-scooter],
+html[data-loader="page"] [data-intro="nav"],
+html[data-loader="page"] [data-intro="page"] {
+  visibility: hidden;
+  animation: loader-failsafe-show 0s 10s forwards;
+}
+
+html[data-loader="fade"] body {
+  animation: loader-fade 0.3s ease-out both;
+}
+
+@keyframes loader-failsafe {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+@keyframes loader-failsafe-show {
+  to {
+    visibility: visible;
+  }
+}
+
+@keyframes loader-fade {
+  from {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

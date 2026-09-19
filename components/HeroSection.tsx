@@ -108,7 +108,7 @@ export function HeroSection() {
           />
 
           {/* LEFT COLUMN: Content & Selectors */}
-          <div className="relative z-20 flex w-full flex-col justify-center px-8 pb-10 pt-20 lg:w-[45%] lg:px-16 lg:pb-32 lg:pt-0">
+          <div data-intro="hero" className="relative z-20 flex w-full flex-col justify-center px-8 pb-10 pt-20 lg:w-[45%] lg:px-16 lg:pb-32 lg:pt-0">
             
             {/* Model Selector */}
             <div className="mb-10">
@@ -262,6 +262,8 @@ export function HeroSection() {
                     alt={active.name}
                     fill
                     priority
+                    // the homepage Assembly lands on this image (see AssemblyIntro)
+                    data-hero-scooter=""
                     sizes="(min-width: 1024px) 60vw, 100vw"
                     className="select-none object-contain drop-shadow-[0_50px_50px_rgba(0,0,0,0.15)]"
                   />
@@ -272,7 +274,7 @@ export function HeroSection() {
 
           {/* FLOATING COMMAND CENTER (Glassmorphism Dock) */}
           <div className="absolute bottom-6 left-1/2 z-30 w-[92%] -translate-x-1/2 sm:bottom-10 lg:w-[85%] max-w-[1200px]">
-            <div className="flex flex-col items-center justify-between gap-6 rounded-[32px] border border-white/50 bg-white/40 px-6 py-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] backdrop-blur-2xl sm:flex-row sm:px-8 sm:py-4 lg:rounded-full">
+            <div data-intro="hero" className="flex flex-col items-center justify-between gap-6 rounded-[32px] border border-white/50 bg-white/40 px-6 py-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] backdrop-blur-2xl sm:flex-row sm:px-8 sm:py-4 lg:rounded-full">
               
               {/* Left Actions */}
               <div className="flex flex-1 items-center justify-center gap-3 sm:justify-start">

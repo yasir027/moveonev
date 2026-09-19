@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
@@ -6,8 +5,6 @@ import { StatBlock } from "@/components/StatBlock";
 export default function Home() {
   return (
     <main>
-      <Navbar />
-
       <HeroSection />
 
       {/* Product collection — editorial layout, not generic cards */}

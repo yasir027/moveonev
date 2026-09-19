@@ -1,7 +1,9 @@
 import { HeroEditorial } from "@/components/hero/HeroEditorial";
 import { HeroStudio } from "@/components/hero/HeroStudio";
+import { UspSection } from "@/components/UspSection";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
+import { AudienceSection } from "@/components/WhoIsItFor";
 
 export default function Home() {
   return (
@@ -16,11 +18,11 @@ export default function Home() {
       </div>
       <HeroEditorial />
 
+      <UspSection />
+      <AudienceSection/>
       {/* Product collection — editorial layout, not generic cards */}
       <section id="models" className="mx-auto max-w-7xl px-8 py-20">
-        <h2 className="mb-4 font-display text-3xl font-semibold text-carbon lg:text-4xl">
-          The lineup
-        </h2>
+        <h2 className="mb-4 text-3xl text-carbon lg:text-4xl">The lineup</h2>
 
         <ProductCard
           name="MOVE ON X1"
@@ -49,14 +51,9 @@ export default function Home() {
       </section>
 
       {/* Specification section — large numbers, thin dividers */}
-      <section
-        id="technology"
-        className="border-t border-carbon/10 bg-mist py-20"
-      >
+      <section id="technology" className="border-t border-carbon/10 bg-mist py-20">
         <div className="mx-auto max-w-7xl px-8">
-          <h2 className="mb-10 font-display text-3xl font-semibold text-carbon lg:text-4xl">
-            Built to perform
-          </h2>
+          <h2 className="mb-10 text-3xl text-carbon lg:text-4xl">Built to perform</h2>
 
           <div className="grid grid-cols-2 gap-x-8 lg:grid-cols-4">
             <StatBlock value={150} suffix="KM" label="True range" />
@@ -69,7 +66,7 @@ export default function Home() {
 
       {/* Final CTA */}
       <section className="bg-carbon py-24 text-center text-white">
-        <h2 className="mx-auto mb-6 max-w-xl font-display text-4xl font-semibold lg:text-5xl">
+        <h2 className="mx-auto mb-6 max-w-xl text-4xl lg:text-5xl">
           Ride the future, today.
         </h2>
         <p className="mx-auto mb-8 max-w-md text-white/60">

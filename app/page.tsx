@@ -1,11 +1,20 @@
-import { HeroSection } from "@/components/HeroSection";
+import { HeroEditorial } from "@/components/hero/HeroEditorial";
+import { HeroStudio } from "@/components/hero/HeroStudio";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 
 export default function Home() {
   return (
     <main>
-      <HeroSection />
+      {/* TEMP: two hero directions stacked for comparison — keep one, delete the other. */}
+      <HeroStudio />
+
+      <div className="flex items-center gap-4 px-[max(1.5rem,4vw)] py-10 text-[11px] font-semibold uppercase tracking-[0.2em] text-carbon/40">
+        <span className="h-px flex-1 bg-carbon/10" />
+        Variant B — split editorial
+        <span className="h-px flex-1 bg-carbon/10" />
+      </div>
+      <HeroEditorial />
 
       {/* Product collection — editorial layout, not generic cards */}
       <section id="models" className="mx-auto max-w-7xl px-8 py-20">

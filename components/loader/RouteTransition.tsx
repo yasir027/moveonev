@@ -65,11 +65,12 @@ function finishProgress() {
     .to(progress, { opacity: 0, duration: 0.2 }, "+=0.01");
 }
 
-export function RouteTransition({ children }: { children: React.ReactNode }) {
+/** `header` stays put across navigations; `children` (the page) slides out and in. */
+export function RouteTransition({ header, children }: { header: React.ReactNode; children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const wrap = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
+  const shownPath = useRef(pathname);
   const busy = useRef(false);
 
   const navigate = useCallback(
@@ -94,10 +95,8 @@ export function RouteTransition({ children }: { children: React.ReactNode }) {
 
   // The new page has rendered: slide it in and finish the progress line.
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
+    if (shownPath.current === pathname) return;
+    shownPath.current = pathname;
     busy.current = false;
     if (!wrap.current) return;
     finishProgress();
@@ -110,6 +109,7 @@ export function RouteTransition({ children }: { children: React.ReactNode }) {
 
   return (
     <NavigateContext.Provider value={navigate}>
+      {header}
       <div ref={wrap} data-intro="page">
         {children}
       </div>

@@ -143,7 +143,6 @@ export function AssemblyIntro({ onDone }: { onDone: () => void }) {
       gsap.set(heroUi, { autoAlpha: 0, y: 24 });
 
       const tl = gsap.timeline({ paused: true });
-      (window as unknown as Record<string, unknown>).__TEST_TL = tl; // TEMP
 
       // wordmark + counter
       tl.to(wordmark, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0).to(count, { autoAlpha: 1, duration: 0.3 }, 0.1);

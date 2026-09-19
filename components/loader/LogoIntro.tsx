@@ -80,7 +80,6 @@ export function LogoIntro({ onDone }: { onDone: () => void }) {
       gsap.set(page, { autoAlpha: 0, y: 24 });
 
       const tl = gsap.timeline();
-      (window as unknown as Record<string, unknown>).__TEST_TL = tl; // TEMP
 
       // 1) one pen draws the ring, then the bolt
       let t = 0.05;
@@ -131,7 +130,9 @@ export function LogoIntro({ onDone }: { onDone: () => void }) {
         .call(() => {
           finishLoader();
           gsap.set([nav, headerLogo, ...page].filter(Boolean), { clearProps: "all" });
-          onDone();
+          // Unmount after this tick: reverting the timeline from inside its own render
+          // would re-apply the page's hidden start state.
+          setTimeout(onDone, 0);
         }, [], 2.7);
     },
     { scope: root },

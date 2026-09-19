@@ -1,6 +1,7 @@
 import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { GlassFilter } from "@/components/ui/GlassFilter";
 import { BrandLoader } from "@/components/loader/BrandLoader";
 import { RouteTransition } from "@/components/loader/RouteTransition";
 import { LOADER_BOOT_SCRIPT } from "@/lib/intro/loader";
@@ -28,9 +29,9 @@ export default function RootLayout({
       <body>
         <script dangerouslySetInnerHTML={{ __html: LOADER_BOOT_SCRIPT }} />
         <BrandLoader />
+        <GlassFilter />
         {/* The header lives in the layout so it stays put between pages. */}
-        <Navbar />
-        <RouteTransition>{children}</RouteTransition>
+        <RouteTransition header={<Navbar />}>{children}</RouteTransition>
       </body>
     </html>
   );

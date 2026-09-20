@@ -49,146 +49,88 @@
   }
 }
 
-/* =========================================================
-   UNIVERSAL DESIGN SYSTEM
-   ========================================================= */
+/*
+ * Spec card. The surface inside the dark USP block: a flat panel one step up from the
+ * section ground, defined by a hairline rather than a change of fill. No material
+ * effects — the hierarchy is carried by type, the volt label and the rule.
+ *
+ * Deliberately NOT glass. Frost needs high-contrast content behind it to blur; a block
+ * of body copy on a flat ground has none, so it renders as a pale box. See .glass-frost
+ * below for the cases that do work: chrome floating over a product shot.
+ */
 
 @layer components {
 
-  /* =========================================
-     UNIVERSAL GLASS CARD
-     ========================================= */
-
-  .glass-card {
+  .spec-card {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
 
-    background:
-      linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.82) 0%,
-        rgba(255, 255, 255, 0.48) 45%,
-        rgba(255, 255, 255, 0.34) 100%
-      );
-
-    border: 1px solid rgba(255, 255, 255, 0.88);
-
-    box-shadow:
-      0 30px 80px -32px rgba(16, 20, 18, 0.30),
-      0 10px 30px -18px rgba(16, 20, 18, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.98),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.30);
-
-    backdrop-filter: blur(30px) saturate(145%);
-    -webkit-backdrop-filter: blur(30px) saturate(145%);
-
-    border-radius: 26px;
+    border-radius: 24px;
+    background: #181d1a;
+    border: 1px solid rgb(255 255 255 / 0.09);
 
     transition:
-      transform 260ms var(--ease-premium),
-      box-shadow 260ms var(--ease-premium),
-      border-color 260ms var(--ease-premium);
+      transform 300ms var(--ease-premium),
+      border-color 300ms var(--ease-premium),
+      background-color 300ms var(--ease-premium);
   }
 
-  .glass-card:hover {
-    transform: translateY(-6px);
-
-    border-color: rgba(255, 255, 255, 1);
-
-    box-shadow:
-      0 38px 90px -34px rgba(16, 20, 18, 0.34),
-      0 15px 35px -20px rgba(16, 20, 18, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+  .spec-card:hover {
+    transform: translateY(-4px);
+    border-color: rgb(125 255 64 / 0.45);
+    background-color: #1c221e;
   }
 
-  /* =========================================
-     GLASS LIGHT REFLECTION
-     ========================================= */
-
-  .glass-card::before {
+  /* Cursor-follow wash. --mx/--my are written straight onto the node by UspSection, so
+     moving the mouse costs no React render; --card-lit fades the whole thing in. */
+  .spec-card::after {
     content: "";
     position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
     pointer-events: none;
 
-    top: -45%;
-    left: -35%;
-
-    width: 90%;
-    height: 100%;
-
-    background: linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.38),
-      rgba(255, 255, 255, 0)
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 0%),
+      rgb(125 255 64 / 0.16),
+      transparent 68%
     );
 
-    transform: rotate(12deg);
-    opacity: 0.55;
+    opacity: var(--card-lit, 0);
+    transition: opacity 320ms var(--ease-premium);
   }
 
-  /* =========================================
-     UNIVERSAL ICON BOX
-     ========================================= */
-
-  .card-icon {
+  /* Content sits above ::after — positioned pseudo-elements otherwise paint over
+     in-flow text. */
+  .spec-content {
     position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 50px;
-    height: 50px;
-
-    flex-shrink: 0;
-
-    border-radius: 15px;
-
-    background:
-      linear-gradient(
-        145deg,
-        #171c19
-        
-      );
-
-    border: 1px solid rgba(255, 255, 255, 0.10);
-
-    box-shadow:
-      0 10px 24px -10px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.10),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.35);
-
-    transition:
-      transform 260ms var(--ease-premium),
-      box-shadow 260ms var(--ease-premium);
+    z-index: 1;
   }
 
-  .glass-card:hover .card-icon {
-    transform: translateY(-2px) scale(1.04);
-
-    box-shadow:
-      0 14px 30px -10px rgba(0, 0, 0, 0.50),
-      0 0 0 1px rgba(125, 255, 64, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  .spec-label {
+    @apply font-display
+      text-[11px]
+      font-semibold
+      uppercase
+      tracking-[0.18em]
+      text-volt;
   }
 
-  /* =========================================
-     CARD TYPOGRAPHY
-     ========================================= */
-
-  .card-title {
-    @apply text-[19px]
+  .spec-title {
+    @apply font-display
+      text-[19px]
       font-bold
-      leading-[1.18]
+      leading-[1.15]
       tracking-[-0.025em]
-      text-carbon;
+      text-white;
   }
 
-  .card-description {
+  .spec-body {
     @apply text-[14px]
-      leading-[1.65]
-      text-carbon/55;
+      leading-[1.6]
+      text-white/55;
   }
 }
 
@@ -242,6 +184,13 @@
   /* The header pill floats over every kind of section, so it keeps a touch more body. */
   .glass-nav {
     background: rgb(255 255 255 / 0.22);
+  }
+
+  /* Over a section marked data-theme="dark" the pill inverts: same material, dark body,
+     so the white type the Navbar swaps in has something to sit on. A light pill there
+     composites carbon links to roughly 1.8:1 — unreadable. */
+  .glass-nav-dark {
+    background: rgb(16 20 18 / 0.55);
   }
 
   .glass-frost {

@@ -6,6 +6,9 @@ import { useEffect } from "react";
  * The SVG filter behind `.glass-liquid`'s refraction. Rendered once in the root layout.
  * Only Chromium applies SVG filters in `backdrop-filter`, so the refraction is switched on
  * there (html[data-liquid]); other browsers keep the plain blur.
+ *
+ * Tuned for pills and swatches. Displacement is measured in pixels and doesn't scale, so
+ * this amount smears anything much larger — don't reach for it on a panel.
  */
 export function GlassFilter() {
   useEffect(() => {

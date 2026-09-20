@@ -1,101 +1,164 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileX2, BatteryCharging, ShoppingBag, Lock, type LucideIcon } from "lucide-react";
+import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 
 interface Usp {
-  icon: LucideIcon;
+  /** The small uppercase category that sits where an icon used to. */
+  label: string;
+  /** "|" marks a deliberate line break in the headline. */
   title: string;
   description: string;
+  /** Footprint in the desktop 4x2 grid. The first claim gets the tall box. */
+  span: string;
 }
 
 const USPS: Usp[] = [
   {
-    icon: FileX2,
-    title: "No RTO. No Road Tax.",
+    label: "Registration",
+    title: "No RTO.|No Road Tax.",
     description:
       "Ride from day one — skip RTO registration, annual road tax and mandatory insurance entirely. Anyone 16 and up can legally ride, licence-free.",
+    span: "sm:col-span-2 lg:col-span-2 lg:row-span-2",
   },
   {
-    icon: BatteryCharging,
+    label: "Battery",
     title: "A Battery Built to Outlast",
     description:
       "Fire-resistant LiFePO4 chemistry, engineered to stay stable through harsh Indian heat and rated for 2,500+ charge cycles of daily riding.",
+    span: "",
   },
   {
-    icon: ShoppingBag,
+    label: "Storage",
     title: "Space for the Whole Ride",
     description:
       "Heavy-duty carrying capacity with up to 45 litres of under-seat storage on select models — room enough for your daily groceries and essentials.",
+    span: "",
   },
   {
-    icon: Lock,
+    label: "Security",
     title: "Smart, Secure, Safe",
     description:
       "Reverse assist for tight parking, keyless ignition, an anti-theft alarm and a one-touch Repair Switch — safety tech rare at this price.",
+    span: "sm:col-span-2 lg:col-span-2",
   },
 ];
 
-const EASE_PREMIUM = [0.22, 1, 0.36, 1];
-
 export function UspSection() {
+  const reducedMotion = usePrefersReducedMotion();
+
+  /* Written straight onto the node: four cards re-rendering on every mousemove is not a
+     trade worth making for a highlight. */
+  function trackPointer(event: React.PointerEvent<HTMLElement>) {
+    if (reducedMotion) return;
+    const card = event.currentTarget;
+    const box = card.getBoundingClientRect();
+    card.style.setProperty("--mx", `${event.clientX - box.left}px`);
+    card.style.setProperty("--my", `${event.clientY - box.top}px`);
+  }
+
+  function lightUp(event: React.PointerEvent<HTMLElement>) {
+    if (reducedMotion) return;
+    event.currentTarget.style.setProperty("--card-lit", "1");
+  }
+
+  function lightDown(event: React.PointerEvent<HTMLElement>) {
+    const card = event.currentTarget;
+    card.style.setProperty("--card-lit", "0");
+    card.style.removeProperty("--mx");
+    card.style.removeProperty("--my");
+  }
+
   return (
-    <section className="relative w-full py-20 sm:py-28">
-      <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
-        
-        {/* Section Header */}
-        <motion.div
+    /* The one dark block on an otherwise light page. It exists to break the tonal run of
+       white sections either side of it, and it is what lets volt read as a brand colour
+       rather than a highlighter. */
+    <section data-theme="dark" className="relative w-full overflow-hidden bg-carbon py-12 lg:py-14">
+
+      {/* Tonal backdrop: the word is a shade of the ground, not a colour on top of it. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-[38%] flex select-none justify-center lg:justify-start lg:pl-12"
+      >
+        <span className="whitespace-nowrap font-display text-[22vw] font-extrabold leading-[0.8] tracking-[-0.06em] text-white/[0.04] lg:text-[17vw]">
+          OWN IT
+        </span>
+      </div>
+
+      <div className="relative mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+
+        <motion.header
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6, ease: EASE_PREMIUM }}
-          className="mb-14 max-w-2xl"
+          className="mb-8 max-w-2xl"
         >
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
+          <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
+            Why Move On
+          </span>
+
+          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white">
             Own it. <br />
             Skip everything else.
           </h2>
-        </motion.div>
 
-        {/* Alternating Cards Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <p className="mt-5 max-w-[560px] text-base leading-relaxed text-white/55">
+            No paperwork, no licence, no annual tax — and none of the compromises that
+            usually come with skipping them.
+          </p>
+        </motion.header>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto] lg:gap-5">
           {USPS.map((usp, i) => {
-            const Icon = usp.icon;
-            
-            // Alternate styles based on index[cite: 5]
-            const isHighlight = i % 2 !== 0; 
-            
-            // Dark Card Styling[cite: 5]
-            const cardBg = isHighlight ? "bg-volt" : "bg-carbon";
-            const titleColor = isHighlight ? "text-carbon" : "text-white";
-            const descColor = isHighlight ? "text-carbon/85" : "text-white/70";
-            
-            // Inverted Icon Container Styling[cite: 5]
-            const iconBg = isHighlight ? "bg-carbon" : "bg-volt";
-            const iconColor = isHighlight ? "#7DFF40" : "#101412";
+            const isFeature = i === 0;
 
             return (
+              /* The reveal and the hover live on separate elements on purpose:
+                 framer-motion leaves an inline `transform` behind, which would beat the
+                 CSS hover lift. */
               <motion.div
                 key={usp.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
-                transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: i * 0.1 }}
-                className={`relative flex flex-col rounded-[24px] p-8 shadow-xl shadow-carbon/5 transition-transform duration-300 hover:-translate-y-2 ${cardBg}`}
+                transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: i * 0.08 }}
+                className={usp.span}
               >
-                <div
-                  className={`mb-8 flex h-14 w-14 items-center justify-center rounded-full ${iconBg}`}
+                <article
+                  onPointerMove={trackPointer}
+                  onPointerEnter={lightUp}
+                  onPointerLeave={lightDown}
+                  className={`spec-card h-full ${isFeature ? "p-7 lg:p-8" : "p-5 lg:p-6"}`}
                 >
-                  <Icon size={24} color={iconColor} strokeWidth={2} />
-                </div>
+                  <div className="spec-content flex h-full flex-col">
+                    <p className="spec-label">
+                      {String(i + 1).padStart(2, "0")}
+                      <span className="mx-2 text-white/25">/</span>
+                      {usp.label}
+                    </p>
 
-                <h3 className={`mb-3 font-display text-xl font-bold leading-snug tracking-tight ${titleColor}`}>
-                  {usp.title}
-                </h3>
-                
-                <p className={`text-base leading-relaxed ${descColor}`}>
-                  {usp.description}
-                </p>
+                    <div className={isFeature ? "mt-auto pt-8" : "mt-5"}>
+                      <h3
+                        className={
+                          isFeature
+                            ? "mb-4 font-display text-[clamp(2rem,3.2vw,2.75rem)] font-bold leading-[1.05] tracking-[-0.04em] text-white"
+                            : "spec-title mb-2.5"
+                        }
+                      >
+                        {usp.title.split("|").map((line) => (
+                          <span key={line} className="block">
+                            {line}
+                          </span>
+                        ))}
+                      </h3>
+
+                      <p className={isFeature ? "max-w-[42ch] text-[15px] leading-[1.6] text-white/55" : "spec-body"}>
+                        {usp.description}
+                      </p>
+                    </div>
+                  </div>
+                </article>
               </motion.div>
             );
           })}

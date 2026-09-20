@@ -65,7 +65,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-carbon py-24 text-center text-white">
+      <section data-theme="dark" className="bg-carbon py-24 text-center text-white">
         <h2 className="mx-auto mb-6 max-w-xl text-4xl lg:text-5xl">
           Ride the future, today.
         </h2>

@@ -1,6 +1,7 @@
 import { HeroEditorial } from "@/components/hero/HeroEditorial";
 import { HeroStudio } from "@/components/hero/HeroStudio";
 import { UspSection } from "@/components/UspSection";
+import { ScrollCurtain } from "@/components/ScrollCurtain";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 import { AudienceSection } from "@/components/WhoIsItFor";
@@ -16,9 +17,11 @@ export default function Home() {
         Variant B — split editorial
         <span className="h-px flex-1 bg-carbon/10" />
       </div>
-      <HeroEditorial />
-
-      <UspSection />
+      {/* The dark block rises over the hero instead of cutting to it. Move the wrapper to
+          whichever hero survives the comparison above. */}
+      <ScrollCurtain pinned={<HeroEditorial />}>
+        <UspSection />
+      </ScrollCurtain>
       <AudienceSection/>
       {/* Product collection — editorial layout, not generic cards */}
       <section id="models" className="mx-auto max-w-7xl px-8 py-20">

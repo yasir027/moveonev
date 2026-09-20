@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
+import { GlassLens } from "@/components/ui/GlassLens";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 
 interface Usp {
@@ -46,6 +48,7 @@ const USPS: Usp[] = [
 
 export function UspSection() {
   const reducedMotion = usePrefersReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
 
   /* Written straight onto the node: four cards re-rendering on every mousemove is not a
      trade worth making for a highlight. */
@@ -73,12 +76,18 @@ export function UspSection() {
     /* The one dark block on an otherwise light page. It exists to break the tonal run of
        white sections either side of it, and it is what lets volt read as a brand colour
        rather than a highlighter. */
-    <section data-theme="dark" className="relative w-full overflow-hidden bg-carbon py-12 lg:py-14">
+    <section
+      ref={sectionRef}
+      data-theme="dark"
+      /* Rounded top + the shadow it casts upward are what make this read as a panel rising
+         over the hero rather than a hard edge between two colours. */
+      className="relative w-full overflow-hidden bg-carbon py-12 shadow-[0_-40px_80px_-24px_rgba(16,20,18,0.55)] lg:rounded-t-[40px] lg:py-14"
+    >
 
       {/* Tonal backdrop: the word is a shade of the ground, not a colour on top of it. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[38%] flex select-none justify-center lg:justify-start lg:pl-12"
+        className="pointer-events-none absolute inset-x-100 top-[10%] flex select-none justify-center lg:justify-start lg:pl-12"
       >
         <span className="whitespace-nowrap font-display text-[22vw] font-extrabold leading-[0.8] tracking-[-0.06em] text-white/[0.04] lg:text-[17vw]">
           OWN IT
@@ -164,6 +173,8 @@ export function UspSection() {
           })}
         </div>
       </div>
+
+      <GlassLens boundsRef={sectionRef} />
     </section>
   );
 }

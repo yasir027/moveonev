@@ -28,7 +28,9 @@
 
   body {
     @apply bg-white text-carbon font-body antialiased;
-    overflow-x: hidden;
+    /* clip, not hidden: `hidden` makes body a scroll container, which silently breaks
+       position:sticky for every descendant (see ScrollCurtain). */
+    overflow-x: clip;
   }
 
   h1,
@@ -186,6 +188,43 @@
     background: rgb(255 255 255 / 0.22);
   }
 
+  /*
+   * Glass lens. The cursor sphere in the dark USP block — the one place glass earns its
+   * keep, because a small lens over high-contrast content has something to refract.
+   * The refraction itself is an SVG filter GlassLens builds at runtime; this is the body,
+   * the rim and the fallback for browsers that cannot run it.
+   */
+  .glass-lens {
+    -webkit-backdrop-filter: blur(2px) saturate(1.15);
+    backdrop-filter: blur(2px) saturate(1.15);
+
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.28),
+      inset 6px 8px 18px -10px rgb(255 255 255 / 0.55),
+      0 14px 40px -12px rgb(0 0 0 / 0.45);
+  }
+
+  /* Specular: a small highlight toward the top-left, the way a real sphere catches a key light. */
+  .glass-lens::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      40% 40% at 32% 28%,
+      rgb(255 255 255 / 0.22),
+      transparent 70%
+    );
+  }
+
+  /* Only Chromium applies SVG filters in backdrop-filter; everyone else keeps the plain
+     blur above, which still reads as glass, just without the bend. */
+  html[data-liquid] .glass-lens {
+    -webkit-backdrop-filter: url(#glass-lens) saturate(1.15) contrast(1.06) brightness(1.02);
+    backdrop-filter: url(#glass-lens) saturate(1.15) contrast(1.06) brightness(1.02);
+  }
+
   /* Over a section marked data-theme="dark" the pill inverts: same material, dark body,
      so the white type the Navbar swaps in has something to sit on. A light pill there
      composites carbon links to roughly 1.8:1 — unreadable. */
@@ -202,6 +241,28 @@
       inset 0 1px 0 rgb(255 255 255 / 0.9),
       0 1px 2px rgb(16 20 18 / 0.05),
       0 0 0 0.5px rgb(16 20 18 / 0.06);
+  }
+
+  /*
+   * Frame ground. What an audience frame shows before its photograph exists: a lit gradient
+   * with grain, so an empty frame reads as a surface rather than a gap. The volt wash is
+   * faint on purpose — it should register as light falling on the ground, not as a tint.
+   */
+  .audience-ground {
+    background:
+      radial-gradient(120% 90% at 22% 8%, rgb(125 255 64 / 0.14), transparent 58%),
+      radial-gradient(90% 70% at 85% 100%, rgb(16 20 18 / 0.07), transparent 60%),
+      linear-gradient(160deg, #e3e8e4, var(--color-soft-grey) 45%, #d7ded9);
+  }
+
+  /* Grain: fractal noise, which keeps the flat gradient from banding on wide frames. */
+  .audience-ground::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.32;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   }
 
   /* Outlined display type for the editorial hero. */

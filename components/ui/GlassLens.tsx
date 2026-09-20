@@ -1,0 +1,223 @@
+"use client";
+
+import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { usePrefersReducedMotion } from "@/lib/motion";
+
+const RADIUS = 60;
+/* Roughly 1:1 with the rendered size — a bigger map buys nothing at this diameter. */
+const MAP_SIZE = 128;
+
+/**
+ * How the bend is distributed across the sphere. r^6 keeps the middle of the lens almost
+ * undisturbed — so text under it stays readable — and packs the refraction into the rim,
+ * which is where a real sphere bends hardest anyway.
+ */
+const PROFILE = 6;
+
+/**
+ * Fold-free ceiling on the displacement.
+ *
+ * feDisplacementMap samples at `r·R − scale·0.498·k(r)`. If that stops increasing with r,
+ * the rim starts sampling past the centre and the image mirrors itself — which reads as a
+ * bug, not as glass. Staying under `R / (0.498 · max k')` keeps the mapping monotonic, and
+ * for k = r^p the steepest slope is p, at the rim.
+ */
+const SCALE = Math.floor(RADIUS / (0.498 * PROFILE));
+
+/** Per-channel spread. ±12% is a fringe; much past that reads as a broken RGB split. */
+const SPREAD = 0.12;
+
+/**
+ * The displacement map: R encodes horizontal offset, G vertical, 128 meaning "don't move".
+ * Offsets point inward so the lens magnifies rather than shrinking what is under it.
+ */
+function buildDisplacementMap(size: number): string {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return "";
+
+  const image = ctx.createImageData(size, size);
+  const data = image.data;
+  const half = size / 2;
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const nx = (x - half) / half;
+      const ny = (y - half) / half;
+      const r = Math.hypot(nx, ny);
+
+      let dx = 0;
+      let dy = 0;
+      if (r > 0 && r < 1) {
+        const k = Math.pow(r, PROFILE);
+        dx = -(nx / r) * k;
+        dy = -(ny / r) * k;
+      }
+
+      data[i] = Math.max(0, Math.min(255, 128 + dx * 127));
+      data[i + 1] = Math.max(0, Math.min(255, 128 + dy * 127));
+      data[i + 2] = 128;
+      data[i + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(image, 0, 0);
+  return canvas.toDataURL();
+}
+
+/** Keeps one channel and drops the other two, so the three passes can be recombined. */
+const CHANNEL_MATRIX = {
+  R: "1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0",
+  G: "0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0",
+  B: "0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0",
+} as const;
+
+/**
+ * Whether this machine has a real cursor. useSyncExternalStore rather than an effect: it
+ * subscribes to the media query directly, and returns false on the server so the markup
+ * matches before hydration.
+ */
+function useFinePointer(): boolean {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia("(pointer: fine)");
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(pointer: fine)").matches,
+    () => false,
+  );
+}
+
+interface GlassLensProps {
+  /** The lens only exists while the pointer is inside this element. */
+  boundsRef: RefObject<HTMLElement | null>;
+}
+
+/**
+ * A refracting sphere that follows the cursor. Chromium bends the real backdrop through the
+ * filter below; everywhere else `.glass-lens` falls back to a plain blur with the same rim.
+ */
+export function GlassLens({ boundsRef }: GlassLensProps) {
+  const reducedMotion = usePrefersReducedMotion();
+  const fine = useFinePointer();
+  const [active, setActive] = useState(false);
+  const mapNode = useRef<SVGFEImageElement>(null);
+
+  const x = useMotionValue(-999);
+  const y = useMotionValue(-999);
+  const springX = useSpring(x, { stiffness: 300, damping: 30, mass: 0.5 });
+  const springY = useSpring(y, { stiffness: 300, damping: 30, mass: 0.5 });
+
+  /* Built once and written straight onto the node. Painting a 256x256 map into React state
+     would re-render the component for a value only the DOM ever reads. */
+  useEffect(() => {
+    if (!fine || reducedMotion) return;
+    mapNode.current?.setAttribute("href", buildDisplacementMap(MAP_SIZE));
+  }, [fine, reducedMotion]);
+
+  const placed = useRef(false);
+
+  useEffect(() => {
+    const bounds = boundsRef.current;
+    if (!bounds || !fine || reducedMotion) return;
+
+    function move(event: PointerEvent) {
+      /* First sighting jumps rather than springing in from off-screen. */
+      if (!placed.current) {
+        x.jump(event.clientX - RADIUS);
+        y.jump(event.clientY - RADIUS);
+        placed.current = true;
+      }
+      x.set(event.clientX - RADIUS);
+      y.set(event.clientY - RADIUS);
+    }
+
+    function enter() {
+      setActive(true);
+    }
+
+    function leave() {
+      setActive(false);
+      placed.current = false;
+    }
+
+    bounds.addEventListener("pointermove", move);
+    bounds.addEventListener("pointerenter", enter);
+    bounds.addEventListener("pointerleave", leave);
+    return () => {
+      bounds.removeEventListener("pointermove", move);
+      bounds.removeEventListener("pointerenter", enter);
+      bounds.removeEventListener("pointerleave", leave);
+    };
+  }, [boundsRef, fine, reducedMotion, x, y]);
+
+  if (!fine || reducedMotion) return null;
+
+  const pass = (channel: keyof typeof CHANNEL_MATRIX, multiplier: number) => (
+    <>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="map"
+        scale={SCALE * multiplier}
+        xChannelSelector="R"
+        yChannelSelector="G"
+        result={`d${channel}`}
+      />
+      <feColorMatrix
+        in={`d${channel}`}
+        type="matrix"
+        values={CHANNEL_MATRIX[channel]}
+        result={`c${channel}`}
+      />
+    </>
+  );
+
+  return (
+    <>
+      <svg aria-hidden width="0" height="0" className="absolute">
+        {/*
+          Dispersion: the same bend run three times at slightly different strengths, one per
+          channel, then recombined additively. That is what puts real colour in the fringe
+          instead of painting a coloured ring on top.
+        */}
+        <filter
+          id="glass-lens"
+          x="-30%"
+          y="-30%"
+          width="160%"
+          height="160%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feImage
+            ref={mapNode}
+            result="map"
+            preserveAspectRatio="none"
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+          />
+          {pass("R", 1 + SPREAD)}
+          {pass("G", 1)}
+          {pass("B", 1 - SPREAD)}
+          <feBlend in="cR" in2="cG" mode="screen" result="rg" />
+          <feBlend in="rg" in2="cB" mode="screen" />
+        </filter>
+      </svg>
+
+      <motion.div
+        aria-hidden
+        style={{ x: springX, y: springY, width: RADIUS * 2, height: RADIUS * 2 }}
+        animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.8 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="glass-lens pointer-events-none fixed left-0 top-0 z-30 rounded-full"
+      />
+    </>
+  );
+}

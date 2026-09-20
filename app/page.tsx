@@ -1,7 +1,5 @@
 import { HeroEditorial } from "@/components/hero/HeroEditorial";
-import { HeroStudio } from "@/components/hero/HeroStudio";
 import { UspSection } from "@/components/UspSection";
-import { ScrollCurtain } from "@/components/ScrollCurtain";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 import { AudienceSection } from "@/components/WhoIsItFor";
@@ -9,48 +7,49 @@ import { AudienceSection } from "@/components/WhoIsItFor";
 export default function Home() {
   return (
     <main>
-      {/* TEMP: two hero directions stacked for comparison — keep one, delete the other. */}
-      <HeroStudio />
+      {/* The full-bleed studio direction is parked in components/hero/HeroStudio.tsx. */}
+      <HeroEditorial />
+      <UspSection />
+      <AudienceSection />
 
-      <div className="flex items-center gap-4 px-[max(1.5rem,4vw)] py-10 text-[11px] font-semibold uppercase tracking-[0.2em] text-carbon/40">
-        <span className="h-px flex-1 bg-carbon/10" />
-        Variant B — split editorial
-        <span className="h-px flex-1 bg-carbon/10" />
-      </div>
-      {/* The dark block rises over the hero instead of cutting to it. Move the wrapper to
-          whichever hero survives the comparison above. */}
-      <ScrollCurtain pinned={<HeroEditorial />}>
-        <UspSection />
-      </ScrollCurtain>
-      <AudienceSection/>
-      {/* Product collection — editorial layout, not generic cards */}
-      <section id="models" className="mx-auto max-w-7xl px-8 py-20">
-        <h2 className="mb-4 text-3xl text-carbon lg:text-4xl">The lineup</h2>
+      {/* Product collection — editorial layout, one card after another. */}
+      <section id="models" className="relative bg-white pt-24 lg:pt-32">
+        <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+          <header className="mb-12 max-w-2xl md:mb-20">
+            <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
+              The Collection
+            </span>
+            <h2 className="font-display text-[clamp(3rem,5vw,4.5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-carbon">
+              Built for the <br />
+              <span className="text-carbon/30">road ahead.</span>
+            </h2>
+          </header>
 
-        <ProductCard
-          name="MOVE ON X1"
-          words={["Urban.", "Agile.", "Effortless."]}
-          image="/scooters/x1.png"
-          range="150 KM"
-          topSpeed="80 KM/H"
-        />
+          <ProductCard
+            name="MOVE ON X1"
+            words={["Urban.", "Agile.", "Effortless."]}
+            image="/scooters/x1.png"
+            range="150 KM"
+            topSpeed="80 KM/H"
+          />
 
-        <ProductCard
-          name="MOVE ON X2"
-          words={["Bolder.", "Faster.", "Further."]}
-          image="/scooters/x2.png"
-          range="190 KM"
-          topSpeed="95 KM/H"
-          reversed
-        />
+          <ProductCard
+            name="MOVE ON X2"
+            words={["Bolder.", "Faster.", "Further."]}
+            image="/scooters/x2.png"
+            range="190 KM"
+            topSpeed="95 KM/H"
+            reversed
+          />
 
-        <ProductCard
-          name="MOVE ON PRO"
-          words={["Performance.", "Refined."]}
-          image="/scooters/pro.png"
-          range="220 KM"
-          topSpeed="110 KM/H"
-        />
+          <ProductCard
+            name="MOVE ON PRO"
+            words={["Performance.", "Refined."]}
+            image="/scooters/pro.png"
+            range="220 KM"
+            topSpeed="110 KM/H"
+          />
+        </div>
       </section>
 
       {/* Specification section — large numbers, thin dividers */}

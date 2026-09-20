@@ -86,6 +86,34 @@ const CARD_REVEAL = {
   viewport: { once: true, margin: "-10%" },
 } as const;
 
+/*
+ * Desktop pacing. The collage is one fixed-height block and the first two groups start at
+ * exactly the same y, so all three cross into view within a few pixels of each other — a
+ * per-group `delay` staggers them on a timer, which plays out whether you keep scrolling
+ * or not.
+ *
+ * These trigger bands stagger them on scroll position instead. Only the BOTTOM inset does
+ * the work: `once: true` means the observer disconnects on first intersection, and a group
+ * scrolling up from below first intersects when its top edge crosses the band's bottom
+ * edge. Pulling that edge further up the screen is what makes a later group ask for more
+ * scroll — a top inset would only govern leaving at the top, which never happens here.
+ * (Keep top + bottom under 100%, or the band inverts to nothing and the group never fires.)
+ *
+ * At a 900px viewport that puts the three triggers roughly 200px and 470px apart. Widen
+ * the insets if the steps run together on a shorter screen.
+ *
+ * The mobile stack doesn't need this — its cards are stacked vertically and already arrive
+ * one at a time — so it keeps the shared CARD_REVEAL viewport and its small delay.
+ */
+const STEP_VIEWPORT = [
+  { once: true, margin: "0px 0px -20% 0px" },
+  { once: true, margin: "0px 0px -42% 0px" },
+  { once: true, margin: "0px 0px -58% 0px" },
+] as const;
+
+/** Inside one step the frame lands first and its card follows. */
+const CARD_FOLLOW = 0.15;
+
 export function AudienceSection() {
   return (
     <section className="relative w-full overflow-hidden bg-white py-16 lg:py-24">
@@ -166,11 +194,8 @@ export function AudienceSection() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{
-                duration: 0.6,
-                ease: EASE_PREMIUM,
-              }}
+              viewport={STEP_VIEWPORT[0]}
+              transition={{ duration: 0.6, ease: EASE_PREMIUM }}
               className="absolute inset-0"
             >
               <AudienceFrame
@@ -182,7 +207,8 @@ export function AudienceSection() {
             {/* Glass Overlay (Pushes into the right gap) */}
             <motion.div
               {...CARD_REVEAL}
-              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: 0.15 }}
+              viewport={STEP_VIEWPORT[0]}
+              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: CARD_FOLLOW }}
               className={`
                 ${GLASS_CARD}
                 absolute bottom-12 right-[-50px] z-20 w-[340px]
@@ -201,12 +227,8 @@ export function AudienceSection() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{
-                duration: 0.6,
-                ease: EASE_PREMIUM,
-                delay: 0.08,
-              }}
+              viewport={STEP_VIEWPORT[1]}
+              transition={{ duration: 0.6, ease: EASE_PREMIUM }}
               className="absolute inset-0"
             >
               <AudienceFrame
@@ -218,7 +240,8 @@ export function AudienceSection() {
             {/* Glass Overlay (Pushes into the left gap) */}
             <motion.div
               {...CARD_REVEAL}
-              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: 0.23 }}
+              viewport={STEP_VIEWPORT[1]}
+              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: CARD_FOLLOW }}
               className={`
                 ${GLASS_CARD}
                 absolute bottom-8 left-[-60px] z-20 w-[340px]
@@ -237,12 +260,8 @@ export function AudienceSection() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{
-                duration: 0.6,
-                ease: EASE_PREMIUM,
-                delay: 0.16,
-              }}
+              viewport={STEP_VIEWPORT[2]}
+              transition={{ duration: 0.6, ease: EASE_PREMIUM }}
               className="absolute inset-0"
             >
               <AudienceFrame
@@ -259,7 +278,8 @@ export function AudienceSection() {
                 Newbies card — raise it further and the two cards touch. */}
             <motion.div
               {...CARD_REVEAL}
-              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: 0.31 }}
+              viewport={STEP_VIEWPORT[2]}
+              transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: CARD_FOLLOW }}
               className={`
                 ${GLASS_CARD}
                 absolute left-[-180px] top-[-44px] z-20 w-[340px]

@@ -1,8 +1,6 @@
 "use client";
 
-import { useRef } from "react";
 import { motion } from "framer-motion";
-import { GlassLens } from "@/components/ui/GlassLens";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 
 interface Usp {
@@ -48,7 +46,6 @@ const USPS: Usp[] = [
 
 export function UspSection() {
   const reducedMotion = usePrefersReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
 
   /* Written straight onto the node: four cards re-rendering on every mousemove is not a
      trade worth making for a highlight. */
@@ -77,7 +74,6 @@ export function UspSection() {
        white sections either side of it, and it is what lets volt read as a brand colour
        rather than a highlighter. */
     <section
-      ref={sectionRef}
       data-theme="dark"
       /* Rounded top + the shadow it casts upward are what make this read as a panel rising
          over the hero rather than a hard edge between two colours. */
@@ -174,7 +170,6 @@ export function UspSection() {
         </div>
       </div>
 
-      <GlassLens boundsRef={sectionRef} />
     </section>
   );
 }

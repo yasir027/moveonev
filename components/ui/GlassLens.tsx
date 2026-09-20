@@ -95,13 +95,21 @@ function useFinePointer(): boolean {
 }
 
 interface GlassLensProps {
-  /** The lens only exists while the pointer is inside this element. */
-  boundsRef: RefObject<HTMLElement | null>;
+  /**
+   * Confine the lens to one element — it then only exists while the pointer is inside it.
+   * Omit it and the lens follows the pointer across the whole page, which is how the root
+   * layout mounts it.
+   */
+  boundsRef?: RefObject<HTMLElement | null>;
 }
 
 /**
- * A refracting sphere that follows the cursor. Chromium bends the real backdrop through the
- * filter below; everywhere else `.glass-lens` falls back to a plain blur with the same rim.
+ * A refracting sphere that follows the cursor, site-wide unless `boundsRef` narrows it.
+ * Chromium bends the real backdrop through the filter below; everywhere else `.glass-lens`
+ * falls back to a plain blur with the same rim.
+ *
+ * Mounted once in the root layout. It is `position: fixed`, so it needs no positioning
+ * parent and refracts whatever the page has composited beneath it.
  */
 export function GlassLens({ boundsRef }: GlassLensProps) {
   const reducedMotion = usePrefersReducedMotion();
@@ -124,15 +132,33 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
   const placed = useRef(false);
 
   useEffect(() => {
-    const bounds = boundsRef.current;
-    if (!bounds || !fine || reducedMotion) return;
+    if (!fine || reducedMotion) return;
+
+    /*
+     * Scoped to one element when given one, otherwise the whole viewport. `window` has no
+     * usable pointerenter/pointerleave pair, so in viewport mode the first move is what
+     * raises the lens, and documentElement's pointerleave — which fires when the cursor
+     * exits the browser window — is what drops it again.
+     */
+    const scoped = boundsRef !== undefined;
+    const bounds: EventTarget | null = scoped ? boundsRef.current : window;
+    if (!bounds) return;
 
     function move(event: PointerEvent) {
-      /* First sighting jumps rather than springing in from off-screen. */
+      /*
+       * First sighting jumps rather than springing in from wherever the cursor was last
+       * seen. The springs have to be jumped too, not just their source: a follower value
+       * re-`set`s itself on every source change, jump included, so jumping only the source
+       * would still animate the travel — which, now that the lens spans the whole site,
+       * would be a visible slide in from the corner every time the cursor re-enters.
+       */
       if (!placed.current) {
         x.jump(event.clientX - RADIUS);
         y.jump(event.clientY - RADIUS);
+        springX.jump(event.clientX - RADIUS);
+        springY.jump(event.clientY - RADIUS);
         placed.current = true;
+        if (!scoped) setActive(true);
       }
       x.set(event.clientX - RADIUS);
       y.set(event.clientY - RADIUS);
@@ -147,15 +173,24 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
       placed.current = false;
     }
 
-    bounds.addEventListener("pointermove", move);
-    bounds.addEventListener("pointerenter", enter);
-    bounds.addEventListener("pointerleave", leave);
+    bounds.addEventListener("pointermove", move as EventListener);
+    if (scoped) {
+      bounds.addEventListener("pointerenter", enter);
+      bounds.addEventListener("pointerleave", leave);
+    } else {
+      document.documentElement.addEventListener("pointerleave", leave);
+    }
+
     return () => {
-      bounds.removeEventListener("pointermove", move);
-      bounds.removeEventListener("pointerenter", enter);
-      bounds.removeEventListener("pointerleave", leave);
+      bounds.removeEventListener("pointermove", move as EventListener);
+      if (scoped) {
+        bounds.removeEventListener("pointerenter", enter);
+        bounds.removeEventListener("pointerleave", leave);
+      } else {
+        document.documentElement.removeEventListener("pointerleave", leave);
+      }
     };
-  }, [boundsRef, fine, reducedMotion, x, y]);
+  }, [boundsRef, fine, reducedMotion, x, y, springX, springY]);
 
   if (!fine || reducedMotion) return null;
 

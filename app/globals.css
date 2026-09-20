@@ -189,8 +189,10 @@
   }
 
   /*
-   * Glass lens. The cursor sphere in the dark USP block — the one place glass earns its
-   * keep, because a small lens over high-contrast content has something to refract.
+   * Glass lens. The cursor sphere, mounted once in the root layout and free to cross every
+   * section — so the rim has to hold on white as well as on carbon: the white inset ring
+   * disappears over the light sections, and the dark hairline under it disappears over the
+   * dark block. One of the two is always doing the work.
    * The refraction itself is an SVG filter GlassLens builds at runtime; this is the body,
    * the rim and the fallback for browsers that cannot run it.
    */
@@ -201,7 +203,10 @@
     box-shadow:
       inset 0 0 0 1px rgb(255 255 255 / 0.28),
       inset 6px 8px 18px -10px rgb(255 255 255 / 0.55),
-      0 14px 40px -12px rgb(0 0 0 / 0.45);
+      0 0 0 0.5px rgb(16 20 18 / 0.12),
+      /* Lighter than it was when the lens only ever sat on carbon: at the old weight this
+         reads as a smudge under the sphere on the white sections. */
+      0 14px 40px -12px rgb(0 0 0 / 0.3);
   }
 
   /* Specular: a small highlight toward the top-left, the way a real sphere catches a key light. */
@@ -223,6 +228,13 @@
   html[data-liquid] .glass-lens {
     -webkit-backdrop-filter: url(#glass-lens) saturate(1.15) contrast(1.06) brightness(1.02);
     backdrop-filter: url(#glass-lens) saturate(1.15) contrast(1.06) brightness(1.02);
+  }
+
+  /* The intro loader owns the screen until it hands back; a mouse move over .brand-cover
+     would otherwise raise the sphere on top of it. */
+  html[data-loader="home"] .glass-lens,
+  html[data-loader="page"] .glass-lens {
+    display: none;
   }
 
   /* Over a section marked data-theme="dark" the pill inverts: same material, dark body,

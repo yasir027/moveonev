@@ -10,7 +10,7 @@ export default function Home() {
       {/* The full-bleed studio direction is parked in components/hero/HeroStudio.tsx. */}
       <HeroEditorial />
       {/* TEMP: three USP visual directions stacked — keep one, delete the rest. */}
-      <UspSection visual="parts" />
+      <UspSection visual="closeups" />
       <AudienceSection />
 
       {/* Product collection — editorial layout, one card after another. */}

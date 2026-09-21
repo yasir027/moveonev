@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 
 /** Which visual treatment the section carries. Three are live so they can be compared. */
-export type UspVisual = "parts" | "annotated" | "tile";
+export type UspVisual = "closeups" | "annotated" | "tile";
 
 interface Usp {
   /** The small uppercase category that sits where an icon used to. */
@@ -16,15 +16,13 @@ interface Usp {
   /** Footprint in the desktop 4x2 grid. The first claim gets the tall box. */
   span: string;
   /**
-   * Line drawing used as a watermark in the `parts` variant.
-   *
-   * Only four of the loader's parts read as anything on their own — cowl, front wheel, seat
-   * and headlamps. The others (body, bars, fork…) are stroke fragments that only resolve
-   * once the assembly layers them, so they are unusable here. That means the pairing is
-   * only loosely semantic: seat genuinely is the under-seat storage and headlamps stand in
-   * for the safety kit, but the other two are product texture rather than illustration.
+   * Close-up crop for the `closeups` variant, cut from Hero/bike_1.png. That file's
+   * "transparency" is a painted checkerboard, so these were cleaned before cropping — and
+   * the grab rail could not survive the cleaning (its silver matches the checker greys), so
+   * no crop includes it. The pairing is only loosely literal: a closed side-profile render
+   * can't show storage or a battery, so each card gets the nearest good-looking part.
    */
-  art: string;
+  closeup: string;
 }
 
 const USPS: Usp[] = [
@@ -34,9 +32,7 @@ const USPS: Usp[] = [
     description:
       "Ride from day one — skip RTO registration, annual road tax and mandatory insurance entirely. Anyone 16 and up can legally ride, licence-free.",
     span: "sm:col-span-2 lg:col-span-2 lg:row-span-2",
-    /* full.webp is the finished photo, not line art — the cowl is the most product-like
-       of the drawn parts, so the big card gets that. */
-    art: "/intro/cowl.webp",
+    closeup: "/usp/closeup-registration.webp",
   },
   {
     label: "Battery",
@@ -44,7 +40,7 @@ const USPS: Usp[] = [
     description:
       "Fire-resistant LiFePO4 chemistry, engineered to stay stable through harsh Indian heat and rated for 2,500+ charge cycles of daily riding.",
     span: "",
-    art: "/intro/frontWheel.webp",
+    closeup: "/usp/closeup-battery.webp",
   },
   {
     label: "Storage",
@@ -52,7 +48,7 @@ const USPS: Usp[] = [
     description:
       "Heavy-duty carrying capacity with up to 45 litres of under-seat storage on select models — room enough for your daily groceries and essentials.",
     span: "",
-    art: "/intro/seat.webp",
+    closeup: "/usp/closeup-storage.webp",
   },
   {
     label: "Security",
@@ -60,7 +56,7 @@ const USPS: Usp[] = [
     description:
       "Reverse assist for tight parking, keyless ignition, an anti-theft alarm and a one-touch Repair Switch — safety tech rare at this price.",
     span: "sm:col-span-2 lg:col-span-2",
-    art: "/intro/headlamps.webp",
+    closeup: "/usp/closeup-security.webp",
   },
 ];
 
@@ -71,7 +67,7 @@ const HOTSPOTS = [
   { x: "49%", y: "45%", label: "Swappable battery" },
 ];
 
-export function UspSection({ visual = "parts" }: { visual?: UspVisual }) {
+export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
   const reducedMotion = usePrefersReducedMotion();
 
   /* Written straight onto the node: four cards re-rendering on every mousemove is not a
@@ -173,9 +169,14 @@ export function UspSection({ visual = "parts" }: { visual?: UspVisual }) {
                     {...cardProps}
                     className={`spec-card h-full ${isFeature ? "p-7 lg:p-8" : "p-5 lg:p-6"}`}
                   >
-                    {visual === "parts" && <PartArt src={usp.art} feature={isFeature} />}
+                    {visual === "closeups" && <CloseUp src={usp.closeup} feature={isFeature} />}
 
-                    <div className="spec-content flex h-full flex-col">
+                    {/* The right side belongs to the close-up, so the copy stops short of it. */}
+                    <div
+                      className={`spec-content flex h-full flex-col ${
+                        visual === "closeups" ? "sm:pr-[34%]" : ""
+                      }`}
+                    >
                       <Label index={i} usp={usp} />
 
                       {isFeature && visual === "annotated" && <AnnotatedScooter />}
@@ -252,26 +253,28 @@ function Title({ title }: { title: string }) {
 }
 
 /**
- * Variant `parts` — the loader's line drawings, which otherwise only exist for the three
- * seconds the intro runs. They are volt strokes on transparent, so on white they need
- * darkening rather than more opacity: opacity alone would leave them fighting the copy.
+ * Variant `closeups` — a crop of the real scooter against the card's right edge, bleeding
+ * past it; the card's own overflow-hidden clips the bleed. The tall front-end crop is pinned
+ * to the top so the mirrors stay in frame when the slot is shorter than the image.
+ *
+ * On phones a side slot would leave ~180px for copy, so below `sm` it becomes a band across
+ * the top of the card instead.
  */
-function PartArt({ src, feature }: { src: string; feature: boolean }) {
+function CloseUp({ src, feature }: { src: string; feature: boolean }) {
   return (
     <div
       aria-hidden
-      /* Kept clear of the copy: the tall card sets its text at the bottom so the art takes
-         the top, and the small cards are text all the way down, so theirs bleeds off the
-         bottom-right corner where only a fragment shows. */
-      className={`pointer-events-none absolute select-none ${
-        feature ? "right-[2%] top-[4%] w-[54%]" : "-bottom-[16%] -right-[10%] w-[46%]"
-      }`}
-      style={{
-        filter: "brightness(0.38) saturate(2.4)",
-        opacity: feature ? 0.45 : 0.3,
-      }}
+      className="pointer-events-none relative mb-5 h-40 select-none overflow-hidden rounded-2xl sm:absolute sm:inset-y-0 sm:-right-[8%] sm:mb-0 sm:h-auto sm:w-[40%] sm:rounded-none"
     >
-      <Image src={src} alt="" width={600} height={600} className="h-auto w-full object-contain" />
+      <Image
+        src={src}
+        alt=""
+        fill
+        /* object-cover fills these slots by height, so the image is wider than the slot:
+           size for the covered width, not the slot's, or it gets served small and upscaled. */
+        sizes={feature ? "(min-width: 1024px) 560px, 90vw" : "(min-width: 1024px) 300px, 90vw"}
+        className={`object-cover object-center ${feature ? "sm:object-top" : ""}`}
+      />
     </div>
   );
 }

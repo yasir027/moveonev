@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/brand/Logo";
 import { TransitionLink } from "@/components/loader/RouteTransition";
+import { NavGlassFilter } from "@/components/ui/NavGlassFilter";
 import { whatsappUrl } from "@/lib/heroModels";
 import { EASE_PREMIUM } from "@/lib/motion";
 
@@ -57,8 +58,33 @@ export function Navbar() {
     };
   }, []);
 
+  /*
+   * While the pill morphs, framer writes a transform: scale() on it — which stretches the
+   * refracted backdrop and visibly smears the rim. `data-morphing` drops the pill back to a
+   * plain blur until it settles.
+   *
+   * Timed off MORPH rather than framer's onLayoutAnimationComplete: the nav's children carry
+   * their own `layout`, so the parent's animation gets interrupted and re-started, and the
+   * complete callback can simply never arrive — which leaves the attribute stuck on and the
+   * refraction switched off for good.
+   */
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    nav.setAttribute("data-morphing", "");
+    const settle = window.setTimeout(
+      () => nav.removeAttribute("data-morphing"),
+      MORPH.duration * 1000,
+    );
+    return () => window.clearTimeout(settle);
+  }, [scrolled]);
+
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
+      {/* Builds the pill's refraction map against navRef. Mounted here rather than in the
+          layout beside GlassFilter so it can take the ref directly. */}
+      <NavGlassFilter targetRef={navRef} />
       <motion.nav
         ref={navRef}
         layout
@@ -67,13 +93,13 @@ export function Navbar() {
         style={{ borderRadius: scrolled ? 9999 : 0 }}
         className={`pointer-events-auto relative flex items-center justify-between overflow-hidden ${
           scrolled
-            ? `glass-liquid ${onDark ? "glass-nav-dark" : "glass-nav"} mt-3 w-[min(920px,calc(100%-1.5rem))] py-2 pl-5 pr-2`
+            ? `glass-liquid ${onDark ? "glass-nav-dark" : "glass-nav"} mt-3 w-[min(920px,calc(100%-1.5rem))] py-4 pl-7 pr-5`
             : "w-full px-[max(1.5rem,3vw)] py-5"
         }`}
       >
         <motion.div layout transition={MORPH}>
           <TransitionLink href="/" aria-label="MoveOn home">
-            <Logo header tone={onDark ? "dark" : "light"} className={`block w-auto ${scrolled ? "h-7" : "h-8 sm:h-10"}`} />
+            <Logo header tone={onDark ? "dark" : "light"} className={`block w-auto ${scrolled ? "h-7 sm:h-9" : "h-9 sm:h-12"}`} />
           </TransitionLink>
         </motion.div>
 
@@ -84,7 +110,7 @@ export function Navbar() {
                 href={`#${link.toLowerCase()}`}
                 className={`font-medium transition-colors duration-300 ${
                   onDark ? "text-white/85 hover:text-white" : "text-carbon/85 hover:text-carbon"
-                } ${scrolled ? "text-sm" : "text-[15px]"}`}
+                } ${scrolled ? "text-[18px]" : "text-[25px]"}`}
               >
                 {link}
               </a>
@@ -98,11 +124,15 @@ export function Navbar() {
           href={whatsappUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className={`rounded-full font-display font-semibold transition-colors duration-300 ${
+          className={`shrink-0 whitespace-nowrap rounded-full font-display font-semibold transition-colors duration-300 ${
             onDark
               ? "bg-volt text-carbon hover:bg-[#6ee62f]"
               : "bg-carbon text-white hover:bg-[#1f2622]"
-          } ${scrolled ? "px-5 py-2.5 text-[13px]" : "px-6 py-3 text-sm"}`}
+          } ${
+            scrolled
+              ? "px-4 py-2 text-sm sm:px-5 sm:py-2.5 sm:text-[15px]"
+              : "px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-[17px]"
+          }`}
         >
           Book test ride
         </motion.a>

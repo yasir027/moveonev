@@ -5,6 +5,28 @@ export interface Model {
   tagline: string;
   description: string;
   image: string;
+  /** The photo's own aspect ratio, so overlays can match the contained image. */
+  imageAspect: string;
+  /** Wheels cut out by scripts/build-wheel-sprites.mjs, so they can really turn. */
+  wheels: {
+    /** One rebuilt wheel, shared by both positions. */
+    sprite: string;
+    /** What sits in front of the wheel here — mudguard and fork, or motor housing. */
+    cover: string;
+    /** Centre of the wheel, in % of the photo. */
+    cx: string;
+    cy: string;
+    /** Box sizes, in % of the photo's width. */
+    size: string;
+    coverSize: string;
+    /** Brightness for a wheel sitting in the bike's shade, so it doesn't look pasted on. */
+    dim?: number;
+    /** The ellipse the wheel projects to: rotate by `tilt`, then squash. */
+    tilt: number;
+    squash: number;
+    /** Photo pixels, so spin can follow the distance travelled. */
+    radiusPx: number;
+  }[];
   accent: string;
   range: string;
   topSpeed: string;
@@ -22,14 +44,42 @@ export const RIDER_COUNT = "2,400+";
 export const GOOGLE_RATING = "4.9";
 export const PETROL_COST_PER_KM = "PKR 12";
 
-const HERO_IMAGE = "/Hero/bike.png";
-// The hero photo's pixel size, so overlays can match the contained image.
-export const HERO_IMAGE_ASPECT = "768/1365";
+// Prepared by scripts/prepare-hero-photo.mjs: cropped to the subject and cut out, with its
+// floor shadow kept as a translucent one.
+const HERO_IMAGE = "/Hero/veloce-l-body.webp";
+const HERO_IMAGE_ASPECT = "1065/1123";
+
+// Printed by scripts/build-wheel-sprites.mjs — re-run it after changing the photo.
+const SHARED_WHEELS: Model["wheels"] = [
+  {
+    sprite: "/Hero/veloce-l-wheel.webp",
+    cover: "/Hero/veloce-l-cover-front.webp",
+    cx: "19.249%",
+    cy: "78.540%",
+    size: "38.122%",
+    coverSize: "39.249%",
+    tilt: 121.9,
+    squash: 0.8128,
+    radiusPx: 203,
+  },
+  {
+    sprite: "/Hero/veloce-l-wheel.webp",
+    cover: "/Hero/veloce-l-cover-rear.webp",
+    cx: "83.099%",
+    cy: "74.354%",
+    size: "22.160%",
+    coverSize: "23.286%",
+    tilt: 121.9,
+    squash: 0.8128,
+    radiusPx: 118,
+    dim: 0.78,
+  },
+];
 
 const SHARED_HOTSPOTS: Model["hotspots"] = [
-  { x: "22%", y: "45%", label: "Full-LED projector headlamps" },
-  { x: "77%", y: "34%", label: "Swappable battery under the seat" },
-  { x: "31%", y: "80%", label: "Disc brake with regen braking" },
+  { x: "20%", y: "46%", label: "Full-LED projector headlamps" },
+  { x: "66%", y: "41%", label: "Swappable battery under the seat" },
+  { x: "24%", y: "74%", label: "Disc brake with regen braking" },
 ];
 
 export const MODELS: Model[] = [
@@ -40,6 +90,8 @@ export const MODELS: Model[] = [
     tagline: "Urban. Agile. Effortless.",
     description: "Designed for everyday city riding with effortless handling and confident performance. A perfect blend of agility and efficiency for the daily commuter.",
     image: HERO_IMAGE,
+    imageAspect: HERO_IMAGE_ASPECT,
+    wheels: SHARED_WHEELS,
     accent: "#42CE00",
     range: "150 KM",
     topSpeed: "80 KM/H",
@@ -60,6 +112,8 @@ export const MODELS: Model[] = [
     tagline: "Bolder. Faster. Further.",
     description: "More range, more power and more presence. Built with an extended chassis and upgraded motor for riders who want more from every journey.",
     image: HERO_IMAGE,
+    imageAspect: HERO_IMAGE_ASPECT,
+    wheels: SHARED_WHEELS,
     accent: "#00A86B",
     range: "190 KM",
     topSpeed: "95 KM/H",
@@ -79,6 +133,8 @@ export const MODELS: Model[] = [
     tagline: "Performance. Refined.",
     description: "Our flagship electric scooter. Dual motors, active suspension, and aerospace-grade materials combine for a refined, unmistakably premium ride.",
     image: HERO_IMAGE,
+    imageAspect: HERO_IMAGE_ASPECT,
+    wheels: SHARED_WHEELS,
     accent: "#7DFF40",
     range: "220 KM",
     topSpeed: "110 KM/H",

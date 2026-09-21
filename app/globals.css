@@ -3,6 +3,9 @@
 @theme {
   /* Brand */
   --color-volt: #7DFF40;
+  /* Volt's readable sibling. #7DFF40 on white is ~1.4:1, so anything small and green on a
+     light ground uses this instead: 6.2:1 on white, 5.8:1 on mist. */
+  --color-leaf: #3B6D11;
   --color-ev-green: #00a86b;
   --color-lime: #7dff40;
 
@@ -52,9 +55,8 @@
 }
 
 /*
- * Spec card. The surface inside the dark USP block: a flat panel one step up from the
- * section ground, defined by a hairline rather than a change of fill. No material
- * effects — the hierarchy is carried by type, the volt label and the rule.
+ * Spec card. The surface inside the USP band: white panels on a mist ground, so they need
+ * no border to separate — the tone change does it.
  *
  * Deliberately NOT glass. Frost needs high-contrast content behind it to blur; a block
  * of body copy on a flat ground has none, so it renders as a pale box. See .glass-frost
@@ -69,23 +71,29 @@
     overflow: hidden;
 
     border-radius: 24px;
-    background: #181d1a;
-    border: 1px solid rgb(255 255 255 / 0.09);
+    background: #ffffff;
+
+    box-shadow:
+      0 1px 2px rgb(16 20 18 / 0.04),
+      0 18px 40px -22px rgb(16 20 18 / 0.18);
 
     transition:
       transform 300ms var(--ease-premium),
-      border-color 300ms var(--ease-premium),
-      background-color 300ms var(--ease-premium);
+      box-shadow 300ms var(--ease-premium);
   }
 
   .spec-card:hover {
     transform: translateY(-4px);
-    border-color: rgb(125 255 64 / 0.45);
-    background-color: #1c221e;
+
+    box-shadow:
+      0 1px 2px rgb(16 20 18 / 0.05),
+      0 26px 55px -24px rgb(16 20 18 / 0.22),
+      0 20px 50px -30px rgb(59 109 17 / 0.35);
   }
 
   /* Cursor-follow wash. --mx/--my are written straight onto the node by UspSection, so
-     moving the mouse costs no React render; --card-lit fades the whole thing in. */
+     moving the mouse costs no React render; --card-lit fades the whole thing in. Volt reads
+     as a tint here rather than a glow, so it carries more alpha than it did on carbon. */
   .spec-card::after {
     content: "";
     position: absolute;
@@ -96,7 +104,7 @@
 
     background: radial-gradient(
       420px circle at var(--mx, 50%) var(--my, 0%),
-      rgb(125 255 64 / 0.16),
+      rgb(125 255 64 / 0.28),
       transparent 68%
     );
 
@@ -117,7 +125,7 @@
       font-semibold
       uppercase
       tracking-[0.18em]
-      text-volt;
+      text-leaf;
   }
 
   .spec-title {
@@ -126,13 +134,13 @@
       font-bold
       leading-[1.15]
       tracking-[-0.025em]
-      text-white;
+      text-carbon;
   }
 
   .spec-body {
     @apply text-[14px]
       leading-[1.6]
-      text-white/55;
+      text-carbon/70;
   }
 }
 
@@ -171,8 +179,12 @@
       rgb(255 255 255 / 0) 60%,
       rgb(255 255 255 / 0.55)
     );
+    /* Both spellings. With only the -webkit- one, Firefox honours mask-composite and
+       ignores the mask itself — so there is no mask at all and this gradient paints as a
+       filled rounded rectangle behind the content instead of as a ring. */
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
     pointer-events: none;
   }
@@ -183,9 +195,139 @@
     backdrop-filter: url(#liquid-glass) blur(1.5px) saturate(180%);
   }
 
-  /* The header pill floats over every kind of section, so it keeps a touch more body. */
+  /*
+   * Header pill. A heavier material than the rest of .glass-liquid — it is the only consumer
+   * that floats over every section on the page, and the only one large enough for a rim
+   * refraction to read. All of it is scoped to .glass-nav / .glass-nav-dark: the six other
+   * .glass-liquid consumers are chips and swatches, and this much edge on a 28px chip is
+   * all edge.
+   *
+   * The refraction itself is NOT here. .glass-liquid sets backdrop-filter, which makes the
+   * pill a backdrop root — a nested backdrop-filter on a pseudo-element would sample the
+   * pill's own paint, not the page behind it. So the bend lives in the one backdrop-filter
+   * chain below, and the pseudo-elements are paint only.
+   */
+  .glass-nav,
+  .glass-nav-dark {
+    /* No `border`: a real one changes the border box and re-triggers framer's layout
+       measurement mid-morph. The 1px rim is the first inset shadow, the way .glass-lens
+       does it. Nor `border-radius` — Navbar sets it inline and framer animates it. */
+    -webkit-backdrop-filter: blur(10px) saturate(1.695) contrast(1.027);
+    backdrop-filter: blur(10px) saturate(1.695) contrast(1.027);
+    /* The dark probe flips in a single scroll frame, so without this the whole material
+       cuts over at the section boundary. */
+    transition:
+      background 0.35s var(--ease-premium),
+      box-shadow 0.35s var(--ease-premium);
+  }
+
   .glass-nav {
-    background: rgb(255 255 255 / 0.22);
+    background: rgb(255 255 255 / 0.2);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.6),
+      inset 0 1px 0 rgb(255 255 255 / 0.95),
+      inset 0 14px 28px -20px rgb(255 255 255 / 0.8),
+      inset 0 -8px 20px -16px rgb(16 20 18 / 0.16),
+      inset 0 -1px 1px rgb(16 20 18 / 0.1),
+      0 0 0 0.5px rgb(16 20 18 / 0.1),
+      0 12px 34px -14px rgb(16 20 18 / 0.3);
+  }
+
+  /*
+   * Chromium only, and only once NavGlassFilter has written the map onto #nav-glass's
+   * feImage — it sets data-refract at that point. Without the gate the first paint runs
+   * feDisplacementMap against a missing in2 and the pill flashes transparent.
+   *
+   * Specificity is load-bearing: `html[data-liquid] .glass-liquid` above is (0,2,1) and
+   * would otherwise win, handing the 920px pill the shared #liquid-glass turbulence — the
+   * exact smear GlassFilter's own doc comment warns about. (0,3,1) settles it.
+   *
+   * Blur drops from 10 to 4: the displacement already scatters the backdrop, and at 10 the
+   * bend disappears into the blur.
+   */
+  html[data-liquid] .glass-nav[data-refract],
+  html[data-liquid] .glass-nav-dark[data-refract] {
+    -webkit-backdrop-filter: url(#nav-glass) blur(4px) saturate(1.695) contrast(1.027);
+    backdrop-filter: url(#nav-glass) blur(4px) saturate(1.695) contrast(1.027);
+  }
+
+  /*
+   * The pill takes .glass-liquid::before over for the drifting sheen and moves the specular
+   * rim into ::after, so the rim paints last and sits over it.
+   *
+   * Stacking, both at z-index: -1 inside .glass-liquid's `isolation: isolate`:
+   *   1. pill background   2. ::before sheen   3. ::after rim   4. logo / links / CTA.
+   * The nav children carry no z-index and need none — in flow or framer-transformed, both
+   * paint above any negative index.
+   */
+  .glass-nav::before,
+  .glass-nav-dark::before {
+    content: "";
+    position: absolute;
+    /* Oversized so it can roam; the nav's own overflow-hidden clips it back to the pill. */
+    inset: -60%;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    /* Neutral, not tinted. The colour in this pill comes from the dispersion in #nav-glass,
+       and from the rim below where that filter cannot run — a coloured blob here would
+       double-count it and stain the white sections. */
+    background:
+      radial-gradient(38% 52% at 22% 40%, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 70%),
+      radial-gradient(34% 48% at 74% 62%, rgb(226 240 255 / 0.34), rgb(226 240 255 / 0) 72%),
+      radial-gradient(30% 44% at 52% 18%, rgb(255 246 235 / 0.26), rgb(255 246 235 / 0) 74%);
+    /* Frame 0 of the loop, declared as the resting state: the reduced-motion block at the
+       foot of this file cuts animations to 0.01ms with no `forwards`, so this is what
+       people who asked for less motion actually see. It has to look finished. */
+    transform: rotate(0deg) scale(1.06);
+    animation: nav-glass-drift 8s linear infinite;
+  }
+
+  .glass-nav::after,
+  .glass-nav-dark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    /* 1.5px, not 1: on a 920px pill a hairline gives the colour stops nowhere to land.
+       This ring is the fringe browsers without the filter get instead of the dispersion. */
+    padding: 1.5px;
+    border-radius: inherit;
+    pointer-events: none;
+    /* Linear, not conic: a conic centred on a 920x68 box sweeps nearly its whole range
+       across the two end caps and stays flat along the top and bottom. Cool on the leading
+       edge, warm on the trailing one — the split a real edge makes, not a brand colour. */
+    background: linear-gradient(
+      104deg,
+      rgb(255 255 255 / 0.98) 0%,
+      rgb(186 230 253 / 0.85) 9%,
+      rgb(125 211 252 / 0.5) 16%,
+      rgb(255 255 255 / 0.12) 30%,
+      rgb(255 255 255 / 0.06) 47%,
+      rgb(255 206 186 / 0.5) 62%,
+      rgb(255 255 255 / 0.1) 72%,
+      rgb(255 255 255 / 0.5) 86%,
+      rgb(205 240 255 / 0.9) 96%,
+      rgb(255 255 255 / 0.98) 100%
+    );
+    /* Both spellings: Firefox ignores -webkit-mask but honours mask-composite, so with only
+       the prefixed one there is no mask at all and the ring paints as a filled block. */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  @keyframes nav-glass-drift {
+    0% {
+      transform: rotate(0deg) scale(1.06);
+    }
+    50% {
+      transform: rotate(180deg) scale(1.16);
+    }
+    100% {
+      transform: rotate(360deg) scale(1.06);
+    }
   }
 
   /*
@@ -241,7 +383,63 @@
      so the white type the Navbar swaps in has something to sit on. A light pill there
      composites carbon links to roughly 1.8:1 — unreadable. */
   .glass-nav-dark {
-    background: rgb(16 20 18 / 0.55);
+    /* Lighter body than a straight inversion would suggest: at 0.55 there is almost nothing
+       of the backdrop left for the refraction to bend. */
+    background: rgb(16 20 18 / 0.46);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.22),
+      inset 0 1px 0 rgb(255 255 255 / 0.5),
+      inset 0 16px 30px -22px rgb(255 255 255 / 0.4),
+      inset 0 -10px 22px -16px rgb(0 0 0 / 0.5),
+      /* The carbon hairline the light pill uses is invisible here; a light one takes over. */
+      0 0 0 0.5px rgb(255 255 255 / 0.1),
+      0 16px 44px -18px rgb(0 0 0 / 0.65);
+  }
+
+  html[data-liquid] .glass-nav-dark[data-refract] {
+    /* More blur than the light pill: less of the backdrop survives the body, so the
+       refraction has to be helped along rather than kept out of the way. */
+    -webkit-backdrop-filter: url(#nav-glass) blur(6px) saturate(1.5) brightness(1.06);
+    backdrop-filter: url(#nav-glass) blur(6px) saturate(1.5) brightness(1.06);
+  }
+
+  /* On carbon the fringe has to emit rather than tint: everything roughly a third stronger,
+     and the warm side warms further so it reads as refracted light, not as dirt. */
+  .glass-nav-dark::after {
+    background: linear-gradient(
+      104deg,
+      rgb(255 255 255 / 0.7) 0%,
+      rgb(186 230 253 / 0.95) 10%,
+      rgb(125 211 252 / 0.8) 18%,
+      rgb(255 255 255 / 0.1) 34%,
+      rgb(255 255 255 / 0.04) 50%,
+      rgb(255 214 170 / 0.6) 64%,
+      rgb(255 255 255 / 0.12) 74%,
+      rgb(255 255 255 / 0.45) 88%,
+      rgb(205 240 255 / 0.85) 97%,
+      rgb(255 255 255 / 0.7) 100%
+    );
+  }
+
+  /* The sheen is the pill's only real light source on carbon, so the lobes go cool and
+     roughly double — a neutral white one reads as a grey smudge down there. */
+  .glass-nav-dark::before {
+    background:
+      radial-gradient(38% 52% at 22% 40%, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 70%),
+      radial-gradient(34% 48% at 74% 62%, rgb(186 230 253 / 0.3), rgb(186 230 253 / 0) 72%),
+      radial-gradient(30% 44% at 52% 18%, rgb(255 236 214 / 0.2), rgb(255 236 214 / 0) 74%);
+  }
+
+  /*
+   * While framer morphs the pill it writes a transform: scale(), and for half a second the
+   * filtered backdrop is being stretched — the rim refraction visibly smears. Drop back to
+   * the plain chain until it settles. Same (0,3,1) as the rules above, so order decides:
+   * this has to stay last.
+   */
+  html[data-liquid] .glass-nav[data-morphing],
+  html[data-liquid] .glass-nav-dark[data-morphing] {
+    -webkit-backdrop-filter: blur(10px) saturate(1.695) contrast(1.027);
+    backdrop-filter: blur(10px) saturate(1.695) contrast(1.027);
   }
 
   .glass-frost {

@@ -18,7 +18,7 @@ import { useHeroState } from "./useHeroState";
  * model code; the four corners hold model, paint, headline and the buy panel.
  */
 export function HeroStudio() {
-  const { active, activeIndex, activeColor, colorIndex, direction, selectModel, setColorIndex } =
+  const { active, activeIndex, activeColor, colorIndex, selectModel, setColorIndex } =
     useHeroState();
   const reducedMotion = useReducedMotion();
 
@@ -138,7 +138,6 @@ export function HeroStudio() {
             primary
             model={active}
             colorIndex={colorIndex}
-            direction={direction}
             boxClassName="inset-x-4 inset-y-2 lg:inset-x-[24%] lg:bottom-[5%] lg:top-[13%]"
           />
         </div>

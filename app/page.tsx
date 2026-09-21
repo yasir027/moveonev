@@ -9,7 +9,8 @@ export default function Home() {
     <main>
       {/* The full-bleed studio direction is parked in components/hero/HeroStudio.tsx. */}
       <HeroEditorial />
-      <UspSection />
+      {/* TEMP: three USP visual directions stacked — keep one, delete the rest. */}
+      <UspSection visual="parts" />
       <AudienceSection />
 
       {/* Product collection — editorial layout, one card after another. */}
@@ -85,5 +86,16 @@ export default function Home() {
         </div>
       </footer>
     </main>
+  );
+}
+
+/** TEMP: separates the stacked USP variants above. Goes when one is chosen. */
+function VariantDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4 bg-white px-[max(1.5rem,4vw)] py-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-carbon/40">
+      <span className="h-px flex-1 bg-carbon/10" />
+      {label}
+      <span className="h-px flex-1 bg-carbon/10" />
+    </div>
   );
 }

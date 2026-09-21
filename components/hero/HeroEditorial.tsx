@@ -19,7 +19,7 @@ import { useHeroState } from "./useHeroState";
  * layout, seam pills and outlined display type from the editorial direction.
  */
 export function HeroEditorial() {
-  const { active, activeIndex, activeColor, colorIndex, direction, selectModel, setColorIndex } =
+  const { active, activeIndex, activeColor, colorIndex, selectModel, setColorIndex } =
     useHeroState();
   const reducedMotion = useReducedMotion();
 
@@ -64,8 +64,9 @@ export function HeroEditorial() {
             {/* LEFT: type */}
             <div
               data-intro="hero"
-              // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8
-              className="flex flex-col justify-center gap-7 px-7 pb-2 pt-10 sm:px-10 lg:py-8 lg:pl-14 lg:pr-10"
+              // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8. On lg the facts bar floats over
+              // the bottom 16% of the card, so the copy is centred in the space above it.
+              className="flex flex-col justify-center gap-7 px-7 pb-2 pt-10 sm:px-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+1.5rem)] lg:pl-14 lg:pr-10 lg:pt-8"
             >
               {/* Model tabs */}
               <div role="tablist" aria-label="Model" className="flex gap-8 border-b border-carbon/10">
@@ -150,8 +151,7 @@ export function HeroEditorial() {
                 primary
                 model={active}
                 colorIndex={colorIndex}
-                direction={direction}
-                boxClassName="-bottom-[10%] -right-[4%] left-[2%] top-[8%]"
+                boxClassName="-bottom-[7%] left-[4%] right-[4%] top-[5%]"
               />
 
               {/* Paint */}
@@ -200,13 +200,27 @@ export function HeroEditorial() {
             ))}
           </div>
 
-          {/* The details bar: facts only, no actions. 1px gaps draw the hairlines. */}
+          {/*
+           * The details bar: facts only, no actions. On lg it is a slab of near-clear glass
+           * over the bottom 16% of the card — a share, not a height, because the scooter
+           * scales with the card, and at 16% the top edge runs through the front wheel's
+           * centre at every desktop size. Behind the glass the lower half of that wheel is
+           * softened, which is where the rebuilt tyre is weakest.
+           *
+           * The tint can't go to zero: two of the cells sit right over the black tyre, and
+           * it's the blur plus that little white that keeps their dark text readable.
+           */}
           <div
             data-intro="hero"
-            className="relative z-20 grid grid-cols-2 gap-px border-t border-carbon/[0.07] bg-carbon/[0.07] lg:grid-cols-4"
+            className="relative z-20 grid grid-cols-2 gap-px border-t border-carbon/[0.07] bg-carbon/[0.07] lg:absolute lg:inset-x-0 lg:bottom-0 lg:h-[16%] lg:min-h-[104px] lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-carbon/[0.08] lg:border-carbon/[0.09] lg:bg-white/[0.22] lg:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.55)] lg:backdrop-blur-[18px] lg:backdrop-saturate-[1.4]"
           >
             {facts.map((fact) => (
-              <div key={fact.label} className="flex flex-col justify-center gap-1 bg-[#FBFBFA] px-6 py-5 sm:px-8 lg:px-10">
+              <div
+                key={fact.label}
+                // Opaque cells over a 1px-gap fill draw the hairlines below lg; on the glass the
+                // cells go clear and `divide-x` draws them instead.
+                className="flex flex-col justify-center gap-1 bg-[#FBFBFA] px-6 py-5 sm:px-8 lg:bg-transparent lg:px-10"
+              >
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/40">{fact.label}</p>
                 <p className="font-display text-xl font-bold tracking-tight text-carbon lg:text-[26px]">{fact.value}</p>
                 {fact.note && <p className="text-xs text-carbon/55">{fact.note}</p>}

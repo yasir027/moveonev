@@ -18,7 +18,7 @@ interface LogoProps {
   /** "light" = ink wordmark for light backgrounds, "dark" = white wordmark. */
   tone?: "light" | "dark";
   /**
-   * Marks this as the header logo: the Logo Assembly docks onto it and route changes
+   * Marks this as the header logo: the site intro docks onto it and route changes
    * recharge it (see BrandLoader and RouteTransition).
    */
   header?: boolean;

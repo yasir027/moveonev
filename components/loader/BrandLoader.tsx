@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { finishLoader, readLoaderVariant, type LoaderVariant } from "@/lib/intro/loader";
-import { AssemblyIntro } from "./AssemblyIntro";
-import { LogoIntro } from "./LogoIntro";
+import { BrandIntro } from "./BrandIntro";
 
 /**
  * Picks the loader for this page load. The choice itself is made before first paint by
@@ -29,8 +28,7 @@ export function BrandLoader() {
     <>
       {/* Covers the page from first paint until the loader below takes over. */}
       <div className="brand-cover" aria-hidden="true" />
-      {variant === "home" && <AssemblyIntro onDone={done} />}
-      {variant === "page" && <LogoIntro onDone={done} />}
+      {(variant === "home" || variant === "page") && <BrandIntro onDone={done} />}
     </>
   );
 }

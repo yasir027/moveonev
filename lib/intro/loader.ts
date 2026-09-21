@@ -1,8 +1,8 @@
 /**
  * The site-wide loader system (concept v7, Scene 6):
  *
- *   home  first visit, homepage       the full Assembly          ~5.1 s
- *   page  first visit, any other page  the Logo Assembly          ~2.4 s
+ *   home  first visit, homepage       scooter photo -> logo intro ~7 s
+ *   page  first visit, any other page  scooter photo -> logo intro ~7 s
  *   (route change inside the site)     header logo recharges      ~0.75 s  (RouteTransition)
  *   fade  seen this visit / reduced motion   a plain fade         <= 0.3 s
  *

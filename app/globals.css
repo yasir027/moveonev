@@ -487,7 +487,7 @@
 
 /*
  * Brand loader. An inline script in the root layout sets html[data-loader] before
- * first paint: "home" (the Assembly), "page" (Logo Assembly) or "fade" (seen this visit).
+ * first paint: "home" or "page" (the scooter -> logo intro) or "fade" (seen this visit).
  * These rules cover the page until the loader hydrates, and every one of them has a
  * failsafe so the site still shows if JavaScript never runs.
  */
@@ -512,10 +512,9 @@ html[data-loader="page"] {
   overflow: hidden;
 }
 
-/* What each loader brings in itself: the Assembly lands on the hero, the Logo Assembly on the page. */
+/* What the intro brings in itself: the homepage hero piece by piece, any other page whole. */
 html[data-loader="home"] [data-intro="nav"],
 html[data-loader="home"] [data-intro="hero"],
-html[data-loader="home"] [data-hero-scooter],
 html[data-loader="page"] [data-intro="nav"],
 html[data-loader="page"] [data-intro="page"] {
   visibility: hidden;

@@ -1,19 +1,32 @@
 /**
- * The scooter photo the site intro reveals, and where the logo's M sits on its face.
+ * The scooter the site intro draws as a blueprint, and where the logo's M lies on its face.
  *
- * Swapping the photo is a data change only: prepare the new shot with
- * `node scripts/prepare-hero-photo.mjs <source> <name>` (move the output to
- * /public/intro/), then update the size and re-tune `m` until the M lies on the cowl
- * and headlamps.
+ * Swapping the scooter is a data change only:
+ *   1. `node scripts/prepare-hero-photo.mjs <source> scooter-front`, then move the output
+ *      to /public/intro/ (the cut-out photo);
+ *   2. `node scripts/prepare-intro-blueprint.mjs` (the blueprint line art, same size);
+ *   3. update the size below and re-pick the four `face` points.
  *
- * TODO: stand-in (a three-quarter view of bike.png). Replace with a straight front-view
- * shot, where the symmetric M can line up exactly.
+ * The M is laid on the face in perspective, through its four corners, so it can lie on a
+ * scooter shot from any angle: foreshortened on a three-quarter view, or square on a front
+ * view. The intro then straightens it as it rises to the centre.
  */
 export const INTRO_PHOTO = {
   src: "/intro/scooter-front.webp",
+  /** Edge line art generated from `src`: what the intro actually shows. */
+  blueprint: "/intro/scooter-blueprint.webp",
   /** Natural size, px. */
-  w: 766,
-  h: 1244,
-  /** The M's box (logo units x 534–936, y 300–742) on the photo: top-left and width, px. */
-  m: { x: 150, y: 70, w: 390 },
+  w: 844,
+  h: 1500,
+  /**
+   * Where the M's corners land on the photo, px: its horn tips on the front panel's two
+   * top corners, its bolt tips where the headlamps' LED strips end. The M's legs then run
+   * down the LED strips and its V follows the nose.
+   */
+  face: {
+    leftHorn: [250, 410],
+    rightHorn: [585, 408],
+    leftTip: [315, 775],
+    rightTip: [538, 775],
+  },
 } as const;

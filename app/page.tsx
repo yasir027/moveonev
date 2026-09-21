@@ -3,6 +3,7 @@ import { UspSection } from "@/components/UspSection";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 import { AudienceSection } from "@/components/WhoIsItFor";
+import { FaqSection } from "@/components/FaqSection";
 
 export default function Home() {
   return (
@@ -66,6 +67,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <FaqSection />
 
       {/* Final CTA */}
       <section data-theme="dark" className="bg-carbon py-24 text-center text-white">

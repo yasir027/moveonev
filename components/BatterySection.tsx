@@ -16,7 +16,7 @@ import {
 import { EASE_PREMIUM } from "@/lib/motion";
 
 const GLASS_CARD =
-  "rounded-[32px] p-7 sm:p-8 shadow-[0_24px_50px_-15px_rgba(16,20,18,0.08)] transition-all duration-500 hover:shadow-[0_32px_60px_-15px_rgba(16,20,18,0.12)]";
+  "rounded-[32px] p-6 shadow-[0_24px_50px_-15px_rgba(16,20,18,0.08)] transition-all duration-500 hover:shadow-[0_32px_60px_-15px_rgba(16,20,18,0.12)]";
 
 const CARD_REVEAL = {
   initial: { opacity: 0 },
@@ -115,7 +115,7 @@ export function BatterySection() {
   return (
     <section
       id="batteries"
-      className="relative w-full bg-mist py-24 lg:py-32"
+      className="relative w-full bg-mist py-20 lg:py-24"
     >
       <div
         aria-hidden
@@ -139,7 +139,7 @@ export function BatterySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.55, ease: EASE_PREMIUM }}
-          className="relative mb-20 max-w-2xl"
+          className="relative mb-12 max-w-2xl"
         >
           <span className="mb-5 block h-1 w-12 rounded-full bg-volt" />
 
@@ -158,7 +158,7 @@ export function BatterySection() {
           </p>
         </motion.header>
 
-        <div className="grid gap-6 pt-10 md:grid-cols-3 lg:gap-8">
+        <div className="grid gap-6 pt-8 md:grid-cols-3 lg:gap-8">
           {packs.map((pack, i) => (
             <motion.article
               key={pack.name}
@@ -201,7 +201,7 @@ function PackCard({ pack }: { pack: Pack }) {
     >
       <PackFrame pack={pack} />
 
-      <div className="mt-12 flex items-center gap-4">
+      <div className="relative z-20 -mt-6 flex items-center gap-4">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-carbon font-display text-xs font-bold text-volt">
           {pack.label}
         </span>
@@ -215,7 +215,7 @@ function PackCard({ pack }: { pack: Pack }) {
         </div>
       </div>
 
-      <div className="mt-6 flex items-baseline gap-2">
+      <div className="mt-4 flex items-baseline gap-2">
         <span className="font-display text-4xl font-extrabold leading-none tracking-[-0.03em] text-carbon lg:text-5xl">
           {pack.range}
         </span>
@@ -227,7 +227,7 @@ function PackCard({ pack }: { pack: Pack }) {
       </p>
 
       {/* Increased text size and specific Lucide icons for perks */}
-      <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-carbon/10 pt-6">
+      <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-carbon/10 pt-5 mb-6">
         {pack.perks.map((perk) => {
           const Icon = getPerkIcon(perk);
           return (
@@ -246,7 +246,7 @@ function PackCard({ pack }: { pack: Pack }) {
       <button
         type="button"
         className={[
-          "mt-10 w-full rounded-full py-3.5 font-display text-sm font-bold tracking-wide transition-colors duration-300 ease-premium",
+          "mt-auto w-full rounded-full py-3 font-display text-sm font-bold tracking-wide transition-colors duration-300 ease-premium",
           isFeatured
             ? "bg-volt text-carbon hover:bg-carbon hover:text-white"
             : "bg-carbon text-white hover:bg-volt hover:text-carbon",

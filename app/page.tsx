@@ -4,6 +4,9 @@ import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 import { AudienceSection } from "@/components/WhoIsItFor";
 import { FaqSection } from "@/components/FaqSection";
+import { BatterySection } from "@/components/BatterySection";
+import {LineupSection} from "@/components/LineupSection";
+import {GetInTouchSection} from "@/components/GetInTouch";
 
 export default function Home() {
   return (
@@ -12,49 +15,13 @@ export default function Home() {
       <HeroEditorial />
       {/* TEMP: three USP visual directions stacked — keep one, delete the rest. */}
       <UspSection visual="closeups" />
+      <LineupSection/>
       <AudienceSection />
+      <BatterySection/>
+      <GetInTouchSection/>
+      
 
-      {/* Product collection — editorial layout, one card after another. */}
-      <section id="models" className="relative bg-white pt-24 lg:pt-32">
-        <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
-          <header className="mb-12 max-w-2xl md:mb-20">
-            <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
-              The Collection
-            </span>
-            <h2 className="font-display text-[clamp(3rem,5vw,4.5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-carbon">
-              Built for the <br />
-              <span className="text-carbon/30">road ahead.</span>
-            </h2>
-          </header>
-
-          <ProductCard
-            name="MOVE ON X1"
-            words={["Urban.", "Agile.", "Effortless."]}
-            image="/scooters/x1.png"
-            range="150 KM"
-            topSpeed="80 KM/H"
-          />
-
-          <ProductCard
-            name="MOVE ON X2"
-            words={["Bolder.", "Faster.", "Further."]}
-            image="/scooters/x2.png"
-            range="190 KM"
-            topSpeed="95 KM/H"
-            reversed
-          />
-
-          <ProductCard
-            name="MOVE ON PRO"
-            words={["Performance.", "Refined."]}
-            image="/scooters/pro.png"
-            range="220 KM"
-            topSpeed="110 KM/H"
-          />
-        </div>
-      </section>
-
-      {/* Specification section — large numbers, thin dividers */}
+      {/* Specification section — large numbers, thin dividers 
       <section id="technology" className="border-t border-carbon/10 bg-mist py-20">
         <div className="mx-auto max-w-7xl px-8">
           <h2 className="mb-10 text-3xl text-carbon lg:text-4xl">Built to perform</h2>
@@ -67,7 +34,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+*/}
       <FaqSection />
 
       {/* Final CTA */}

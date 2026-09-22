@@ -6,6 +6,7 @@ import { AudienceSection } from "@/components/WhoIsItFor";
 import { FaqSection } from "@/components/FaqSection";
 import { BatterySection } from "@/components/BatterySection";
 import {LineupSection} from "@/components/LineupSection";
+import {GetInTouchSection} from "@/components/GetInTouch";
 
 export default function Home() {
   return (
@@ -17,20 +18,8 @@ export default function Home() {
       <LineupSection/>
       <AudienceSection />
       <BatterySection/>
-      {/* Product collection — editorial layout, one card after another. */}
-      <section id="models" className="relative bg-white pt-24 lg:pt-32">
-        <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
-          <header className="mb-12 max-w-2xl md:mb-20">
-            <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
-              The Collection
-            </span>
-            <h2 className="font-display text-[clamp(3rem,5vw,4.5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-carbon">
-              Built for the <br />
-              <span className="text-carbon/30">road ahead.</span>
-            </h2>
-          </header>
-        </div>
-      </section>
+      <GetInTouchSection/>
+      
 
       {/* Specification section — large numbers, thin dividers 
       <section id="technology" className="border-t border-carbon/10 bg-mist py-20">

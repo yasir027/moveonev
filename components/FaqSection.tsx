@@ -96,7 +96,7 @@ export function FaqSection() {
           transition={{ duration: 0.55, ease: EASE_PREMIUM }}
           className="flex flex-col self-start lg:sticky lg:top-28 lg:min-h-[520px]"
         >
-          <span className="mb-4 block h-px w-10 bg-volt" />
+          {/* <span className="mb-4 block h-px w-10 bg-volt" /> */}
           <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
             Questions, Answered
           </span>

@@ -16,7 +16,7 @@ import {
 import { EASE_PREMIUM } from "@/lib/motion";
 
 const GLASS_CARD =
-  "rounded-[32px] p-6 shadow-[0_24px_50px_-15px_rgba(16,20,18,0.08)] transition-all duration-500 hover:shadow-[0_32px_60px_-15px_rgba(16,20,18,0.12)]";
+  "rounded-[32px] p-5 shadow-[0_24px_50px_-15px_rgba(16,20,18,0.08)] transition-all duration-500 hover:shadow-[0_32px_60px_-15px_rgba(16,20,18,0.12)]";
 
 const CARD_REVEAL = {
   initial: { opacity: 0 },
@@ -141,11 +141,11 @@ export function BatterySection() {
           transition={{ duration: 0.55, ease: EASE_PREMIUM }}
           className="relative mb-12 max-w-2xl"
         >
-          <span className="mb-5 block h-1 w-12 rounded-full bg-volt" />
+          {/* <span className="mb-5 block h-1 w-12 rounded-full bg-volt" />
 
           <span className="mb-4 block font-display text-xs font-bold uppercase tracking-[0.2em] text-carbon/40">
             The Battery
-          </span>
+          </span> */}
           <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
             Pick the pack
             <br />
@@ -195,34 +195,34 @@ function PackCard({ pack }: { pack: Pack }) {
         /* Removed overflow-hidden so the 3D image can break the top boundary */
         /* Solid black border and resting lift for the featured card */
         isFeatured
-          ? "border-[3px] border-carbon lg:-translate-y-6 hover:lg:-translate-y-8"
+          ? "border-[3px] border-carbon lg:-translate-y-4 hover:lg:-translate-y-6"
           : "border border-carbon/10 hover:-translate-y-2",
       ].join(" ")}
     >
       <PackFrame pack={pack} />
 
-      <div className="relative z-20 -mt-6 flex items-center gap-4">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-carbon font-display text-xs font-bold text-volt">
+      <div className="relative z-20 -mt-14 flex items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-carbon font-display text-[11px] font-bold text-volt">
           {pack.label}
         </span>
         <div className="min-w-0">
           <p className="font-display text-xs font-bold uppercase tracking-[0.16em] text-carbon/40">
             {pack.name}
           </p>
-          <h3 className="font-display text-xl font-bold leading-tight tracking-tight text-carbon sm:text-2xl">
+          <h3 className="font-display text-lg font-bold leading-tight tracking-tight text-carbon sm:text-xl">
             {pack.title}
           </h3>
         </div>
       </div>
 
-      <div className="mt-4 flex items-baseline gap-2">
-        <span className="font-display text-4xl font-extrabold leading-none tracking-[-0.03em] text-carbon lg:text-5xl">
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="font-display text-3xl font-extrabold leading-none tracking-[-0.03em] text-carbon lg:text-4xl">
           {pack.range}
         </span>
         <span className="text-sm font-semibold text-carbon/50">km per charge</span>
       </div>
 
-      <p className="mt-2 text-sm font-medium tracking-wide text-carbon/60">
+      <p className="mt-1.5 text-sm font-medium tracking-wide text-carbon/60">
         {pack.specs}
       </p>
 
@@ -231,11 +231,11 @@ function PackCard({ pack }: { pack: Pack }) {
         {pack.perks.map((perk) => {
           const Icon = getPerkIcon(perk);
           return (
-            <li key={perk} className="flex items-center gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-volt/20">
-                <Icon className="h-4 w-4 text-[#42ce00]" strokeWidth={2.5} aria-hidden />
+            <li key={perk} className="flex items-center gap-2.5">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-volt/20">
+                <Icon className="h-3.5 w-3.5 text-[#42ce00]" strokeWidth={2.5} aria-hidden />
               </span>
-              <span className="truncate text-base font-semibold text-carbon/80">
+              <span className="truncate text-sm font-semibold text-carbon/80">
                 {perk}
               </span>
             </li>
@@ -246,7 +246,7 @@ function PackCard({ pack }: { pack: Pack }) {
       <button
         type="button"
         className={[
-          "mt-auto w-full rounded-full py-3 font-display text-sm font-bold tracking-wide transition-colors duration-300 ease-premium",
+          "mt-auto w-full rounded-full py-2.5 font-display text-sm font-bold tracking-wide transition-colors duration-300 ease-premium",
           isFeatured
             ? "bg-volt text-carbon hover:bg-carbon hover:text-white"
             : "bg-carbon text-white hover:bg-volt hover:text-carbon",

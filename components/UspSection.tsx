@@ -122,9 +122,9 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
           transition={{ duration: 0.6, ease: EASE_PREMIUM }}
           className="mb-8 max-w-2xl"
         >
-          <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/65">
+          {/* <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/65">
             Why Move On
-          </span>
+          </span> */}
 
           <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
             Own it. <br />

@@ -160,9 +160,7 @@ export function LineupSection() {
           transition={{ duration: 0.55, ease: EASE_PREMIUM }}
           className="mb-16 max-w-2xl"
         >
-          <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
-            The Lineup
-          </span>
+         
           <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
             Eight models.
             <br />

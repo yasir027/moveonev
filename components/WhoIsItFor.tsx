@@ -224,11 +224,11 @@ export function AudienceSection() {
           }}
           className="mb-10 max-w-2xl lg:mb-12"
         >
-          <span className="mb-4 block h-px w-10 bg-volt" />
+          {/* <span className="mb-4 block h-px w-10 bg-volt" />
 
           <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
             For Every Rider
-          </span>
+          </span> */}
           <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
             Built for every
             <br />

@@ -14,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 const GLASS_CARD =
   "rounded-[32px] p-5 shadow-[0_24px_50px_-15px_rgba(16,20,18,0.08)] transition-all duration-500 hover:shadow-[0_32px_60px_-15px_rgba(16,20,18,0.12)]";
@@ -129,36 +130,35 @@ export function BatterySection() {
       <div className="relative mx-auto w-full max-w-[1300px] px-6 sm:px-8 lg:px-12">
         <span
           aria-hidden
-          className="pointer-events-none absolute right-12 top-8 hidden select-none whitespace-nowrap font-display text-[8vw] font-extrabold leading-[0.8] tracking-[-0.04em] text-carbon/[0.03] lg:block"
+          className="pointer-events-none absolute right-12 top-30 hidden select-none whitespace-nowrap font-display text-[15vw] font-extrabold leading-[0.8] tracking-[-0.04em] text-carbon/[0.03] lg:block"
         >
           RANGE
         </span>
 
-        <motion.header
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.55, ease: EASE_PREMIUM }}
-          className="relative mb-12 max-w-2xl"
-        >
+        <header className="relative mb-12 max-w-2xl">
           {/* <span className="mb-5 block h-1 w-12 rounded-full bg-volt" />
 
           <span className="mb-4 block font-display text-xs font-bold uppercase tracking-[0.2em] text-carbon/40">
             The Battery
           </span> */}
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Pick the pack
-            <br />
-            that fits your day.
-          </h2>
+          <RevealHeading
+            className="text-carbon"
+            lines={["Pick the pack", "that fits your day."]}
+          />
 
-          <p className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
+            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+          >
             Same protection, same charger, same three-year cover across all
             three. The only question is how far you ride between charges.
-          </p>
-        </motion.header>
+          </motion.p>
+        </header>
 
-        <div className="grid gap-6 pt-8 md:grid-cols-3 lg:gap-8">
+        <div className="focus-siblings grid gap-6 pt-8 md:grid-cols-3 lg:gap-8">
           {packs.map((pack, i) => (
             <motion.article
               key={pack.name}
@@ -191,7 +191,7 @@ function PackCard({ pack }: { pack: Pack }) {
     <div
       className={[
         GLASS_CARD,
-        "group flex h-full flex-col bg-white",
+        "group relative flex h-full flex-col bg-white",
         /* Removed overflow-hidden so the 3D image can break the top boundary */
         /* Solid black border and resting lift for the featured card */
         isFeatured
@@ -199,6 +199,8 @@ function PackCard({ pack }: { pack: Pack }) {
           : "border border-carbon/10 hover:-translate-y-2",
       ].join(" ")}
     >
+      <span aria-hidden className="focus-veil" />
+
       <PackFrame pack={pack} />
 
       <div className="relative z-20 -mt-14 flex items-center gap-3">

@@ -11,6 +11,7 @@ import {
   RIDER_COUNT,
   whatsappUrl,
 } from "@/lib/heroModels";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { ScooterStage } from "./ScooterStage";
 import { useHeroState } from "./useHeroState";
 
@@ -121,17 +122,19 @@ export function HeroEditorial() {
               </AnimatePresence>
 
               <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
-                <a
-                  href={whatsappUrl(active)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex h-14 items-center gap-3 rounded-full bg-volt pl-6 pr-2 font-display text-sm font-bold text-carbon transition-colors duration-300 hover:bg-[#3bbd00]"
-                >
-                  Book a free test ride
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-carbon text-white transition-transform duration-300 group-hover:translate-x-0.5">
-                    <ArrowRight size={16} strokeWidth={2.2} />
-                  </span>
-                </a>
+                <Magnetic>
+                  <a
+                    href={whatsappUrl(active)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex h-14 items-center gap-3 rounded-full bg-volt pl-6 pr-2 font-display text-sm font-bold text-carbon transition-colors duration-300 hover:bg-[#3bbd00]"
+                  >
+                    Book a free test ride
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-carbon text-white transition-transform duration-300 group-hover:translate-x-0.5">
+                      <ArrowRight size={16} strokeWidth={2.2} />
+                    </span>
+                  </a>
+                </Magnetic>
                 <button
                   onClick={scrollToLineup}
                   className="group inline-flex items-center gap-1.5 font-display text-sm font-semibold text-carbon/70 transition-colors hover:text-carbon"

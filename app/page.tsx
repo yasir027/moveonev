@@ -7,6 +7,7 @@ import { FaqSection } from "@/components/FaqSection";
 import { BatterySection } from "@/components/BatterySection";
 import {LineupSection} from "@/components/LineupSection";
 import {GetInTouchSection} from "@/components/GetInTouch";
+import { ExpandPanel } from "@/components/ui/ExpandPanel";
 
 export default function Home() {
   return (
@@ -18,7 +19,9 @@ export default function Home() {
       <LineupSection/>
       <AudienceSection />
       <BatterySection/>
-      <GetInTouchSection/>
+      <ExpandPanel>
+        <GetInTouchSection/>
+      </ExpandPanel>
       
 
       {/* Specification section — large numbers, thin dividers 

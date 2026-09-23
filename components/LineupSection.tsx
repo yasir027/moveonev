@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /* Named finishes, as they appear on the price list. */
 const FINISH: Record<string, string> = {
@@ -153,26 +154,25 @@ export function LineupSection() {
       <div className="mx-auto w-full max-w-[1400px] px-6 sm:px-8 lg:px-12">
         
         {/* Section Header */}
-        <motion.header
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.55, ease: EASE_PREMIUM }}
-          className="mb-16 max-w-2xl"
-        >
+        <header className="mb-16 max-w-2xl">
          
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Eight models.
-            <br />
-            No licence, no RTO.
-          </h2>
-          <p className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60">
+          <RevealHeading
+            className="text-carbon"
+            lines={["Eight models.", "No licence, no RTO."]}
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
+            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+          >
             Every model runs the same platform — 100+ km of range, a heavy-duty BLDC motor, and a 150 kg load rating. Pick the one that looks right and choose your finish.
-          </p>
-        </motion.header>
+          </motion.p>
+        </header>
 
         {/* Minimal Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 lg:gap-8">
+        <div className="focus-siblings grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 lg:gap-8">
           {models.map((model, i) => (
             <motion.div
               key={model.name}
@@ -206,7 +206,8 @@ function ModelCard({ model }: { model: Model }) {
 
   return (
     <div className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[24px] bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-15px_rgba(16,20,18,0.08)]">
-      
+      <span aria-hidden className="focus-veil" />
+
       {/* Top Meta Info */}
       <div className="mb-8 flex items-start justify-between">
         <div>

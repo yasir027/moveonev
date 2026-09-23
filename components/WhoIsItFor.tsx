@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
  * The frosted card material comes from .glass-frost in globals.css. The drop shadow is the
@@ -214,33 +215,29 @@ export function AudienceSection() {
 
 
         {/* Universal section heading */}
-        <motion.header
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{
-            duration: 0.55,
-            ease: EASE_PREMIUM,
-          }}
-          className="mb-10 max-w-2xl lg:mb-12"
-        >
+        <header className="mb-10 max-w-2xl lg:mb-12">
           {/* <span className="mb-4 block h-px w-10 bg-volt" />
 
           <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
             For Every Rider
           </span> */}
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Built for every
-            <br />
-            kind of rider.
-          </h2>
+          <RevealHeading
+            className="text-carbon"
+            lines={["Built for every", "kind of rider."]}
+          />
 
-          <p className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
+            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+          >
             Whether you&apos;re starting out, heading to class, or simply
             looking for an easier way around town — there&apos;s a MOVE ON
             for you.
-          </p>
-        </motion.header>
+          </motion.p>
+        </header>
 
         {/* =====================================================
             MOBILE / TABLET

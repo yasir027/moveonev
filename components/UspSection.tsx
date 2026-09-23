@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /** Which visual treatment the section carries. Three are live so they can be compared. */
 export type UspVisual = "closeups" | "annotated" | "tile";
@@ -115,27 +116,27 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
 
       <div className="relative mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
 
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.6, ease: EASE_PREMIUM }}
-          className="mb-8 max-w-2xl"
-        >
+        <header className="mb-8 max-w-2xl">
           {/* <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/65">
             Why Move On
           </span> */}
 
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Own it. <br />
-            Skip everything else.
-          </h2>
+          <RevealHeading
+            className="text-carbon"
+            lines={["Own it.", "Skip everything else."]}
+          />
 
-          <p className="mt-5 max-w-[560px] text-base leading-relaxed text-carbon/65">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: 0.25 }}
+            className="mt-5 max-w-[560px] text-base leading-relaxed text-carbon/65"
+          >
             No paperwork, no licence, no annual tax — and none of the compromises that
             usually come with skipping them.
-          </p>
-        </motion.header>
+          </motion.p>
+        </header>
 
         {visual === "tile" ? (
           /* Re-tiled so a photo sits alongside all four claims and the grid still has no

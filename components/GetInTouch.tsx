@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronDown, Phone, MapPin, Clock, Check } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 const MODELS = [
   "X Double Light",
@@ -73,23 +74,23 @@ export function GetInTouchSection() {
       <div className="relative mx-auto w-full max-w-[1240px] px-5 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-16">
           {/* Left: the ask */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 0.55, ease: EASE_PREMIUM }}
-            className="lg:pt-4"
-          >
+          <div className="lg:pt-4">
             <span className="mb-4 block h-px w-10 bg-volt" />
             <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
               Get in touch
             </span>
-            <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white">
-              Book a test ride.
-              <br />
-              <span className="text-white/30">Ride it first.</span>
-            </h2>
+            <RevealHeading
+              className="text-white"
+              lines={["Book a test ride.", <span key="b" className="text-white/30">Ride it first.</span>]}
+            />
 
+            {/* The copy follows the heading in, rather than arriving with it. */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
+            >
             <p className="mt-6 max-w-[420px] text-base leading-relaxed text-white/60">
               Tell us which model you have your eye on and we&apos;ll have it
               charged and waiting. No paperwork, no licence — just turn up.
@@ -106,7 +107,8 @@ export function GetInTouchSection() {
                 Mon–Sat, 10am – 8pm
               </Detail>
             </ul>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* Right: the form */}
           <motion.div

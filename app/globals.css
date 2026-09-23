@@ -486,6 +486,31 @@
 }
 
 /*
+ * Hover focus. Hovering one card in a .focus-siblings grid veils the others so the hovered one
+ * leads. A veil element inside each card, not opacity or filter on the card: either would make
+ * the card a backdrop root and kill the blur on the .glass-liquid chips inside it. Inside the
+ * card root (rather than on its grid cell) so it follows the card's own lift.
+ */
+@layer components {
+  .focus-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    border-radius: inherit;
+    pointer-events: none;
+    background: rgb(246 248 246 / 0.62);
+    opacity: 0;
+    transition: opacity 400ms var(--ease-premium);
+  }
+
+  @media (hover: hover) {
+    .focus-siblings:has(> :hover) > :not(:hover) .focus-veil {
+      opacity: 1;
+    }
+  }
+}
+
+/*
  * Brand loader. An inline script in the root layout sets html[data-loader] before
  * first paint: "home" or "page" (the scooter -> logo intro) or "fade" (seen this visit).
  * These rules cover the page until the loader hydrates, and every one of them has a

@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 const faqs = [
   {
@@ -100,11 +101,10 @@ export function FaqSection() {
           <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
             Questions, Answered
           </span>
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Smarter way to
-            <br />
-            <span className="text-carbon/30">ride every day.</span>
-          </h2>
+          <RevealHeading
+            className="text-carbon"
+            lines={["Smarter way to", <span key="b" className="text-carbon/30">ride every day.</span>]}
+          />
           <p className="mt-6 max-w-[420px] text-base leading-relaxed text-carbon/60">
             Everything you need to know before your first ride — range,
             charging, licences and upkeep.

@@ -39,14 +39,14 @@ export interface Model {
 }
 
 // TODO: replace the placeholders below with real business details.
-export const WHATSAPP_NUMBER = "923000000000"; // international format, no "+" or spaces
+export const WHATSAPP_NUMBER = "7893620380"; // international format, no "+" or spaces
 export const RIDER_COUNT = "2,400+";
 export const GOOGLE_RATING = "4.9";
-export const PETROL_COST_PER_KM = "PKR 12";
+export const PETROL_COST_PER_KM = "RS 12";
 
 // Prepared by scripts/prepare-hero-photo.mjs: cropped to the subject and cut out, with its
 // floor shadow kept as a translucent one.
-const HERO_IMAGE = "/Hero/veloce-l-body.webp";
+const HERO_IMAGE = "/Hero/Xdoublelight.webp";
 const HERO_IMAGE_ASPECT = "1065/1123";
 
 // Printed by scripts/build-wheel-sprites.mjs — re-run it after changing the photo.
@@ -84,19 +84,19 @@ const SHARED_HOTSPOTS: Model["hotspots"] = [
 
 export const MODELS: Model[] = [
   {
-    id: "x1",
-    code: "X1",
-    name: "MOVE ON X1",
-    tagline: "Urban. Agile. Effortless.",
-    description: "Designed for everyday city riding with effortless handling and confident performance. A perfect blend of agility and efficiency for the daily commuter.",
+    id: "double-light",
+    code: "DOUBLE LIGHT",
+    name: "X-DOUBLE LIGHT",
+    tagline: "Smooth. Comfortable. Reliable.",
+    description: "Designed with advanced technology and premium styling to deliver a smooth, comfortable and reliable riding experience.",
     image: HERO_IMAGE,
     imageAspect: HERO_IMAGE_ASPECT,
     wheels: SHARED_WHEELS,
     accent: "#42CE00",
     range: "150 KM",
     topSpeed: "80 KM/H",
-    priceFrom: "PKR 289,000",
-    costPerKm: "PKR 2",
+    priceFrom: "₹45,000",
+    costPerKm: "RS 2",
     colors: [
       { name: "Crimson Matte", hex: "#8B1A1F" },
       { name: "Graphite", hex: "#2C2C2C" },
@@ -106,19 +106,19 @@ export const MODELS: Model[] = [
     hotspots: SHARED_HOTSPOTS,
   },
   {
-    id: "x2",
-    code: "X2",
-    name: "MOVE ON X2",
-    tagline: "Bolder. Faster. Further.",
-    description: "More range, more power and more presence. Built with an extended chassis and upgraded motor for riders who want more from every journey.",
-    image: HERO_IMAGE,
-    imageAspect: HERO_IMAGE_ASPECT,
+    id: "torvo",
+    code: "TORVO",
+    name: "X-TORVO",
+    tagline: "Performance. Comfort. Smart.",
+    description: "A perfect combination of performance, comfort and smart features for modern urban mobility.",
+    image: "/hero/Xtorvo.png",
+imageAspect: HERO_IMAGE_ASPECT,
     wheels: SHARED_WHEELS,
     accent: "#00A86B",
     range: "190 KM",
     topSpeed: "95 KM/H",
-    priceFrom: "PKR 349,000",
-    costPerKm: "PKR 2.2",
+    priceFrom: "₹75,000",
+    costPerKm: "RS 2.2",
     colors: [
       { name: "Crimson", hex: "#8B0000" },
       { name: "Midnight Blue", hex: "#1A2530" },
@@ -127,19 +127,19 @@ export const MODELS: Model[] = [
     hotspots: SHARED_HOTSPOTS,
   },
   {
-    id: "pro",
-    code: "PRO",
-    name: "MOVE ON PRO",
-    tagline: "Performance. Refined.",
-    description: "Our flagship electric scooter. Dual motors, active suspension, and aerospace-grade materials combine for a refined, unmistakably premium ride.",
+    id: "robox",
+    code: "ROBOX",
+    name: "X-ROBOX",
+    tagline: "Comfort. Performance. Function.",
+    description: "Designed to redefine urban commuting with comfort, performance and advanced functionality.",
     image: HERO_IMAGE,
     imageAspect: HERO_IMAGE_ASPECT,
     wheels: SHARED_WHEELS,
     accent: "#7DFF40",
     range: "220 KM",
     topSpeed: "110 KM/H",
-    priceFrom: "PKR 429,000",
-    costPerKm: "PKR 2.5",
+    priceFrom: "₹1,05,000",
+    costPerKm: "RS 2.5",
     colors: [
       { name: "Crimson Matte", hex: "#8B1A1F" },
       { name: "Carbon Black", hex: "#111111" },

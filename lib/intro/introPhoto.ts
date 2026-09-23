@@ -5,11 +5,12 @@
  *   1. `node scripts/prepare-hero-photo.mjs <source> scooter-front`, then move the output
  *      to /public/intro/ (the cut-out photo);
  *   2. `node scripts/prepare-intro-blueprint.mjs` (the blueprint line art, same size);
- *   3. update the size below and re-pick the four `face` points.
+ *   3. update the size below;
+ *   4. redraw the M over the new blueprint (open intro-m-fit.svg, move its points) and
+ *      re-run `scripts/import-intro-m.mjs` to regenerate lib/intro/mOnFace.ts.
  *
- * The M is laid on the face in perspective, through its four corners, so it can lie on a
- * scooter shot from any angle: foreshortened on a three-quarter view, or square on a front
- * view. The intro then straightens it as it rises to the centre.
+ * The M is not fitted by code: it is drawn by hand onto the blueprint, then the intro
+ * traces that drawing and morphs it into the real logo as it rises to the centre.
  */
 export const INTRO_PHOTO = {
   src: "/intro/scooter-front.webp",
@@ -18,15 +19,4 @@ export const INTRO_PHOTO = {
   /** Natural size, px. */
   w: 844,
   h: 1500,
-  /**
-   * Where the M's corners land on the photo, px: its horn tips on the front panel's two
-   * top corners, its bolt tips where the headlamps' LED strips end. The M's legs then run
-   * down the LED strips and its V follows the nose.
-   */
-  face: {
-    leftHorn: [250, 410],
-    rightHorn: [585, 408],
-    leftTip: [315, 775],
-    rightTip: [538, 775],
-  },
 } as const;

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LOGO_MARK_CENTER, LOGO_SUB, LOGO_SUB_DOT, LOGO_VIEWBOX, LOGO_VIEWBOX_STR, LOGO_WORD } from "@/lib/intro/logo";
 import { INTRO_PHOTO } from "@/lib/intro/introPhoto";
+import { M_ON_FACE, M_ON_FACE_BOX } from "@/lib/intro/mOnFace";
 import { COLORS, finishLoader, preloadImages } from "@/lib/intro/loader";
 import { LOGO_MARK_SUBPATHS } from "@/components/brand/Logo";
 
@@ -56,39 +57,8 @@ const M_BOX = { x: 534, y: 300, w: 402, h: 442 };
 const M_CENTER_Y = M_BOX.y + M_BOX.h / 2;
 
 type Pt = readonly [number, number];
-/** The flat M's corners, logo units: left horn tip, right horn tip, left bolt tip, right bolt tip. */
-const M_ANCHORS: Pt[] = [[547, 305], [923, 305], [655, 739], [815, 739]];
-
-/** The perspective transform (homography) that maps four points onto four others. */
-function homographyFrom4(src: Pt[], dst: Pt[]) {
-  const A: number[][] = [];
-  const b: number[] = [];
-  src.forEach(([x, y], i) => {
-    const [u, v] = dst[i];
-    A.push([x, y, 1, 0, 0, 0, -u * x, -u * y]);
-    b.push(u);
-    A.push([0, 0, 0, x, y, 1, -v * x, -v * y]);
-    b.push(v);
-  });
-  // Gauss-Jordan elimination with partial pivoting.
-  for (let c = 0; c < 8; c++) {
-    let p = c;
-    for (let r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
-    [A[c], A[p]] = [A[p], A[c]];
-    [b[c], b[p]] = [b[p], b[c]];
-    for (let r = 0; r < 8; r++) {
-      if (r === c) continue;
-      const f = A[r][c] / A[c][c];
-      for (let k = c; k < 8; k++) A[r][k] -= f * A[c][k];
-      b[r] -= f * b[c];
-    }
-  }
-  const h = b.map((v, i) => v / A[i][i]);
-  return ([x, y]: Pt): Pt => {
-    const w = h[6] * x + h[7] * y + 1;
-    return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
-  };
-}
+/** The flat M's vertical span, logo units: horn tops to bolt tips. */
+const M_SPAN = { top: 305, bottom: 739 };
 
 /**
  * An absolute path (M/L/C/H/V/Z) as a template plus its points, with H/V expanded to L,
@@ -115,28 +85,27 @@ function drawPath({ cmds }: ReturnType<typeof pathPoints>, pts: Pt[]) {
 }
 
 // The photo in logo units, so it shares one coordinate system with the M and the lockup.
-// Scaled so the M lying on the face is about as big as the flat M, and placed so the face
-// sits below where the flat M ends up: the M rises into the centre.
-const { leftHorn, rightHorn, leftTip, rightTip } = INTRO_PHOTO.face;
-const FACE: Pt[] = [leftHorn, rightHorn, leftTip, rightTip];
-const FACE_H = (leftTip[1] + rightTip[1]) / 2 - (leftHorn[1] + rightHorn[1]) / 2;
-const S = (0.95 * (M_ANCHORS[2][1] - M_ANCHORS[0][1])) / FACE_H;
+// Scaled so the drawn M is as tall as the flat one, and placed below where the flat M
+// ends up: the M rises into the centre.
+const BOX = M_ON_FACE_BOX;
+const S = (M_SPAN.bottom - M_SPAN.top) / BOX.h;
 const RISE = 0.3 * M_BOX.h;
-const centroid = (pts: Pt[]) => [0, 1].map((i) => pts.reduce((sum, p) => sum + p[i], 0) / pts.length) as unknown as Pt;
-const [faceCx, faceCy] = centroid(FACE);
-const [mCx, mCy] = centroid(M_ANCHORS);
-const PHOTO = { x: mCx - S * faceCx, y: mCy + RISE - S * faceCy, w: INTRO_PHOTO.w * S, h: INTRO_PHOTO.h * S };
+const PHOTO = {
+  x: M_AXIS - S * (BOX.x + BOX.w / 2),
+  y: (M_SPAN.top + M_SPAN.bottom) / 2 + RISE - S * (BOX.y + BOX.h / 2),
+  w: INTRO_PHOTO.w * S,
+  h: INTRO_PHOTO.h * S,
+};
 const onPhoto = ([x, y]: Pt): Pt => [PHOTO.x + S * x, PHOTO.y + S * y];
-const FACE_U = FACE.map(onPhoto);
-/** Lays the flat M onto the scooter's face, in perspective. */
-const ON_FACE = homographyFrom4(M_ANCHORS, FACE_U);
-// The traced M: the same outline flat and laid on the face, so the rise can morph between them.
-const M_SHAPES = M_TRACE.map((d) => {
+/** The drawn M, in logo units: what the hairline traces before it rises. */
+const FACE_PATHS = M_ON_FACE.map((d) => {
   const shape = pathPoints(d);
-  return { shape, flat: shape.pts, onFace: shape.pts.map(ON_FACE) };
+  return drawPath(shape, shape.pts.map(onPhoto));
 });
-const HORN_Y = (FACE_U[0][1] + FACE_U[1][1]) / 2;
-const TIPS: Pt = [(FACE_U[2][0] + FACE_U[3][0]) / 2, (FACE_U[2][1] + FACE_U[3][1]) / 2];
+const HORN_Y = onPhoto([0, BOX.y])[1];
+const TIPS: Pt = [M_AXIS, onPhoto([0, BOX.y + BOX.h])[1]];
+/** The drawn M's top corners, for the width dimension. */
+const FACE_U: Pt[] = [onPhoto([BOX.x, BOX.y]), onPhoto([BOX.x + BOX.w, BOX.y])];
 
 // The lower scooter dissolves into the dark below the face.
 const FADE_FROM = TIPS[1] + 60;
@@ -275,7 +244,110 @@ export function BrandIntro({ onDone }: { onDone: () => void }) {
       if (headerLogo) gsap.set(headerLogo, { opacity: 0 });
       gsap.set(content, { autoAlpha: 0, y: 24 });
 
+      // The drawn outline and the logo are the same M drawn differently, so the rise pairs
+      // them up before morphing: walking both outlines in step, never backwards, and
+      // choosing the pairing with the least total travel. Corners then meet corners and no
+      // point has to cross the shape, which is what made the logo look like it flipped.
+      const WALK = 300;
+      const BUDGET = 320;
+      const BAND = 70; // how far the two walks may drift apart, in samples
+      const scratch = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      lock.appendChild(scratch);
+      const measure = (d: string) => {
+        scratch.setAttribute("d", d);
+        return scratch.getTotalLength();
+      };
+      /** The outline itself: the longest subpath, since an export can leave stray snippets. */
+      const outline = (d: string) => d.split(/(?=M)/).filter(Boolean).sort((x, y) => measure(y) - measure(x))[0];
+      const walk = (d: string, count: number): Pt[] => {
+        const len = measure(d);
+        return Array.from({ length: count }, (_, i) => {
+          const { x, y } = scratch.getPointAtLength((i / count) * len);
+          return [x, y] as Pt;
+        });
+      };
+      const wrap = (i: number, n: number) => ((i % n) + n) % n;
+      const at = (pts: Pt[], i: number) => pts[wrap(i, pts.length)];
+      const area = (pts: Pt[]) => pts.reduce((sum, [x, y], i) => {
+        const [nx, ny] = at(pts, i + 1);
+        return sum + (x * ny - nx * y);
+      }, 0);
+      const centre = (pts: Pt[]): Pt => [
+        pts.reduce((sum, p) => sum + p[0], 0) / pts.length,
+        pts.reduce((sum, p) => sum + p[1], 0) / pts.length,
+      ];
+
+      const morphs = FACE_PATHS.map((faceD, index) => {
+        const logo = walk(outline(M_TRACE[index]), WALK);
+        let face = walk(outline(faceD), WALK);
+        // Both loops must run the same way round, or every point crosses the shape.
+        if (Math.sign(area(face)) !== Math.sign(area(logo))) face = [...face].reverse();
+
+        // Compare shapes, not where they sit: the drawing is lower down the screen.
+        const [fcx, fcy] = centre(face);
+        const [lcx, lcy] = centre(logo);
+        const gap = (i: number, j: number) =>
+          Math.hypot(at(face, i)[0] - fcx - (logo[j][0] - lcx), at(face, i)[1] - fcy - (logo[j][1] - lcy));
+
+        // Where on the drawing does the logo's outline begin? Take the cheapest start.
+        let start = 0;
+        let cheapest = Infinity;
+        for (let offset = 0; offset < WALK; offset += 2) {
+          let sum = 0;
+          for (let i = 0; i < WALK; i += 5) sum += gap(i + offset, i);
+          if (sum < cheapest) [cheapest, start] = [sum, offset];
+        }
+
+        // Walk both outlines together, never going backwards, for the least total travel.
+        const cost: number[][] = Array.from({ length: WALK }, () => new Array(WALK).fill(Infinity));
+        const step: number[][] = Array.from({ length: WALK }, () => new Array(WALK).fill(0));
+        cost[0][0] = gap(start, 0);
+        for (let i = 0; i < WALK; i++) {
+          for (let j = Math.max(0, i - BAND); j < Math.min(WALK, i + BAND); j++) {
+            const here = cost[i][j];
+            if (here === Infinity) continue;
+            const moves: [number, number, number][] = [
+              [i + 1, j + 1, 1],
+              [i + 1, j, 2],
+              [i, j + 1, 3],
+            ];
+            moves.forEach(([ni, nj, mark]) => {
+              if (ni >= WALK || nj >= WALK) return;
+              const next = here + gap(start + ni, nj);
+              if (next < cost[ni][nj]) {
+                cost[ni][nj] = next;
+                step[ni][nj] = mark;
+              }
+            });
+          }
+        }
+
+        // Read the pairing back, then thin it to an even number of points.
+        const pairs: [number, number][] = [];
+        for (let i = WALK - 1, j = WALK - 1; i > 0 || j > 0; ) {
+          pairs.push([i, j]);
+          const mark = step[i][j];
+          if (mark === 1) {
+            i--;
+            j--;
+          } else if (mark === 2) i--;
+          else if (mark === 3) j--;
+          else break;
+        }
+        pairs.push([0, 0]);
+        pairs.reverse();
+        const picked = Array.from({ length: BUDGET }, (_, k) => pairs[Math.round((k * (pairs.length - 1)) / BUDGET)]);
+        return {
+          from: picked.map(([i]) => at(face, start + i)),
+          to: picked.map(([, j]) => logo[j]),
+        };
+      });
+      lock.removeChild(scratch);
+
+      (window as unknown as { __morphs: unknown }).__morphs = morphs; // DEBUG-REMOVE
+      (window as unknown as { __lock: unknown }).__lock = lock; // DEBUG-REMOVE
       const tl = gsap.timeline({ paused: true });
+      (window as unknown as { __tl: gsap.core.Timeline }).__tl = tl; // DEBUG-REMOVE
       /** Draws a path's stroke from start to end. */
       const draw = (p: Element, at: number, dur: number) =>
         tl.to(p, { attr: { "stroke-dashoffset": 0 }, duration: dur, ease: "power2.inOut" }, at);
@@ -322,11 +394,13 @@ export function BrandIntro({ onDone }: { onDone: () => void }) {
         duration: T.riseDur,
         ease: "power3.inOut",
         onUpdate() {
-          M_SHAPES.forEach(({ shape, flat, onFace }, i) => {
-            const pts = onFace.map(([x, y], j): Pt => [x + (flat[j][0] - x) * lift.t, y + (flat[j][1] - y) * lift.t]);
-            mStroke[i].setAttribute("d", drawPath(shape, pts));
+          morphs.forEach(({ from, to }, i) => {
+            const pts = from.map(([x, y], j) => `${(x + (to[j][0] - x) * lift.t).toFixed(1)} ${(y + (to[j][1] - y) * lift.t).toFixed(1)}`);
+            mStroke[i].setAttribute("d", `M${pts.join("L")}Z`);
           });
         },
+        // land on the real logo, not the sampled outline
+        onComplete: () => mStroke.forEach((p, i) => p.setAttribute("d", M_TRACE[i])),
       }, T.rise)
         .to(drawing, { opacity: 0, duration: T.riseDur, ease: "power2.inOut" }, T.rise)
         .to(labels, { autoAlpha: 0, duration: 0.6 }, T.rise);
@@ -472,8 +546,8 @@ export function BrandIntro({ onDone }: { onDone: () => void }) {
         </g>
         {/* its outline starts laid on the scooter's face, in perspective */}
         <g fill="none" stroke={COLORS.volt} strokeLinejoin="round">
-          {M_SHAPES.map(({ shape, onFace }, i) => (
-            <path key={i} data-m-stroke d={drawPath(shape, onFace)} />
+          {FACE_PATHS.map((d, i) => (
+            <path key={i} data-m-stroke d={d} />
           ))}
         </g>
 

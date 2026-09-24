@@ -26,6 +26,15 @@ const SCALE = foldFreeScale(RADIUS, PROFILE);
 const SPREAD = 0.12;
 
 /**
+ * Anything clickable. The lens lags the cursor on its spring, so over a button the pointer
+ * sits in the rim — where the bend is strongest — and the button appears shifted from where
+ * a click actually lands. Over these the lens gets out of the way. `data-lens-off` lets any
+ * other element opt out.
+ */
+const INTERACTIVE =
+  'a, button, [role="button"], input, select, textarea, label, summary, [data-lens-off]';
+
+/**
  * Whether this machine has a real cursor. useSyncExternalStore rather than an effect: it
  * subscribes to the media query directly, and returns false on the server so the markup
  * matches before hydration.
@@ -63,6 +72,8 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
   const reducedMotion = usePrefersReducedMotion();
   const fine = useFinePointer();
   const [active, setActive] = useState(false);
+  const [yielding, setYielding] = useState(false);
+  const yieldingRef = useRef(false);
   const mapNode = useRef<SVGFEImageElement>(null);
 
   const x = useMotionValue(-999);
@@ -110,6 +121,13 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
       }
       x.set(event.clientX - RADIUS);
       y.set(event.clientY - RADIUS);
+
+      /* Tracked in a ref so state only changes on the crossing, not on every move. */
+      const over = event.target instanceof Element && event.target.closest(INTERACTIVE) !== null;
+      if (over !== yieldingRef.current) {
+        yieldingRef.current = over;
+        setYielding(over);
+      }
     }
 
     function enter() {
@@ -119,6 +137,8 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
     function leave() {
       setActive(false);
       placed.current = false;
+      yieldingRef.current = false;
+      setYielding(false);
     }
 
     bounds.addEventListener("pointermove", move as EventListener);
@@ -199,7 +219,10 @@ export function GlassLens({ boundsRef }: GlassLensProps) {
       <motion.div
         aria-hidden
         style={{ x: springX, y: springY, width: RADIUS * 2, height: RADIUS * 2 }}
-        animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.8 }}
+        animate={{
+          opacity: active && !yielding ? 1 : 0,
+          scale: !active ? 0.8 : yielding ? 0.6 : 1,
+        }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         className="glass-lens pointer-events-none fixed left-0 top-0 z-30 rounded-full"
       />

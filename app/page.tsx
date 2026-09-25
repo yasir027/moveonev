@@ -1,50 +1,30 @@
-import { Navbar } from "@/components/Navbar";
-import { HeroSection } from "@/components/HeroSection";
+import { HeroEditorial } from "@/components/hero/HeroEditorial";
 import { UspSection } from "@/components/UspSection";
 import { ProductCard } from "@/components/ProductCard";
 import { StatBlock } from "@/components/StatBlock";
 import { AudienceSection } from "@/components/WhoIsItFor";
+import { FaqSection } from "@/components/FaqSection";
+import { BatterySection } from "@/components/BatterySection";
+import {LineupSection} from "@/components/LineupSection";
+import {GetInTouchSection} from "@/components/GetInTouch";
+import { ExpandPanel } from "@/components/ui/ExpandPanel";
 
 export default function Home() {
   return (
     <main>
-      <Navbar />
+      {/* The full-bleed studio direction is parked in components/hero/HeroStudio.tsx. */}
+      <HeroEditorial />
+      {/* TEMP: three USP visual directions stacked — keep one, delete the rest. */}
+      <UspSection visual="closeups" />
+      <LineupSection/>
+      <AudienceSection />
+      <BatterySection/>
+      <ExpandPanel>
+        <GetInTouchSection/>
+      </ExpandPanel>
+      
 
-      <HeroSection />
-
-      <UspSection />
-      <AudienceSection/>
-      {/* Product collection — editorial layout, not generic cards */}
-      <section id="models" className="mx-auto max-w-7xl px-8 py-20">
-        <h2 className="mb-4 text-3xl text-carbon lg:text-4xl">The lineup</h2>
-
-        <ProductCard
-          name="MOVE ON X1"
-          words={["Urban.", "Agile.", "Effortless."]}
-          image="/scooters/x1.png"
-          range="150 KM"
-          topSpeed="80 KM/H"
-        />
-
-        <ProductCard
-          name="MOVE ON X2"
-          words={["Bolder.", "Faster.", "Further."]}
-          image="/scooters/x2.png"
-          range="190 KM"
-          topSpeed="95 KM/H"
-          reversed
-        />
-
-        <ProductCard
-          name="MOVE ON PRO"
-          words={["Performance.", "Refined."]}
-          image="/scooters/pro.png"
-          range="220 KM"
-          topSpeed="110 KM/H"
-        />
-      </section>
-
-      {/* Specification section — large numbers, thin dividers */}
+      {/* Specification section — large numbers, thin dividers 
       <section id="technology" className="border-t border-carbon/10 bg-mist py-20">
         <div className="mx-auto max-w-7xl px-8">
           <h2 className="mb-10 text-3xl text-carbon lg:text-4xl">Built to perform</h2>
@@ -57,9 +37,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+*/}
+      <FaqSection />
 
       {/* Final CTA */}
-      <section className="bg-carbon py-24 text-center text-white">
+      <section data-theme="dark" className="bg-carbon py-24 text-center text-white">
         <h2 className="mx-auto mb-6 max-w-xl text-4xl lg:text-5xl">
           Ride the future, today.
         </h2>
@@ -77,5 +59,16 @@ export default function Home() {
         </div>
       </footer>
     </main>
+  );
+}
+
+/** TEMP: separates the stacked USP variants above. Goes when one is chosen. */
+function VariantDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4 bg-white px-[max(1.5rem,4vw)] py-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-carbon/40">
+      <span className="h-px flex-1 bg-carbon/10" />
+      {label}
+      <span className="h-px flex-1 bg-carbon/10" />
+    </div>
   );
 }

@@ -8,7 +8,12 @@ import { NavGlassFilter } from "@/components/ui/NavGlassFilter";
 import { whatsappUrl } from "@/lib/heroModels";
 import { EASE_PREMIUM } from "@/lib/motion";
 
-const LINKS = ["Models", "Technology", "About", "Experience"];
+const LINKS = [
+  { label: "Models", href: "/models" },
+  { label: "Technology", href: "#technology" },
+  { label: "About", href: "#about" },
+  { label: "Experience", href: "#experience" },
+];
 
 const MORPH = { duration: 0.5, ease: EASE_PREMIUM };
 
@@ -104,19 +109,26 @@ export function Navbar() {
         </motion.div>
 
         <motion.ul layout="position" transition={MORPH} className="hidden items-center gap-8 md:flex">
-          {LINKS.map((link) => (
-            <li key={link}>
-              <a
-                href={`#${link.toLowerCase()}`}
-                className={`font-medium transition-colors duration-300 ${
-                  onDark ? "text-white/85 hover:text-white" : "text-carbon/85 hover:text-carbon"
-                } ${scrolled ? "text-[18px]" : "text-[25px]"}`}
-              >
-                {link}
-              </a>
-            </li>
-          ))}
-        </motion.ul>
+  {LINKS.map((link) => {
+    const className = `font-medium transition-colors duration-300 ${
+      onDark ? "text-white/85 hover:text-white" : "text-carbon/85 hover:text-carbon"
+    } ${scrolled ? "text-[18px]" : "text-[25px]"}`;
+
+    return (
+      <li key={link.href}>
+        {link.href.startsWith("#") ? (
+          <a href={link.href} className={className}>
+            {link.label}
+          </a>
+        ) : (
+          <TransitionLink href={link.href} className={className}>
+            {link.label}
+          </TransitionLink>
+        )}
+      </li>
+    );
+  })}
+</motion.ul>
 
         <motion.a
           layout="position"

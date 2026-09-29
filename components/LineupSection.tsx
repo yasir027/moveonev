@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /* Named finishes, as they appear on the price list. */
 const FINISH: Record<string, string> = {
@@ -153,28 +154,25 @@ export function LineupSection() {
       <div className="mx-auto w-full max-w-[1400px] px-6 sm:px-8 lg:px-12">
         
         {/* Section Header */}
-        <motion.header
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.55, ease: EASE_PREMIUM }}
-          className="mb-16 max-w-2xl"
-        >
-          <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
-            The Lineup
-          </span>
-          <h2 className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-carbon">
-            Eight models.
-            <br />
-            No licence, no RTO.
-          </h2>
-          <p className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60">
+        <header className="mb-16 max-w-2xl">
+         
+          <RevealHeading
+            className="text-carbon"
+            lines={["Eight models.", "No licence, no RTO."]}
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
+            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+          >
             Every model runs the same platform — 100+ km of range, a heavy-duty BLDC motor, and a 150 kg load rating. Pick the one that looks right and choose your finish.
-          </p>
-        </motion.header>
+          </motion.p>
+        </header>
 
         {/* Minimal Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 lg:gap-8">
+        <div className="focus-siblings grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 lg:gap-8">
           {models.map((model, i) => (
             <motion.div
               key={model.name}
@@ -208,37 +206,45 @@ function ModelCard({ model }: { model: Model }) {
 
   return (
     <div className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[24px] bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-15px_rgba(16,20,18,0.08)]">
-      
+      <span aria-hidden className="focus-veil" />
+
       {/* Top Meta Info */}
-      <div className="mb-8 flex items-start justify-between">
+      <div className="mb-5 flex items-start justify-between">
         <div>
-          <h3 className="font-display text-xl font-bold tracking-tight text-carbon">
+          {/* Model Name */}
+          <h3 className="font-display text-[22px] font-bold tracking-tight text-carbon">
             {model.name}
           </h3>
-          <p className="mt-1 font-display text-[10px] font-semibold uppercase tracking-[0.15em] text-carbon/40">
-            From ₹{DUMMY_PRICE}
+
+          {/* Price */}
+          <p className="mt-1.5 font-display text-[15px] font-bold tracking-tight text-carbon/75">
+            From{" "}
+            <span className="text-carbon">
+              ₹{DUMMY_PRICE}
+            </span>
           </p>
         </div>
-        
-        {/* Subtle Hover Action Icon */}
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-carbon/5 text-carbon/30 transition-colors duration-300 group-hover:bg-carbon group-hover:text-volt">
-          <ArrowUpRight size={16} strokeWidth={2.5} />
+
+        {/* Hover Action Icon */}
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-carbon/5 text-carbon/40 transition-all duration-300 group-hover:bg-carbon group-hover:text-volt">
+          <ArrowUpRight size={17} strokeWidth={2.5} />
         </div>
       </div>
 
       {/* Floating Product Image */}
-      <div className="relative mb-10 aspect-[4/3] w-full">
+      <div className="relative mb-7 aspect-[4/3] w-full">
         {/* Ambient Floor Shadow */}
-        <div className="absolute bottom-2 left-1/2 h-3 w-1/2 -translate-x-1/2 rounded-[50%] bg-carbon/10 blur-xl transition-all duration-500 ease-premium group-hover:w-2/3 group-hover:bg-carbon/15" />
-        <div className="absolute bottom-4 left-1/2 h-1.5 w-1/4 -translate-x-1/2 rounded-[50%] bg-carbon/20 blur-md transition-all duration-500 ease-premium group-hover:w-1/3" />
+        <div className="absolute bottom-1 left-1/2 h-3.5 w-[58%] -translate-x-1/2 rounded-[50%] bg-carbon/10 blur-xl transition-all duration-500 ease-premium group-hover:w-[70%] group-hover:bg-carbon/15" />
+
+        <div className="absolute bottom-3 left-1/2 h-1.5 w-[30%] -translate-x-1/2 rounded-[50%] bg-carbon/20 blur-md transition-all duration-500 ease-premium group-hover:w-[38%]" />
 
         {model.image ? (
           <Image
             src={model.image}
             alt={`MOVE ON ${model.name}`}
             fill
-            sizes="(min-width: 1280px) 20vw, (min-width: 640px) 40vw, 85vw"
-            className="relative z-10 object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)] transition-transform duration-500 ease-premium group-hover:-translate-y-2 group-hover:scale-105"
+            sizes="(min-width: 1280px) 22vw, (min-width: 640px) 42vw, 90vw"
+            className="relative z-10 scale-[1.15] object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.14)] transition-transform duration-500 ease-premium group-hover:-translate-y-2 group-hover:scale-[1.22]"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -249,39 +255,46 @@ function ModelCard({ model }: { model: Model }) {
         )}
       </div>
 
-      {/* Bottom Minimal Specs & Swatches */}
-      <div className="mt-auto flex flex-col gap-5 border-t border-carbon/5 pt-5">
-        
-        {/* Sleek inline specs */}
-        <div className="flex items-center justify-between font-display text-[10px] font-bold uppercase tracking-[0.1em] text-carbon/50">
+      {/* Bottom Specs */}
+      <div className="mt-auto flex flex-col gap-5 border-t border-carbon/8 pt-5">
+
+        {/* Range / Speed */}
+        <div className="flex items-center justify-between font-display text-[11px] font-bold uppercase tracking-[0.1em] text-carbon/70">
           <span>{model.range} Range</span>
-          <span className="h-1 w-1 rounded-full bg-carbon/15" />
+
+          <span className="h-1 w-1 shrink-0 rounded-full bg-carbon/25" />
+
           <span>{model.topSpeed}</span>
         </div>
 
-        {/* Minimal overlapping swatches */}
+        {/* Finishes + CTA */}
         <div className="flex items-center justify-between">
+          
+          {/* Colour Swatches */}
           <div className="flex -space-x-1.5">
             {visibleFinishes.map((finish) => (
               <span
                 key={finish}
                 title={finish}
                 className="h-5 w-5 rounded-full border-2 border-white shadow-sm"
-                style={{ backgroundColor: FINISH[finish] ?? "#8A9199" }}
+                style={{
+                  backgroundColor: FINISH[finish] ?? "#8A9199",
+                }}
               />
             ))}
+
             {extraFinishesCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-carbon/5 text-[8px] font-bold text-carbon/60 shadow-sm">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-carbon/5 text-[8px] font-bold text-carbon/70 shadow-sm">
                 +{extraFinishesCount}
               </span>
             )}
           </div>
-          
-          <span className="font-display text-[10px] font-bold text-carbon transition-colors duration-300 group-hover:text-volt">
+
+          {/* CTA */}
+          <span className="font-display text-[11px] font-bold tracking-tight text-carbon/80 transition-colors duration-300 group-hover:text-volt">
             Explore Details
           </span>
         </div>
-
       </div>
     </div>
   );

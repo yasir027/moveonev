@@ -36,8 +36,9 @@ import { ModelStage } from "./ModelStage";
  * Right column: name, price, description, then the two choices (finish, battery), the
  * USP chips and the booking row. Expanding grows the box and adds the full details below.
  *
- * The peek must fit a laptop viewport with no scrolling: the stage is at most 90svh and
- * the right column is kept compact enough to fit beside it.
+ * The peek must fit a laptop viewport with no scrolling: on desktop it takes the screen
+ * height less a 1rem margin (the stage tops out at 660px), and the right column is kept
+ * compact enough to fit beside it on a 1366×768 laptop.
  *
  * It is a single motion.div whose classes flip with `expanded`, never re-mounted, so
  * framer animates the size change. The card carries the same layoutId, which is what
@@ -169,7 +170,7 @@ export function ModelModal({
     "flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-carbon shadow-[inset_0_0_0_1px_rgb(16_20_18/0.1)] transition-colors duration-200 hover:bg-carbon hover:text-volt";
 
   const label =
-    "font-display text-[12px] font-bold uppercase tracking-[0.14em] text-[#475569]";
+    "font-display text-[10px] font-bold uppercase tracking-[0.14em] text-[#475569]";
 
   return (
     <>
@@ -189,7 +190,7 @@ export function ModelModal({
       <div
         className={[
           "pointer-events-none fixed inset-0 z-[70] flex justify-center",
-          expanded ? "items-stretch p-0" : "items-end p-3 sm:items-center sm:p-6",
+          expanded ? "items-stretch p-0" : "items-end p-3 sm:items-center sm:p-6 lg:p-4",
         ].join(" ")}
       >
         <motion.div
@@ -203,7 +204,7 @@ export function ModelModal({
             "pointer-events-auto relative flex flex-col overflow-hidden bg-white shadow-[0_40px_100px_-30px_rgba(16,20,18,0.45)]",
             expanded
               ? "h-full w-full"
-              : "max-h-[90svh] w-full max-w-full sm:w-[600px] lg:w-[1000px]",
+              : "max-h-[90svh] w-full max-w-full sm:w-[600px] lg:max-h-[calc(100svh-2rem)] lg:w-[1000px]",
           ].join(" ")}
         >
           {/* Drag handle, mobile only */}
@@ -245,9 +246,17 @@ export function ModelModal({
               scroll by wheel and touch, just without a bar. Both spellings: Chrome 121+
               honours scrollbar-width, older WebKit needs the pseudo-element. */}
           <div className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {/* No padding on the grid: the stage is full-bleed, and only the right
-                column carries padding. */}
-            <div className="grid w-full lg:grid-cols-[1.05fr_1fr]">
+            {/* In the peek the grid has no padding: the stage is full-bleed and only the
+                right column carries padding. Expanded keeps the original contained
+                layout. */}
+            <div
+              className={[
+                "grid w-full lg:grid-cols-[1.05fr_1fr]",
+                expanded
+                  ? "mx-auto max-w-[1200px] gap-6 p-5 pt-16 sm:p-8 sm:pt-20 lg:gap-14 lg:p-12 lg:pt-20"
+                  : "",
+              ].join(" ")}
+            >
               {/* LEFT — the stage. `layout` counter-scales it during the morph so the
                   scooter doesn't visibly stretch. */}
               <motion.div layout className="min-w-0">
@@ -255,11 +264,11 @@ export function ModelModal({
                   slides={slides}
                   alt={`MOVE ON ${model.name} in ${finish}`}
                   name={model.name}
-                  color={FINISH[finish] ?? "#8A9199"}
+                  variant="modal"
                   className={
                     expanded
-                      ? "h-[56svh] lg:h-svh"
-                      : "h-[44svh] sm:h-[400px] lg:h-[min(90svh,640px)]"
+                      ? "h-[56svh] lg:h-[min(calc(100svh-10rem),680px)]"
+                      : "h-[44svh] sm:h-[400px] lg:h-[min(calc(100svh-2rem),660px)]"
                   }
                 />
               </motion.div>
@@ -268,24 +277,31 @@ export function ModelModal({
               <motion.div
                 layout="position"
                 className={[
-                  "flex min-w-0 flex-col px-5 pb-6 pt-6 sm:px-8 sm:pb-8",
-                  expanded
-                    ? "lg:mx-auto lg:w-full lg:max-w-[560px] lg:justify-center lg:px-12 lg:py-20"
-                    : "lg:pl-4 lg:pr-8 lg:pt-[30px]",
+                  "flex min-w-0 flex-col",
+                  expanded ? "" : "px-5 pb-6 pt-6 sm:px-8 sm:pb-8 lg:pb-6 lg:pl-4 lg:pr-8 lg:pt-6",
                 ].join(" ")}
               >
-                {/* Eyebrow. In the peek it shares a line with the icon buttons. */}
-                <p className="font-display text-[12px] font-bold uppercase tracking-[0.18em] text-leaf">
-                  MOVE ON · Electric scooter
-                </p>
-
-                <h3 className="mt-3 font-display text-[30px] leading-[1.05] tracking-[-0.03em] text-carbon lg:text-[36px]">
-                  {nameLight && <span className="font-light">{nameLight} </span>}
-                  <span className="font-bold">{nameBold}</span>
+                {/* The name: the series letter outlined (the hero's .type-outline, at a
+                    lighter stroke for this size), the model name heavy with a volt
+                    highlighter band under it. The band clones onto each line when the name
+                    wraps. In the peek the float clears the icon buttons on the first line
+                    only, so the name wraps around them rather than under them. */}
+                <h3 className="mt-6 font-display text-[40px] font-extrabold leading-[0.95] tracking-[-0.045em] text-carbon sm:text-[46px] lg:text-[60px]">
+                  {!expanded && (
+                    <span aria-hidden className="float-right hidden h-10 w-[132px] lg:block" />
+                  )}
+                  {nameLight && (
+                    <span className="type-outline mr-[0.18em] [-webkit-text-stroke-width:2px]">
+                      {nameLight}
+                    </span>
+                  )}
+                  <span className="bg-[linear-gradient(transparent_60%,var(--color-volt)_60%,var(--color-volt)_88%,transparent_88%)] [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
+                    {nameBold}
+                  </span>
                 </h3>
 
                 {/* Price. The offer leads; the list price is struck through beside it. */}
-                <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-2">
                   <span className="font-display text-[34px] font-extrabold leading-none tracking-[-0.04em] text-leaf lg:text-[38px]">
                     {formatPrice(price.offer)}
                   </span>
@@ -299,7 +315,7 @@ export function ModelModal({
 
                 <p
                   className={[
-                    "mt-3 text-[15px] leading-relaxed text-[#475569]",
+                    "mt-3 text-[14px] leading-relaxed text-[#475569]",
                     expanded ? "" : "line-clamp-2",
                   ].join(" ")}
                 >
@@ -308,10 +324,10 @@ export function ModelModal({
 
                 {/* Finish. The chosen name sits right beside the header, so the two read
                     as one label. Picking one re-tints the stage's arc. */}
-                <div className="mt-5">
+                <div className="mt-8">
                   <p className="mb-2.5 flex items-baseline gap-3">
                     <span className={label}>Finish</span>
-                    <span className="text-[15px] font-semibold text-carbon">{finish}</span>
+                    <span className="text-[10px] font-semibold text-carbon">{finish}</span>
                   </p>
                   <div role="radiogroup" aria-label="Finish" className="flex flex-wrap gap-3">
                     {model.finishes.map((name) => {
@@ -326,7 +342,7 @@ export function ModelModal({
                           title={name}
                           onClick={() => setFinish(name)}
                           className={[
-                            "h-8 w-8 rounded-full transition-shadow duration-200 ease-premium",
+                            "h-6 w-6 rounded-full transition-shadow duration-200 ease-premium",
                             active
                               ? "ring-2 ring-carbon ring-offset-2"
                               : "ring-1 ring-carbon/15 hover:ring-carbon/40",
@@ -343,7 +359,7 @@ export function ModelModal({
                     same 3px border, so picking one never shifts the layout. ev-green,
                     not volt: volt is ~1.4:1 on white and a selection border has to be
                     seen; ev-green is ~3.1:1. */}
-                <div className="mt-5">
+                <div className="mt-4">
                   <p className={`${label} mb-2.5`}>Battery</p>
                   <div role="radiogroup" aria-label="Battery" className="grid grid-cols-2 gap-3">
                     {BATTERIES.map((option) => {
@@ -356,18 +372,18 @@ export function ModelModal({
                           aria-checked={active}
                           onClick={() => setBattery(option.id)}
                           className={[
-                            "rounded-[18px] border-[3px] px-4 py-3 text-left transition-colors duration-200 ease-premium",
+                            "rounded-[18px] border-[3px] px-4 py-2.5 text-left transition-colors duration-200 ease-premium",
                             active
                               ? "border-ev-green bg-ev-green/5"
                               : "border-carbon/10 bg-white hover:border-carbon/25",
                           ].join(" ")}
                         >
-                          <span className="block font-display text-[17px] font-bold tracking-tight text-carbon">
+                          <span className="block font-display text-[15px] font-bold tracking-tight text-carbon">
                             {option.id === "30ah" ? "30AH" : "45AH"}
                           </span>
                           {/* The range is what the choice is about, so it carries the
                               weight: semibold, in the darker slate. */}
-                          <span className="mt-0.5 block text-[15px] font-semibold text-[#334155]">
+                          <span className="mt-0.5 block text-[12px] font-semibold text-[#334155]">
                             {option.range}
                           </span>
                         </button>
@@ -377,7 +393,7 @@ export function ModelModal({
                 </div>
 
                 {/* USPs — a row of round icon chips, short label under each. */}
-                <ul className="mt-5 grid grid-cols-4 gap-2">
+                <ul className="mt-4 grid grid-cols-4 gap-2">
                   {USP.map(({ icon: Icon, short, long }) => (
                     <li
                       key={long(pack.range)}
@@ -387,7 +403,7 @@ export function ModelModal({
                       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-soft-grey">
                         <Icon size={18} strokeWidth={2.25} className="text-leaf" aria-hidden />
                       </span>
-                      <span className="text-[12px] font-semibold leading-tight text-carbon">
+                      <span className="text-[11px] font-semibold leading-tight text-carbon">
                         {short(pack.range)}
                       </span>
                     </li>
@@ -398,8 +414,8 @@ export function ModelModal({
                     one beside it. */}
                 <div
                   className={[
-                    "mt-6 flex items-center gap-3",
-                    expanded ? "lg:mt-10" : "lg:mt-auto lg:pt-6",
+                    "mt-6 flex items-center gap-3 lg:mt-auto",
+                    expanded ? "lg:pt-8" : "lg:pt-6",
                   ].join(" ")}
                 >
                   <a
@@ -429,11 +445,9 @@ export function ModelModal({
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.45, ease: EASE_PREMIUM, delay: 0.3 }}
-                  className="lg:col-span-2"
+                  className="border-t border-carbon/10 pt-10 lg:col-span-2"
                 >
-                  <div className="mx-auto w-full max-w-[1200px] border-t border-carbon/10 px-5 pb-12 pt-10 sm:px-8 lg:px-12 lg:pt-14">
-                    <ModelDetail model={model} />
-                  </div>
+                  <ModelDetail model={model} />
                 </motion.div>
               )}
             </div>

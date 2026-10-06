@@ -108,11 +108,14 @@ export function Navbar() {
           </TransitionLink>
         </motion.div>
 
-        <motion.ul layout="position" transition={MORPH} className="hidden items-center gap-8 md:flex">
+        {/* No gap: each link carries its own side padding, sized so the row is exactly as
+            wide as it was at 25px/18px with gap-8 — the labels shrank, the navbar didn't.
+            Padding rather than gap also widens each link's click target. */}
+        <motion.ul layout="position" transition={MORPH} className="hidden items-center md:flex">
   {LINKS.map((link) => {
-    const className = `font-medium transition-colors duration-300 ${
+    const className = `inline-block font-medium transition-colors duration-300 ${
       onDark ? "text-white/85 hover:text-white" : "text-carbon/85 hover:text-carbon"
-    } ${scrolled ? "text-[18px]" : "text-[25px]"}`;
+    } ${scrolled ? "px-[18.5px] text-[15px]" : "px-[22.85px] text-[20px]"}`;
 
     return (
       <li key={link.href}>

@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
+import Image from "next/image";
 import {
   GOOGLE_RATING,
   LUXURY_EASE,
@@ -54,47 +55,92 @@ export function HeroEditorial() {
     },
   ];
 
+  function FactCell({
+  fact,
+  floating = false,
+}: {
+  fact: { label: string; value: string; note?: ReactNode };
+  floating?: boolean;
+}) {
+  return (
+    <div
+      className={
+        floating
+          ? "flex flex-col justify-center gap-0.5 px-8 py-2 text-center"
+          : "flex flex-col justify-center gap-1 bg-[#FBFBFA] px-6 py-5 sm:px-8"
+      }
+    >
+      <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/">
+        {fact.label}
+      </p>
+<p className="font-display text-xl font-bold tracking-tight text-carbon lg:text-[22px]">
+          {fact.value}
+      </p>
+      {fact.note && (
+        <p
+          className={`text-xs text-carbon/55 ${
+            floating ? "flex justify-center" : ""
+          }`}
+        >
+          {fact.note}
+        </p>
+      )}
+    </div>
+  );
+}
   return (
     // Reduced pt-24 to pt-20, and lg:pb-10 to lg:pb-8
     <section className="w-full bg-white px-4 pb-8 pt-20 sm:px-6 lg:px-8 lg:pb-8">
       <div className="mx-auto max-w-[1600px]">
         <div className="relative flex flex-col overflow-hidden rounded-[40px] bg-[#F6F7F6] lg:h-[calc(100svh-8.5rem)] lg:min-h-[620px]">
 
-          <div className="grid flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <div className="grid flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6.5fr)]">
 
             {/* LEFT: type */}
             <div
               data-intro="hero"
               // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8. On lg the facts bar floats over
               // the bottom 16% of the card, so the copy is centred in the space above it.
-              className="flex flex-col justify-center gap-7 px-7 pb-2 pt-10 sm:px-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+1.5rem)] lg:pl-14 lg:pr-10 lg:pt-8"
+              className="flex flex-col justify-between gap-6 px-7 pb-2 pt-10 sm:px-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-14   lg:pl-20"
             >
-              {/* Model tabs */}
-              <div role="tablist" aria-label="Model" className="flex gap-8 border-b border-carbon/10">
-                {MODELS.map((model, index) => {
-                  const isActive = index === activeIndex;
-                  return (
-                    <button
-                      key={model.id}
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => selectModel(index)}
-                      className={`relative pb-3 font-display text-sm font-semibold tracking-wide transition-colors duration-300 ${
-                        isActive ? "text-carbon" : "text-carbon/40 hover:text-carbon/70"
-                      }`}
-                    >
-                      {model.code}
-                      {isActive && (
-                        <motion.span
-                          layoutId="hero-tab-line"
-                          className="absolute inset-x-0 -bottom-px h-[2px] bg-carbon"
-                          transition={{ duration: 0.45, ease: LUXURY_EASE }}
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+              {/* Model selector */}
+<div>
+  <div role="tablist" aria-label="Model" className="flex flex-wrap gap-3">
+    {MODELS.map((model, index) => {
+      const isActive = index === activeIndex;
+      return (
+        <button
+          key={model.id}
+          role="tab"
+          aria-selected={isActive}
+          onClick={() => selectModel(index)}
+          className={`flex items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
+            isActive
+              ? "bg-carbon text-white shadow-md"
+              : "bg-white text-carbon/60 shadow-sm hover:bg-white/80 hover:text-carbon"
+          }`}
+        >
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+              isActive ? "bg-white/10" : "bg-carbon/5"
+            }`}
+          >
+            <Image
+              src={model.image}
+              alt=""
+              width={24}
+              height={24}
+              className="object-contain"
+            />
+          </div>
+          <span className="font-display text-xs font-semibold tracking-wide">
+            {model.name}
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
               <AnimatePresence mode="wait">
                 <motion.div
@@ -107,14 +153,12 @@ export function HeroEditorial() {
                   <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
                     {active.tagline}
                   </p>
-                  <h1 className="mt-4 font-display text-[clamp(3.25rem,6vw,7rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
-                    MOVE
-                    <br />
-                    ON{" "}
-                    <span className="type-outline" style={{ "--outline-fill": "#F6F7F6" } as CSSProperties}>
-                      {active.code}
-                    </span>
-                  </h1>
+                 <h1 className="mt-4 font-display text-[clamp(2.5rem,4.5vw,5rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
+  <span className="type-outline" style={{ "--outline-fill": "#F6F7F6" } as CSSProperties}>
+    X&#8202;-
+  </span>
+  {active.code}
+</h1>
                   <p className="mt-6 max-w-[400px] text-[15px] leading-relaxed text-carbon/60">
                     {active.description}
                   </p>
@@ -139,7 +183,7 @@ export function HeroEditorial() {
                   onClick={scrollToLineup}
                   className="group inline-flex items-center gap-1.5 font-display text-sm font-semibold text-carbon/70 transition-colors hover:text-carbon"
                 >
-                  Explore {active.code}
+                  Explore {active.name}
                   <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </button>
               </div>
@@ -187,7 +231,7 @@ export function HeroEditorial() {
             </div>
           </div>
 
-          {/* Spec pills on the seam — half over the type, half over the product panel */}
+          {/* Spec pills on the seam — half over the type, half over the product panel 
           <div aria-hidden className="pointer-events-none absolute left-[41.667%] top-0 z-30 hidden h-full lg:block">
             {pills.map((pill, index) => (
               <motion.span
@@ -201,8 +245,8 @@ export function HeroEditorial() {
                 {pill}
               </motion.span>
             ))}
-          </div>
-
+          </div>*/
+          }
           {/*
            * The details bar: facts only, no actions. On lg it is a slab of near-clear glass
            * over the bottom 16% of the card — a share, not a height, because the scooter
@@ -213,23 +257,34 @@ export function HeroEditorial() {
            * The tint can't go to zero: two of the cells sit right over the black tyre, and
            * it's the blur plus that little white that keeps their dark text readable.
            */}
-          <div
-            data-intro="hero"
-            className="relative z-20 grid grid-cols-2 gap-px border-t border-carbon/[0.07] bg-carbon/[0.07] lg:absolute lg:inset-x-0 lg:bottom-0 lg:h-[16%] lg:min-h-[104px] lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-carbon/[0.08] lg:border-carbon/[0.09] lg:bg-white/[0.22] lg:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.55)] lg:backdrop-blur-[18px] lg:backdrop-saturate-[1.4]"
-          >
-            {facts.map((fact) => (
-              <div
-                key={fact.label}
-                // Opaque cells over a 1px-gap fill draw the hairlines below lg; on the glass the
-                // cells go clear and `divide-x` draws them instead.
-                className="flex flex-col justify-center gap-1 bg-[#FBFBFA] px-6 py-5 sm:px-8 lg:bg-transparent lg:px-10"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/40">{fact.label}</p>
-                <p className="font-display text-xl font-bold tracking-tight text-carbon lg:text-[26px]">{fact.value}</p>
-                {fact.note && <p className="text-xs text-carbon/55">{fact.note}</p>}
-              </div>
-            ))}
-          </div>
+          {/*
+ * The details bar: facts only, no actions. A floating dock rather than a slab welded
+ * to the bottom edge — the stage's corners stay visible around it, which is what makes
+ * it read as a separate object.
+ *
+ * .glass-frost, not the near-clear tint: two cells sit over the black tyre, and frost's
+ * heavier white is what keeps dark text legible there. Below lg it stays in flow with
+ * opaque cells, since frost on the stage's flat ground is just a pale box.
+ */}
+<div
+  data-intro="hero"
+  className="relative z-20 grid grid-cols-2 gap-px border-t border-carbon/[0.07] bg-carbon/[0.07] lg:hidden"
+>
+  {facts.map((fact) => (
+    <FactCell key={fact.label} fact={fact} />
+  ))}
+</div>
+
+<div
+  data-intro="hero"
+  className="absolute inset-x-0 bottom-6 z-20 hidden px-6 lg:block"
+>
+  <div className="glass-frost mx-auto grid max-w-[1200px] grid-cols-4 divide-x divide-carbon/10 rounded-full py-1 shadow-[0_12px_40px_-12px_rgba(16,20,18,0.28)]">
+    {facts.map((fact) => (
+      <FactCell key={fact.label} fact={fact} floating />
+    ))}
+  </div>
+</div>
         </div>
       </div>
     </section>

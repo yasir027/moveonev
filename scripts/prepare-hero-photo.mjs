@@ -1,6 +1,7 @@
 /**
- * Prepares a studio product shot for the hero: crops to the subject and cuts out the
- * backdrop, keeping the floor shadow as a translucent one.
+ * Prepares a studio product shot for the hero: crops to the subject, cuts out the
+ * backdrop keeping the floor shadow as a translucent one, then pads the result onto a
+ * fixed canvas so every model lands the same size on the stage.
  *
  * Blending the backdrop away with `multiply` is not an option: the hero moves and tilts
  * the scooter, and those transforms create stacking contexts that isolate the blend from
@@ -12,6 +13,7 @@
  *      whites (headlight, chrome) are never reached, so they stay.
  *   3. Flood one step further across light, near-neutral pixels — that's the floor
  *      shadow. It becomes soft black with alpha from how dark it was.
+ *   4. Fit the subject inside the canvas and pad out the rest with transparency.
  *
  * Usage: node scripts/prepare-hero-photo.mjs <source> [outName]
  * e.g.   node scripts/prepare-hero-photo.mjs ./veloce-raw.webp veloce
@@ -32,7 +34,17 @@ const WHITE = 246;
 const KEEP = 236;
 // Margin kept around the subject, as a fraction of its size.
 const MARGIN = 0.03;
-const TARGET_HEIGHT = 1500;
+
+/*
+ * Every shot lands on this canvas, so the subject is the same size on the stage whatever
+ * its own proportions are. Cropping tight and normalising height alone doesn't do it:
+ * object-contain fits to whichever axis runs out first, so a wider scooter sits smaller.
+ *
+ * These are X-DOUBLE LIGHT's dimensions, which keeps that file the same as today's and
+ * pads every other model to match it. Change them and every photo must be re-run.
+ */
+const CANVAS_W = 1065;
+const CANVAS_H = 1123;
 
 const outDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "Hero");
 const outFile = path.join(outDir, `${outName}.webp`);
@@ -136,11 +148,32 @@ const top = Math.max(0, minY - marginY);
 const cropW = Math.min(width - left, maxX - minX + marginX * 2);
 const cropH = Math.min(height - top, maxY - minY + marginY * 2);
 
-const out = await sharp(data, { raw: { width, height, channels } })
+// 5. Scale the subject to fit the canvas, touching whichever edge it reaches first.
+//    PNG rather than webp for the intermediate: this buffer is re-encoded below, and
+//    two lossy passes would show on the cut-out's soft edges.
+const subject = await sharp(data, { raw: { width, height, channels } })
   .extract({ left, top, width: cropW, height: cropH })
-  .resize({ height: TARGET_HEIGHT, withoutEnlargement: true })
+  .resize({ width: CANVAS_W, height: CANVAS_H, fit: "inside" })
+  .png()
+  .toBuffer({ resolveWithObject: true });
+
+const padX = CANVAS_W - subject.info.width;
+const padY = CANVAS_H - subject.info.height;
+
+// 6. Centred across, sat on the floor. The shadow is the bottom of the crop, so
+//    bottom-aligning puts every model's ground line in the same place — centring
+//    would leave the shorter ones floating.
+const out = await sharp(subject.data)
+  .extend({
+    left: Math.floor(padX / 2),
+    right: Math.ceil(padX / 2),
+    top: padY,
+    bottom: 0,
+    background: { r: 0, g: 0, b: 0, alpha: 0 },
+  })
   .webp({ quality: 90, alphaQuality: 100 })
   .toFile(outFile);
 
 console.log(`subject ${minX},${minY} → ${maxX},${maxY} of ${width}x${height}`);
+console.log(`fitted ${subject.info.width}x${subject.info.height}, padded ${padX}x${padY}`);
 console.log(`wrote ${outFile} — ${out.width}x${out.height} (aspect ${out.width}/${out.height})`);

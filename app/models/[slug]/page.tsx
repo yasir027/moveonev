@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { FINISH, formatPrice, getModel, models, splitName } from "@/lib/models";
+import { FINISH, formatPrice, getModel, models } from "@/lib/models";
 import { ModelDetail } from "@/components/models/ModelDetail";
 import { ModelStage } from "@/components/models/ModelStage";
 
@@ -32,7 +32,6 @@ export default async function ModelPage({ params }: Props) {
   if (!model) notFound();
 
   const photos = model.gallery?.length ? model.gallery : model.image ? [model.image] : [];
-  const [nameLight, nameBold] = splitName(model.name);
 
   const keyNumbers = [
     ["Top speed", model.topSpeed],
@@ -54,14 +53,12 @@ export default async function ModelPage({ params }: Props) {
         {/* HERO */}
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
           {/* Photos: the same stage as the modal, tall and sticky so the scooter stays
-              in view while the buy box scrolls. The page has no finish picker, so the
-              arc takes the first finish. */}
+              in view while the buy box scrolls. */}
           <ModelStage
             slides={photos}
             alt={`MOVE ON ${model.name}`}
             name={model.name}
-            color={FINISH[model.finishes[0]] ?? "#8A9199"}
-            className="h-[56svh] self-start rounded-[28px] lg:sticky lg:top-28 lg:h-[min(calc(100svh-9rem),720px)]"
+            className="h-[56svh] self-start lg:sticky lg:top-28 lg:h-[min(calc(100svh-9rem),720px)]"
           />
 
           {/* Buy box */}
@@ -71,9 +68,8 @@ export default async function ModelPage({ params }: Props) {
               No licence · No RTO
             </p>
 
-            <h1 className="font-display text-[clamp(2.25rem,4vw,3.25rem)] leading-[1.02] tracking-[-0.035em] text-carbon">
-              {nameLight && <span className="font-light">{nameLight} </span>}
-              <span className="font-bold">{nameBold}</span>
+            <h1 className="font-display text-[clamp(2.25rem,4vw,3.25rem)] font-bold leading-[1.02] tracking-[-0.035em] text-carbon">
+              {model.name}
             </h1>
 
             <p className="mt-4 font-display text-[22px] font-bold text-carbon/75">

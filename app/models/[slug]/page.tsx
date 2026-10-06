@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { FINISH, formatPrice, getModel, models } from "@/lib/models";
+import { FINISH, formatPrice, getModel, models, splitName } from "@/lib/models";
 import { ModelDetail } from "@/components/models/ModelDetail";
+import { ModelStage } from "@/components/models/ModelStage";
 
 /*
  * The real page behind /models/<slug>. This is what a refresh, a shared link, a bookmark
@@ -32,6 +32,7 @@ export default async function ModelPage({ params }: Props) {
   if (!model) notFound();
 
   const photos = model.gallery?.length ? model.gallery : model.image ? [model.image] : [];
+  const [nameLight, nameBold] = splitName(model.name);
 
   const keyNumbers = [
     ["Top speed", model.topSpeed],
@@ -52,53 +53,16 @@ export default async function ModelPage({ params }: Props) {
 
         {/* HERO */}
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-          {/* Photos. Sticky, so the scooter stays in view while the buy box scrolls. */}
-          <div className="self-start lg:sticky lg:top-28">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px] bg-soft-grey">
-              {/* Floor: tight contact ellipse plus a wide ambient one. */}
-              <div
-                aria-hidden
-                className="absolute bottom-[12%] left-1/2 h-5 w-[58%] -translate-x-1/2 rounded-[50%] bg-carbon/15 blur-2xl"
-              />
-              <div
-                aria-hidden
-                className="absolute bottom-[15%] left-1/2 h-2 w-[30%] -translate-x-1/2 rounded-[50%] bg-carbon/25 blur-lg"
-              />
-              {photos[0] ? (
-                <Image
-                  src={photos[0]}
-                  alt={`MOVE ON ${model.name}`}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 55vw, 92vw"
-                  className="relative z-10 object-contain p-6 drop-shadow-[0_22px_22px_rgba(0,0,0,0.16)]"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center font-display text-[12px] font-bold tracking-[0.25em] text-carbon/30">
-                  IMAGE PENDING
-                </div>
-              )}
-            </div>
-
-            {photos.length > 1 && (
-              <div className="mt-4 grid grid-cols-3 gap-3">
-                {photos.slice(1).map((src) => (
-                  <div
-                    key={src}
-                    className="relative aspect-[4/3] overflow-hidden rounded-[18px] bg-soft-grey"
-                  >
-                    <Image
-                      src={src}
-                      alt={`MOVE ON ${model.name}`}
-                      fill
-                      sizes="(min-width: 1024px) 18vw, 30vw"
-                      className="object-contain p-2"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Photos: the same stage as the modal, tall and sticky so the scooter stays
+              in view while the buy box scrolls. The page has no finish picker, so the
+              arc takes the first finish. */}
+          <ModelStage
+            slides={photos}
+            alt={`MOVE ON ${model.name}`}
+            name={model.name}
+            color={FINISH[model.finishes[0]] ?? "#8A9199"}
+            className="h-[56svh] self-start rounded-[28px] lg:sticky lg:top-28 lg:h-[min(calc(100svh-9rem),720px)]"
+          />
 
           {/* Buy box */}
           <div>
@@ -107,8 +71,9 @@ export default async function ModelPage({ params }: Props) {
               No licence · No RTO
             </p>
 
-            <h1 className="font-display text-[clamp(2.25rem,4vw,3.25rem)] font-bold leading-[1.02] tracking-[-0.035em] text-carbon">
-              {model.name}
+            <h1 className="font-display text-[clamp(2.25rem,4vw,3.25rem)] leading-[1.02] tracking-[-0.035em] text-carbon">
+              {nameLight && <span className="font-light">{nameLight} </span>}
+              <span className="font-bold">{nameBold}</span>
             </h1>
 
             <p className="mt-4 font-display text-[22px] font-bold text-carbon/75">

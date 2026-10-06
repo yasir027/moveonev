@@ -123,6 +123,13 @@ export const getModel = (slug: string) => models.find((m) => m.slug === slug);
 
 export const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
+/* The name in two weights, light then bold ("X" / "Double Light"). Split on the first
+   space only: the series letter is the quiet part, the model is the loud one. */
+export const splitName = (name: string): [string, string] => {
+  const at = name.indexOf(" ");
+  return at === -1 ? ["", name] : [name.slice(0, at), name.slice(at + 1)];
+};
+
 /* Named finishes, as they appear on the price list. */
 export const FINISH: Record<string, string> = {
   "Glossy Red": "#C8102E",

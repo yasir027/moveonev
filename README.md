@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Known issues
+
+- **`npm run build` fails on `lib/oldmodels.ts`** (noted 2026-10-16, arrived with the
+  `yasir16thOct` merge). TypeScript reports `TS2741: Property '"55ah"' is missing` at
+  `lib/oldmodels.ts:87`: the X Double Light entry only has `"30ah"` pricing, but `BatteryId`
+  is now `"30ah" | "55ah"`. Nothing imports the file — it looks like a backup of the old
+  model data — so `npm run dev` is unaffected, but the type check blocks every production
+  build. **Fix before deploying:** delete `lib/oldmodels.ts` if it's no longer needed
+  (confirm with Yasir), or add the missing `"55ah"` pricing.
+
 ## Getting Started
 
 First, run the development server:

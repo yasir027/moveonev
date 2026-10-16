@@ -1,4 +1,10 @@
 /*
+ * TODO(before production): this file breaks `npm run build`. The X Double Light entry has
+ * no "55ah" pricing, which BatteryId now requires (TS2741). Nothing imports this file —
+ * delete it if it's no longer needed, or add the pricing. See "Known issues" in README.md.
+ */
+
+/*
  * Model data. No "use client" on purpose: the /models/[slug] page is a server component
  * and can't read anything exported from a client file.
  *

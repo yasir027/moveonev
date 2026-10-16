@@ -196,7 +196,7 @@ export function AudienceSection() {
         STRICT BOXED CONTAINER
         mx-auto and max-w guarantee it will never be full-width on large screens
       */}
-      <div className="relative mx-auto w-full max-w-[1300px] px-5 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1440px] px-8 sm:px-8 lg:px-8">
 
         {/* Tonal backdrop, the light-section counterpart to the dark block's "OWN IT".
             It sits in the void beside the heading rather than behind the collage — the

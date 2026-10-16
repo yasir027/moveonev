@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, Phone, MapPin, Clock, Check } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
+import { SHOWROOM } from "@/lib/showroom";
 
 const MODELS = [
   "X Double Light",
@@ -98,13 +99,15 @@ export function GetInTouchSection() {
 
             <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <Detail icon={Phone} label="Call or WhatsApp">
-                +91 00000 00000
+                <a href={`tel:${SHOWROOM.phone.tel}`} className="transition-colors hover:text-white">
+                  {SHOWROOM.phone.display}
+                </a>
               </Detail>
               <Detail icon={MapPin} label="Showroom">
-                Add the street address here
+                {SHOWROOM.addressLines.join(", ")}
               </Detail>
               <Detail icon={Clock} label="Open">
-                Mon–Sat, 10am – 8pm
+                {SHOWROOM.hours.label}
               </Detail>
             </ul>
             </motion.div>

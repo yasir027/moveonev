@@ -579,3 +579,15 @@ html[data-loader="fade"] body {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Home page: ShowroomLead runs straight on into the footer on the same night ground, so the
+ * footer lets its scooter rise up into it and the two read as one. Elsewhere the section
+ * above the footer can be light, so the watermark stays clipped at the footer's edge.
+ * Unlayered on purpose: it has to beat the `overflow-hidden` utility on the footer.
+ */
+main:has([data-footer-lead]) + footer[data-site-footer] {
+  overflow-x: clip; /* still clips the roll-in sideways */
+  overflow-y: visible; /* but not the mirrors */
+  --wm-solid: 88%; /* only the very top of the drawing fades */
+}

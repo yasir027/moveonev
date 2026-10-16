@@ -18,22 +18,29 @@ const NavigateContext = createContext<(href: string) => void>(() => {});
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function headerParts() {
-  const logo = document.querySelector("svg[data-brand-logo]");
   return {
     progress: document.querySelector<HTMLElement>("[data-route-progress]"),
-    charge: logo?.querySelector("[data-logo-charge]") ?? null,
-    stroke: logo?.querySelector("[data-logo-stroke]") ?? null,
-    strokes: [...(logo?.querySelectorAll<SVGPathElement>("[data-logo-stroke] path") ?? [])],
+    logo: document.querySelector<SVGSVGElement>("svg[data-brand-logo]"),
   };
 }
 
-/** The header logo redraws and refills from the bottom, like a battery charging. */
+/** The header logo recharges while the progress line runs under the header. */
 function rechargeHeader() {
-  const { progress, charge, stroke, strokes } = headerParts();
+  const { progress, logo } = headerParts();
   const tl = gsap.timeline();
   if (progress) {
     tl.fromTo(progress, { scaleX: 0, opacity: 1 }, { scaleX: 0.6, duration: 0.3, ease: "power2.out" }, 0);
   }
+  if (logo) tl.add(rechargeLogo(logo), 0);
+  return tl;
+}
+
+/** A <Logo> redraws and refills from the bottom, like a battery charging. */
+export function rechargeLogo(logo: SVGSVGElement) {
+  const charge = logo.querySelector("[data-logo-charge]");
+  const stroke = logo.querySelector("[data-logo-stroke]");
+  const strokes = [...logo.querySelectorAll<SVGPathElement>("[data-logo-stroke] path")];
+  const tl = gsap.timeline();
   if (charge) {
     const c = { h: 0 };
     tl.to(c, {

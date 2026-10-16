@@ -9,7 +9,7 @@ import { LineupSection } from "@/components/LineupSection";
 import {GetInTouchSection} from "@/components/GetInTouch";
 import {HeroSection} from "@/components/hero/HeroSection"
 import { ExpandPanel } from "@/components/ui/ExpandPanel";
-
+import { ShowroomLead } from "@/components/SiteFooter";
 export default function Home() {
   return (
     <main>
@@ -41,25 +41,8 @@ export default function Home() {
       </section>
 */}
       <FaqSection />
-
-      {/* Final CTA */}
-      <section data-theme="dark" className="bg-carbon py-24 text-center text-white">
-        <h2 className="mx-auto mb-6 max-w-xl text-4xl lg:text-5xl">
-          Ride the future, today.
-        </h2>
-        <p className="mx-auto mb-8 max-w-md text-white/60">
-          Book a test ride at your nearest MOVE ON showroom and feel the
-          difference for yourself.
-        </p>
-      </section>
-
-      {/* Minimal footer */}
-      <footer className="border-t border-carbon/10 px-8 py-10">
-        <div className="mx-auto flex max-w-7xl items-center justify-between text-sm text-carbon/50">
-          <span>© {new Date().getFullYear()} MOVE ON</span>
-          <span>Made for the road ahead.</span>
-        </div>
-      </footer>
+      {/* Runs straight on into the footer: same ground, no rule between them. */}
+      <ShowroomLead />
     </main>
   );
 }

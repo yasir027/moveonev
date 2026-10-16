@@ -1,6 +1,7 @@
 import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { SiteFooter } from "@/components/SiteFooter";
 import { GlassFilter } from "@/components/ui/GlassFilter";
 // import { GlassLens } from "@/components/ui/GlassLens";
 import { BrandLoader } from "@/components/loader/BrandLoader";
@@ -37,7 +38,10 @@ export default function RootLayout({
             Disabled for now — uncomment to bring the lens back. */}
         {/* <GlassLens /> */}
         {/* The header lives in the layout so it stays put between pages. */}
-        <RouteTransition header={<Navbar />}>{children}</RouteTransition>
+        <RouteTransition header={<Navbar />}>
+          {children}
+          <SiteFooter />
+        </RouteTransition>
       </body>
     </html>
   );

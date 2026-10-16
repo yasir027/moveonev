@@ -25,7 +25,7 @@ const LINES = [
 
 const NUMBERS = [
   { value: "25 km/h", label: "Top speed" },
-  { value: "70–120 km", label: "Range" },
+  { value: "70–170 km", label: "Range" },
   { value: "150 kg", label: "Load" },
 ];
 

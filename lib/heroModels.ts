@@ -39,7 +39,7 @@ export interface Model {
 }
 
 // TODO: replace the placeholders below with real business details.
-export const WHATSAPP_NUMBER = "7893620380"; // international format, no "+" or spaces
+export const WHATSAPP_NUMBER = "917893620380"; // international format (91 = India), no "+" or spaces
 export const RIDER_COUNT = "2,400+";
 export const GOOGLE_RATING = "4.9";
 export const PETROL_COST_PER_KM = "RS 12";

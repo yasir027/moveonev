@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, type PanInfo } from "framer-motion";
 import { ExternalLink, Maximize2, X } from "lucide-react";
-import { skipNextRouteTransition } from "@/components/loader/RouteTransition";
+import { endHandover, startHandover } from "@/lib/handover";
 import { EASE_PREMIUM } from "@/lib/motion";
 import type { BatteryId, Model } from "@/lib/models";
 import { ModelView } from "./ModelView";
@@ -57,25 +57,31 @@ export function ModelModal({
   useEffect(() => () => window.clearTimeout(handover.current), []);
 
   /* Expand: grow to full screen, then hand over to the real page. The page renders the
-     same ModelView as this popup's expanded state, so the swap is invisible: the window
-     jumps to the top behind the popup (no smooth scroll on the new page) and the route
-     transition's slide-in is skipped (no blank frame). */
+     same ModelView as this popup's expanded state, and by the end of the grow the screen
+     already looks exactly like it: the header fades in over the popup in its top-of-page
+     form (lib/handover.ts), and the window jumps to the top behind the popup so the new
+     page doesn't smooth-scroll. The route swap then changes no pixels. */
   const goToPage = useCallback(() => {
+    const { finish, battery } = choice.current;
+    const query = new URLSearchParams();
+    if (finish !== model.finishes[0]) query.set("finish", finish);
+    if (battery !== "30ah") query.set("battery", battery);
+    const search = query.toString();
+    const url = search ? `${href}?${search}` : href;
+
+    /* Fetch the exact page now, so it loads while the popup grows. */
+    router.prefetch(url);
+    startHandover();
     setExpanded(true);
     handover.current = window.setTimeout(() => {
-      const { finish, battery } = choice.current;
-      const query = new URLSearchParams();
-      if (finish !== model.finishes[0]) query.set("finish", finish);
-      if (battery !== "30ah") query.set("battery", battery);
-      const search = query.toString();
       window.scrollTo({ top: 0, behavior: "instant" });
-      skipNextRouteTransition();
-      router.push(search ? `${href}?${search}` : href);
+      router.push(url);
     }, 520);
   }, [router, href, model.finishes]);
 
   const close = useCallback(() => {
     window.clearTimeout(handover.current);
+    endHandover();
     onClose();
   }, [onClose]);
 
@@ -146,18 +152,27 @@ export function ModelModal({
               : "max-h-[90svh] w-full max-w-full sm:w-[600px] lg:max-h-[calc(100svh-4rem)] lg:w-[880px]",
           ].join(" ")}
         >
-          {/* Drag handle, mobile only */}
+          {/* Drag handle, mobile only. It and the icon buttons fade out on expand: the
+              page has neither, and the header fades in over that corner. */}
           <motion.div
             onPanEnd={onHandlePanEnd}
             style={{ touchAction: "none" }}
-            className="absolute inset-x-0 top-0 z-40 flex h-8 cursor-grab justify-center pt-2.5 sm:hidden"
+            className={[
+              "absolute inset-x-0 top-0 z-40 flex h-8 cursor-grab justify-center pt-2.5 transition-opacity duration-200 sm:hidden",
+              expanded ? "pointer-events-none opacity-0" : "",
+            ].join(" ")}
           >
             <span className="h-1 w-10 rounded-full bg-carbon/20" />
           </motion.div>
 
           {/* Above the drag handle (z-40): it spans the full width, and beneath it the
               buttons only took taps on their bottom edge. */}
-          <div className="absolute right-4 top-2 z-50 flex gap-2">
+          <div
+            className={[
+              "absolute right-4 top-2 z-50 flex gap-2 transition-opacity duration-200",
+              expanded ? "pointer-events-none opacity-0" : "",
+            ].join(" ")}
+          >
             <button
               type="button"
               onClick={goToPage}

@@ -284,10 +284,11 @@ export function ModelView({
       {/* Expanded only, spanning both columns: these are full-width sections, and
           squeezed into one column they would be a long narrow strip. Waits for
           the box to finish growing, then fades in, so the content never lands in
-          a container that is still moving. */}
+          a container that is still moving. On the page it is simply there: the popup
+          already showed it, so fading it in again would read as a second arrival. */}
       {expanded && (
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={asPage ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE_PREMIUM, delay: 0.3 }}
           className="border-t border-carbon/10 pt-10 lg:col-span-2"

@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, type Compone
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
+import { endHandover, isHandover } from "@/lib/handover";
 
 /**
  * Moving between pages (concept v7, Scene 6, tier 3): no fullscreen loader. The header
@@ -16,15 +17,6 @@ import gsap from "gsap";
 const NavigateContext = createContext<(href: string) => void>(() => {});
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* Set by a caller that has already covered the screen with the next page's look (the
-   model popup grown to full screen), so the slide-in would only flash a blank frame. */
-let skipNext = false;
-
-/** The next route change shows the new page at once, with no fade or slide-in. */
-export function skipNextRouteTransition() {
-  skipNext = true;
-}
 
 function headerParts() {
   return {
@@ -116,8 +108,10 @@ export function RouteTransition({ header, children }: { header: React.ReactNode;
     busy.current = false;
     if (!wrap.current) return;
     finishProgress();
-    if (skipNext) {
-      skipNext = false;
+    /* The model popup grew into this page and already looks exactly like it, so a
+       slide-in would only flash a blank frame. Show it as is and end the hand-over. */
+    if (isHandover()) {
+      endHandover();
       return;
     }
     gsap.fromTo(

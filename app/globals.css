@@ -27,6 +27,10 @@
   html {
     scroll-behavior: smooth;
     background: #ffffff;
+    /* Keep the scrollbar's width reserved even while a popup locks scrolling, so fixed
+       overlays are exactly as wide as the page: nothing shifts sideways when a modal
+       opens, closes, or (the model popup) grows into its page. */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -535,6 +539,8 @@ html[data-loader="page"] .brand-cover {
 html[data-loader="home"],
 html[data-loader="page"] {
   overflow: hidden;
+  /* The cover is fixed, so a reserved gutter would show as a white strip beside it. */
+  scrollbar-gutter: auto;
 }
 
 /* What the intro brings in itself: the homepage hero piece by piece, any other page whole. */
@@ -564,6 +570,22 @@ html[data-loader="fade"] body {
 }
 
 @keyframes loader-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/*
+ * Model popup hand-over (lib/handover.ts): while the popup grows into its page, the header
+ * rises above it (the popup is z-70) and fades in, so it is already in place, in its
+ * top-of-page form, when the route swaps underneath.
+ */
+html[data-handover] [data-site-header] {
+  z-index: 80;
+  animation: handover-header-in 0.45s var(--ease-premium) both;
+}
+
+@keyframes handover-header-in {
   from {
     opacity: 0;
   }

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Logo } from "@/components/brand/Logo";
 import { TransitionLink } from "@/components/loader/RouteTransition";
 import { NavGlassFilter } from "@/components/ui/NavGlassFilter";
+import { HANDOVER_EVENT } from "@/lib/handover";
 import { whatsappUrl } from "@/lib/heroModels";
 import { EASE_PREMIUM } from "@/lib/motion";
 
@@ -26,9 +27,21 @@ const MORPH = { duration: 0.5, ease: EASE_PREMIUM };
  * marking themselves `data-theme="dark"`.
  */
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [onDark, setOnDark] = useState(false);
+  const [scrolledRaw, setScrolled] = useState(false);
+  const [onDarkRaw, setOnDark] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+
+  /* While the model popup grows into its page (lib/handover.ts), show the form the page
+     will have at its top: full width, light. It morphs there as it fades in over the
+     popup, so nothing changes when the route swaps underneath. */
+  const [handover, setHandover] = useState(false);
+  useEffect(() => {
+    const onHandover = (e: Event) => setHandover((e as CustomEvent<boolean>).detail);
+    window.addEventListener(HANDOVER_EVENT, onHandover);
+    return () => window.removeEventListener(HANDOVER_EVENT, onHandover);
+  }, []);
+  const scrolled = scrolledRaw && !handover;
+  const onDark = onDarkRaw && !handover;
 
   useEffect(() => {
     const onScroll = () => {
@@ -86,7 +99,10 @@ export function Navbar() {
   }, [scrolled]);
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
+    <header
+      data-site-header
+      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center"
+    >
       {/* Builds the pill's refraction map against navRef. Mounted here rather than in the
           layout beside GlassFilter so it can take the ref directly. */}
       <NavGlassFilter targetRef={navRef} />

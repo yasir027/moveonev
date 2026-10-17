@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, type PanInfo } from "framer-motion";
 import { ExternalLink, Maximize2, X } from "lucide-react";
+import { skipNextRouteTransition } from "@/components/loader/RouteTransition";
 import { EASE_PREMIUM } from "@/lib/motion";
-import type { Model } from "@/lib/models";
+import type { BatteryId, Model } from "@/lib/models";
 import { ModelView } from "./ModelView";
 
 /*
@@ -26,28 +27,57 @@ import { ModelView } from "./ModelView";
 
 export function ModelModal({
   model,
+  initialBattery,
   onClose,
 }: {
   model: Model;
+  /** The battery the card was priced at, so the popup opens on the same price. */
+  initialBattery?: BatteryId;
   onClose: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const router = useRouter();
   const href = `/models/${model.slug}`;
 
+  /* The visitor's picks, handed to the page in the URL so it opens on the same ones. */
+  const choice = useRef({ finish: model.finishes[0], battery: initialBattery ?? "30ah" });
+  const onChoice = useCallback((finish: string, battery: BatteryId) => {
+    choice.current = { finish, battery };
+  }, []);
+
   /* Warm the page up while the popup is open, so the hand-over below is instant. */
   useEffect(() => {
     router.prefetch(href);
   }, [router, href]);
 
+  /* The pending hand-over. Closing mid-grow (Escape, the backdrop) cancels it: close()
+     below clears it at once, since AnimatePresence keeps us mounted through the exit
+     animation, past the moment it would fire. */
+  const handover = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(handover.current), []);
+
   /* Expand: grow to full screen, then hand over to the real page. The page renders the
-     same ModelView as this popup's expanded state, so the swap is invisible. */
+     same ModelView as this popup's expanded state, so the swap is invisible: the window
+     jumps to the top behind the popup (no smooth scroll on the new page) and the route
+     transition's slide-in is skipped (no blank frame). */
   const goToPage = useCallback(() => {
     setExpanded(true);
-    window.setTimeout(() => router.push(href), 520);
-  }, [router, href]);
+    handover.current = window.setTimeout(() => {
+      const { finish, battery } = choice.current;
+      const query = new URLSearchParams();
+      if (finish !== model.finishes[0]) query.set("finish", finish);
+      if (battery !== "30ah") query.set("battery", battery);
+      const search = query.toString();
+      window.scrollTo({ top: 0, behavior: "instant" });
+      skipNextRouteTransition();
+      router.push(search ? `${href}?${search}` : href);
+    }, 520);
+  }, [router, href, model.finishes]);
 
-  const close = onClose;
+  const close = useCallback(() => {
+    window.clearTimeout(handover.current);
+    onClose();
+  }, [onClose]);
 
   /* ---- Page behaviour ------------------------------------------------------- */
 
@@ -125,7 +155,9 @@ export function ModelModal({
             <span className="h-1 w-10 rounded-full bg-carbon/20" />
           </motion.div>
 
-          <div className="absolute right-4 top-2 z-30 flex gap-2">
+          {/* Above the drag handle (z-40): it spans the full width, and beneath it the
+              buttons only took taps on their bottom edge. */}
+          <div className="absolute right-4 top-2 z-50 flex gap-2">
             <button
               type="button"
               onClick={goToPage}
@@ -155,8 +187,20 @@ export function ModelModal({
               has nothing to scroll; the expanded view and short or mobile screens still
               scroll by wheel and touch, just without a bar. Both spellings: Chrome 121+
               honours scrollbar-width, older WebKit needs the pseudo-element. */}
-          <div className="flex-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <ModelView model={model} expanded={expanded} />
+          {/* Expanded, the top padding matches the page's navbar clearance (its <main>
+              pt-[88px]), so nothing moves when the page takes over. */}
+          <div
+            className={[
+              "flex-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+              expanded ? "pt-[88px]" : "",
+            ].join(" ")}
+          >
+            <ModelView
+              model={model}
+              expanded={expanded}
+              initialBattery={initialBattery}
+              onChange={onChoice}
+            />
           </div>
         </motion.div>
       </div>

@@ -18,7 +18,7 @@ import { ModelModal } from "./ModelModal";
 type ModelCardProps = {
   model: Model;
   pricing?: Model["pricing"][keyof Model["pricing"]];
-  batteryId?: string;
+  batteryId?: BatteryId;
 };
 
 
@@ -317,6 +317,7 @@ const start =
             {open && (
               <ModelModal
                 model={model}
+                initialBattery={batteryId}
                 onClose={handleClose}
               />
             )}

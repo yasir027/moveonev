@@ -18,7 +18,14 @@ const RADIUS = "48px";
  * listener writes the variable straight to the node, like ScrollCurtain: framer's useScroll did
  * not track targets on this page.
  */
-export function ExpandPanel({ children }: { children: ReactNode }) {
+export function ExpandPanel({
+  children,
+  gutterClassName = "bg-mist",
+}: {
+  children: ReactNode;
+  /** The side gutters' ground: match the section above (the model page is white). */
+  gutterClassName?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
 
@@ -60,8 +67,8 @@ export function ExpandPanel({ children }: { children: ReactNode }) {
   };
 
   return (
-    /* bg-mist matches the section above, so the gutters read as page, not as a gap. */
-    <div ref={ref} className="bg-mist">
+    /* The gutters match the section above, so they read as page, not as a gap. */
+    <div ref={ref} className={gutterClassName}>
       <div style={panel}>{children}</div>
     </div>
   );

@@ -3,6 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BATTERIES, getModel, models } from "@/lib/models";
 import { ModelView } from "@/components/models/ModelView";
+import { ExpandPanel } from "@/components/ui/ExpandPanel";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { Reveal } from "@/components/ui/Reveal";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
  * The real page behind /models/<slug>: what a refresh, a shared link, a bookmark, the
@@ -74,7 +78,7 @@ export default async function ModelPage({ params, searchParams }: Props) {
   return (
     /* pt clears the fixed navbar; tune it until the scooter sits exactly where it did in
        the grown popup. */
-    <main className="bg-white pb-20 pt-[88px]">
+    <main className="bg-white pt-[88px]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -88,24 +92,54 @@ export default async function ModelPage({ params, searchParams }: Props) {
         initialBattery={battery}
       />
 
-      {/* CLOSING CTA — dark, so the page ends on the one action it exists for. */}
-      <section
-        data-theme="dark"
-        className="mx-[7%] mt-6 rounded-[32px] bg-carbon px-8 py-14 text-center lg:py-16"
-      >
-        <h2 className="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-          Ride the {model.name} before you decide.
-        </h2>
-        <p className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65">
-          Book a free test ride. No paperwork, no licence — just turn up.
-        </p>
-        <Link
-          href="/#book"
-          className="mt-8 inline-block rounded-full bg-volt px-8 py-4 font-display text-[16px] font-bold text-carbon transition-colors duration-200 hover:bg-white"
-        >
-          Book a test ride
-        </Link>
-      </section>
+      {/* CLOSING CTA — dark, so the page ends on the one action it exists for. It opens
+          from an inset, rounded panel to full width as it scrolls in, like the home's Get
+          in Touch, and runs straight on into the dark footer. */}
+      <div className="mt-10 lg:mt-16">
+        <ExpandPanel gutterClassName="bg-white">
+          <section
+            data-theme="dark"
+            className="relative bg-carbon px-8 py-20 text-center lg:py-28"
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(60% 50% at 20% 15%, rgb(125 255 64 / 0.16), transparent 62%), radial-gradient(55% 50% at 92% 88%, rgb(0 168 107 / 0.14), transparent 62%)",
+              }}
+            />
+            <div className="relative">
+              <RevealHeading replay
+                className="text-white"
+                lines={[
+                  `Ride the ${model.name}`,
+                  <span key="b" className="text-white/30">
+                    before you decide.
+                  </span>,
+                ]}
+              />
+              <Reveal replay
+                as="p"
+                delay={0.25}
+                className="mx-auto mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/65"
+              >
+                Book a free test ride. No paperwork, no licence — just turn up.
+              </Reveal>
+              <Reveal replay delay={0.35} className="mt-10">
+                <Magnetic>
+                  <Link
+                    href="/#book"
+                    className="inline-block rounded-full bg-volt px-8 py-4 font-display text-[16px] font-bold text-carbon transition-colors duration-200 hover:bg-white"
+                  >
+                    Book a test ride
+                  </Link>
+                </Magnetic>
+              </Reveal>
+            </div>
+          </section>
+        </ExpandPanel>
+      </div>
     </main>
   );
 }

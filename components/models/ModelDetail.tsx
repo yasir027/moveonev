@@ -40,6 +40,8 @@ import {
   type IconKey,
   type Model,
 } from "@/lib/models";
+import { Reveal } from "@/components/ui/Reveal";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
  * Everything below the hero, as a stack of full-width sections. Shared by the expanded
@@ -50,7 +52,20 @@ import {
  *
  * Sections carry only a top hairline and no background of their own, so the stack sits
  * the same on the page's white and inside the modal.
+ *
+ * Motion is the home page's: each heading rises out of its mask, its copy follows 0.25s
+ * later, and cards and rows stagger in as they scroll into view — every time, like the
+ * page's closing panel, not just the first (`replay`). All of it sits
+ * below the fold of the expanded popup, so none of it runs during the popup's hand-over
+ * to the page. The client pieces (Reveal, RevealHeading) keep this file server-safe.
  */
+
+/* Every section heading's type style. */
+const DETAIL_HEADING =
+  "font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em]";
+
+const EYEBROW =
+  "mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf";
 
 const ICONS: Record<IconKey, LucideIcon> = {
   key: KeyRound,
@@ -104,16 +119,18 @@ export function ModelDetail({ model }: { model: Model }) {
     <div>
       {/* 1 — the most distinctive thing on the sheet */}
 <section className="pb-12 lg:pb-14">
-  <h2 className="mb-8 max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-    Four ways to start. No fumbling for keys.
-  </h2>
+  <RevealHeading replay
+    base={DETAIL_HEADING}
+    className="mb-8 max-w-[26ch] text-carbon"
+    lines={["Four ways to start. No fumbling for keys."]}
+  />
 
   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    {START_METHODS.map((method) => {
+    {START_METHODS.map((method, i) => {
       const Icon = ICONS[method.icon];
       const photo = START_IMAGES[method.icon];
       return (
-        <div key={method.title} className="rounded-[28px] bg-volt/10 p-6">
+        <Reveal replay key={method.title} index={i} className="rounded-[28px] bg-volt/10 p-6">
           <div className="relative aspect-square">
 <span aria-hidden className="absolute inset-[3%] rounded-full bg-volt/25" />
             {photo && (
@@ -134,7 +151,7 @@ export function ModelDetail({ model }: { model: Model }) {
             {method.title}
           </h3>
           <p className="mt-1.5 text-[14px] leading-relaxed text-[#475569]">{method.body}</p>
-        </div>
+        </Reveal>
       );
     })}
   </div>
@@ -151,20 +168,24 @@ export function ModelDetail({ model }: { model: Model }) {
     }
   >
     <div>
-      <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
+      <Reveal replay as="p" className={EYEBROW}>
         Smart features
-      </p>
-      <h2 className="max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-        Built for performance, comfort and connectivity.
-      </h2>
-      <p className="mb-8 mt-3 text-[14px] text-[#475569]">
+      </Reveal>
+      <RevealHeading replay
+        base={DETAIL_HEADING}
+        className="max-w-[26ch] text-carbon"
+        lines={["Built for performance, comfort and connectivity."]}
+      />
+      <Reveal replay as="p" delay={0.25} className="mb-8 mt-3 text-[14px] text-[#475569]">
         Thoughtful technology that makes every ride easier.
-      </p>
+      </Reveal>
 
       <ul className="grid gap-3 sm:grid-cols-2">
-        {FEATURES.map(({ icon: Icon, title, body }) => (
-          <li
+        {FEATURES.map(({ icon: Icon, title, body }, i) => (
+          <Reveal replay
+            as="li"
             key={title}
+            index={i}
             className="flex items-center gap-4 rounded-[20px] bg-volt/10 p-4"
           >
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-volt/25">
@@ -178,13 +199,16 @@ export function ModelDetail({ model }: { model: Model }) {
                 {body}
               </span>
             </span>
-          </li>
+          </Reveal>
         ))}
       </ul>
     </div>
 
     {PEOPLE[model.slug] && (
-      <div className="relative min-h-[320px] overflow-hidden rounded-[28px] lg:min-h-0">
+      <Reveal replay
+        delay={0.1}
+        className="relative min-h-[320px] overflow-hidden rounded-[28px] lg:min-h-0"
+      >
         <Image
           src={PEOPLE[model.slug]}
           alt={`${model.name} on the road`}
@@ -192,7 +216,7 @@ export function ModelDetail({ model }: { model: Model }) {
           sizes="(min-width: 1024px) 45vw, 100vw"
           className="object-cover"
         />
-      </div>
+      </Reveal>
     )}
   </div>
 </section>
@@ -201,8 +225,9 @@ export function ModelDetail({ model }: { model: Model }) {
 <Section eyebrow="The battery" title="Two packs. Same protection, different distance.">
   <div className="grid gap-4 lg:grid-cols-2">
     {BATTERIES.map((pack, i) => (
-      <div
+      <Reveal replay
         key={pack.id}
+        index={i}
         className={[
           "relative min-h-[300px] overflow-hidden rounded-[28px] p-6 lg:p-8",
           i === 0 ? "bg-soft-grey" : "bg-volt/10",
@@ -232,82 +257,93 @@ export function ModelDetail({ model }: { model: Model }) {
             className="object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.25)]"
           />
         </div>
-      </div>
+      </Reveal>
     ))}
   </div>
 
   {/* Protection panel */}
 <div className="mt-4 py-6 lg:py-8">
-      <h3 className="font-display text-[clamp(1.25rem,2vw,1.5rem)] font-bold tracking-tight text-carbon">
-      Engineered for peace of mind
-    </h3>
-    <p className="mt-1 text-[14px] text-[#475569]">
+    <RevealHeading replay
+      as="h3"
+      base="font-display text-[clamp(1.25rem,2vw,1.5rem)] font-bold tracking-tight"
+      className="text-carbon"
+      lines={["Engineered for peace of mind"]}
+    />
+    <Reveal replay as="p" delay={0.25} className="mt-1 text-[14px] text-[#475569]">
       Advanced protection. Longer life. A safer ride, every day.
-    </p>
+    </Reveal>
 
     <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4">
-      {BATTERY_PROTECTION.map((item) => {
+      {BATTERY_PROTECTION.map((item, i) => {
         const Icon = ICONS[item.icon];
         return (
-          <li key={item.label} className="flex items-center gap-3">
+          <Reveal replay as="li" key={item.label} index={i} className="flex items-center gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-volt/25">
               <Icon size={20} strokeWidth={2} className="text-leaf" aria-hidden />
             </span>
             <span className="text-[14px] font-medium leading-tight text-carbon">
               {item.label}
             </span>
-          </li>
+          </Reveal>
         );
       })}
     </ul>
   </div>
 
-  <p className="mt-6 max-w-[62ch] text-[14px] leading-relaxed text-[#475569]">{BATTERY_APP}</p>
+  <Reveal replay as="p" className="mt-6 max-w-[62ch] text-[14px] leading-relaxed text-[#475569]">
+    {BATTERY_APP}
+  </Reveal>
 </Section>
 
       {/* 4 */}
 <section className="border-t border-carbon/10 py-12 lg:py-14">
-  <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
+  <Reveal replay as="p" className={EYEBROW}>
     Charging
-  </p>
-  <h2 className="max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-    Pick the charger that fits your routine.
-  </h2>
-  <p className="mb-8 mt-3 text-[14px] text-[#475569]">
+  </Reveal>
+  <RevealHeading replay
+    base={DETAIL_HEADING}
+    className="max-w-[26ch] text-carbon"
+    lines={["Pick the charger that fits your routine."]}
+  />
+  <Reveal replay as="p" delay={0.25} className="mb-8 mt-3 text-[14px] text-[#475569]">
     Fast, reliable charging for everyday use.
-  </p>
+  </Reveal>
 
   <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
-    <div className="relative aspect-[8/5] w-full">
+    <Reveal replay className="relative aspect-[8/5] w-full">
       <Image
         src="/charger.png"
         alt="XIDAA 60V lithium battery charger with LED display"
         fill
         sizes="(min-width: 1024px) 50vw, 100vw"
       className="object-contain p-[8%] drop-shadow-[0_18px_18px_rgba(0,0,0,0.18)]"      />
-    </div>
+    </Reveal>
 
     <div>
       <div className="divide-y divide-carbon/15">
-        {CHARGERS.map((charger) => (
-          <div key={charger.label} className="py-5 first:pt-0">
+        {CHARGERS.map((charger, i) => (
+          <Reveal replay key={charger.label} index={i} delay={0.1} className="py-5 first:pt-0">
             <p className="font-display text-[13px] font-bold uppercase tracking-[0.14em] text-[#475569]">
               {charger.label}
             </p>
 <p className="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">              {charger.time}
             </p>
             <p className="mt-1.5 text-[14px] text-[#475569]">Full charge</p>
-          </div>
+          </Reveal>
         ))}
       </div>
 
-      <p className="mt-2 flex items-start gap-3 border-t border-carbon/15 pt-5 text-[14px] leading-relaxed text-[#475569]">
+      <Reveal replay
+        as="p"
+        delay={0.25}
+        className="mt-2 flex items-start gap-3 border-t border-carbon/15 pt-5 text-[14px] leading-relaxed text-[#475569]"
+      >
         <Info size={18} aria-hidden className="mt-0.5 shrink-0 text-leaf" />
         <span>
           The charger display shows charge percentage, charging status and when the
           battery is full. 1 year warranty on the charger.
         </span>
-      </p>
+      </Reveal>
     </div>
   </div>
 </section>
@@ -316,15 +352,17 @@ export function ModelDetail({ model }: { model: Model }) {
 <section className="border-t border-carbon/10 py-12 lg:py-14">
   <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] lg:gap-12">
     <div>
-      <h2 className="mb-8 max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-        Everything you need on day one.
-      </h2>
+      <RevealHeading replay
+        base={DETAIL_HEADING}
+        className="mb-8 max-w-[26ch] text-carbon"
+        lines={["Everything you need on day one."]}
+      />
 
       <div className="space-y-6">
-        {IN_THE_BOX.map((item) => {
+        {IN_THE_BOX.map((item, i) => {
           const Icon = ICONS[item.icon];
           return (
-            <div key={item.title} className="flex gap-4">
+            <Reveal replay key={item.title} index={i} className="flex gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-volt/25">
                 <Icon size={24} strokeWidth={2} className="text-leaf" aria-hidden />
               </span>
@@ -336,13 +374,13 @@ export function ModelDetail({ model }: { model: Model }) {
                   {item.body}
                 </p>
               </div>
-            </div>
+            </Reveal>
           );
         })}
       </div>
     </div>
 
-    <div className="relative aspect-[8/5] w-full">
+    <Reveal replay delay={0.1} className="relative aspect-[8/5] w-full">
       <Image
         src="/ToolKit.png"
         alt="All-in-one tool kit: flat wrench 8, 10, 15 mm and 14GE; inner hex key wrench 2, 2.5, 3, 4, 5 and 6 mm; socket hex wrench 8, 9 and 10 mm; flathead and Phillips screwdrivers with sleeve extension rod"
@@ -350,18 +388,18 @@ export function ModelDetail({ model }: { model: Model }) {
         sizes="(min-width: 1024px) 60vw, 100vw"
         className="object-contain"
       />
-    </div>
+    </Reveal>
   </div>
 </section>
 
       {/* 6 */}
       <Section eyebrow="Warranty" title="Covered where it counts.">
   <dl className="grid grid-cols-2 gap-x-8 lg:grid-cols-4 lg:gap-x-10">
-    {WARRANTY.map((item) => {
+    {WARRANTY.map((item, i) => {
       /* "2+1 years / 40,000 km" -> big "2+1 years", small "40,000 km" under it. */
       const [main, extra] = item.cover.split(" / ");
       return (
-        <div key={item.part} className="border-t border-carbon/15 py-5">
+        <Reveal replay key={item.part} index={i} className="border-t border-carbon/15 py-5">
           <dt className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#475569]">
             {item.part}
           </dt>
@@ -373,15 +411,17 @@ export function ModelDetail({ model }: { model: Model }) {
               <span className="mt-1 block text-[14px] font-semibold text-leaf">{extra}</span>
             )}
           </dd>
-        </div>
+        </Reveal>
       );
     })}
   </dl>
 
-  <p role="note" className="mt-2 flex items-center gap-2 text-[14px] text-[#475569]">
-    <Info size={16} aria-hidden className="shrink-0" />
-    {WARRANTY_NOTE}
-  </p>
+  <Reveal replay delay={0.25}>
+    <p role="note" className="mt-2 flex items-center gap-2 text-[14px] text-[#475569]">
+      <Info size={16} aria-hidden className="shrink-0" />
+      {WARRANTY_NOTE}
+    </p>
+  </Reveal>
 </Section>
 
       {/* 7 — reference, so it folds away by default */}
@@ -428,12 +468,14 @@ function Section({
 }) {
   return (
     <section className="border-t border-carbon/10 py-12 first:border-t-0 first:pt-0 lg:py-14">
-      <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
+      <Reveal replay as="p" className={EYEBROW}>
         {eyebrow}
-      </p>
-      <h2 className="mb-8 max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-        {title}
-      </h2>
+      </Reveal>
+      <RevealHeading replay
+        base={DETAIL_HEADING}
+        className="mb-8 max-w-[26ch] text-carbon"
+        lines={[title]}
+      />
       {children}
     </section>
   );

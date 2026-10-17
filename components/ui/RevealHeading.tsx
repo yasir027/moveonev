@@ -14,6 +14,10 @@ interface RevealHeadingProps {
   /** Colour and anything else on top of SECTION_HEADING. */
   className?: string;
   as?: "h1" | "h2" | "h3";
+  /** The type style, for headings that aren't section-sized. Defaults to SECTION_HEADING. */
+  base?: string;
+  /** Rise again every time it comes back into view, rather than only the first time. */
+  replay?: boolean;
 }
 
 /**
@@ -22,16 +26,22 @@ interface RevealHeadingProps {
  * Still a single real heading: the lines are block spans inside it, so screen readers and
  * SEO see the same text as before. Reduced motion swaps the slide for a plain fade.
  */
-export function RevealHeading({ lines, className = "", as = "h2" }: RevealHeadingProps) {
+export function RevealHeading({
+  lines,
+  className = "",
+  as = "h2",
+  base = SECTION_HEADING,
+  replay = false,
+}: RevealHeadingProps) {
   const reducedMotion = usePrefersReducedMotion();
   const Tag = motion[as];
 
   return (
     <Tag
-      className={`${SECTION_HEADING} ${className}`}
+      className={`${base} ${className}`}
       initial="hidden"
       whileInView="shown"
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: !replay, margin: "-10%" }}
       transition={{ staggerChildren: 0.08 }}
     >
       {lines.map((line, i) => (

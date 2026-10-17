@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getModel, models } from "@/lib/models";
+import { BATTERIES, getModel, models } from "@/lib/models";
 import { ModelView } from "@/components/models/ModelView";
 
 /*
@@ -19,7 +19,12 @@ export function generateStaticParams() {
 
 // Next 15 signature: params is a Promise. On Next 14 it is a plain object, so drop the
 // `await` and the Promise<> wrapper.
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  /* ?finish=&battery= — the picks the popup hands over on Expand. Reading them makes the
+     page render per request rather than at build time. */
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const model = getModel((await params).slug);
@@ -38,9 +43,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ModelPage({ params }: Props) {
+export default async function ModelPage({ params, searchParams }: Props) {
   const model = getModel((await params).slug);
   if (!model) notFound();
+
+  /* Only values this model actually has; anything else falls back to the defaults. */
+  const query = await searchParams;
+  const finish = model.finishes.find((f) => f === query.finish);
+  const battery = BATTERIES.find((b) => b.id === query.battery)?.id;
 
   const offers = Object.values(model.pricing).map((p) => p.offer);
   const jsonLd = {
@@ -70,7 +80,13 @@ export default async function ModelPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <ModelView model={model} expanded asPage />
+      <ModelView
+        model={model}
+        expanded
+        asPage
+        initialFinish={finish}
+        initialBattery={battery}
+      />
 
       {/* CLOSING CTA — dark, so the page ends on the one action it exists for. */}
       <section

@@ -38,14 +38,31 @@ export function ModelView({
   model,
   expanded,
   asPage = false,
+  initialFinish,
+  initialBattery,
+  onChange,
 }: {
   model: Model;
   expanded: boolean;
   /** True on the real page: the name becomes the page's <h1>. */
   asPage?: boolean;
+  /** Where the choices start: the card's battery, or what the popup handed to the page. */
+  initialFinish?: string;
+  initialBattery?: BatteryId;
+  /** Told about every pick, so the popup can carry the choices over to the page. */
+  onChange?: (finish: string, battery: BatteryId) => void;
 }) {
-  const [finish, setFinish] = useState(model.finishes[0]);
-  const [battery, setBattery] = useState<BatteryId>("30ah");
+  const [finish, setFinishState] = useState(initialFinish ?? model.finishes[0]);
+  const [battery, setBatteryState] = useState<BatteryId>(initialBattery ?? "30ah");
+
+  const setFinish = (next: string) => {
+    setFinishState(next);
+    onChange?.(next, battery);
+  };
+  const setBattery = (next: BatteryId) => {
+    setBatteryState(next);
+    onChange?.(finish, next);
+  };
 
   const pack = BATTERIES.find((b) => b.id === battery) ?? BATTERIES[0];
   const price = model.pricing[battery];

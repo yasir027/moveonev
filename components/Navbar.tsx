@@ -11,7 +11,7 @@ import { EASE_PREMIUM } from "@/lib/motion";
 const LINKS = [
   { label: "Models", href: "/models" },
   { label: "Technology", href: "/technology" },
-  { label: "About", href: "#about" },
+  { label: "About", href: "/about" },
   { label: "Blogs", href: "/blogs" },
 ];
 

@@ -5,11 +5,16 @@ import { ArrowLeft } from "lucide-react";
 import { WHATSAPP_NUMBER } from "@/lib/heroModels";
 import { formatDate, getPost, posts } from "@/lib/blogs";
 import { PostCard } from "@/components/blog/PostCard";
+import { Reveal } from "@/components/ui/Reveal";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
  * /blogs/<slug> — one article. The page is the template (header, SEO, structured data,
  * related cards, call to action). The article itself is the Body component exported by
  * its own file in content/blogs/, so each article controls its own layout.
+ *
+ * Motion is kept to the edges: the header, "Keep reading" and the call to action reveal
+ * once; the article body stays still so nothing moves while someone reads.
  */
 
 const SITE = "https://moveonevmoto.com";
@@ -89,10 +94,15 @@ export default async function BlogPostPage({ params }: Props) {
               <span>{post.readMin} min read</span>
             </div>
 
-            <h1 className="mt-5 font-display text-[clamp(2.25rem,4.2vw,3.5rem)] font-bold leading-[1.04] tracking-[-0.035em] text-carbon">
-              {post.title}
-            </h1>
-            <p className="mt-5 text-[19px] leading-relaxed text-[#475569]">{post.excerpt}</p>
+            <RevealHeading
+              as="h1"
+              base="mt-5 font-display text-[clamp(2.25rem,4.2vw,3.5rem)] font-bold leading-[1.04] tracking-[-0.035em]"
+              className="text-carbon"
+              lines={[post.title]}
+            />
+            <Reveal as="p" delay={0.2} className="mt-5 text-[19px] leading-relaxed text-[#475569]">
+              {post.excerpt}
+            </Reveal>
           </header>
 
           {/* The article. Its own file decides everything in here. */}
@@ -107,12 +117,16 @@ export default async function BlogPostPage({ params }: Props) {
           <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
             Keep reading
           </p>
-          <h2 className="mb-8 max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-            More from the blog.
-          </h2>
+          <RevealHeading
+            base="mb-8 max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em]"
+            className="text-carbon"
+            lines={["More from the blog."]}
+          />
           <div className="grid gap-6 md:grid-cols-2">
-            {related.map((p) => (
-              <PostCard key={p.slug} post={p} />
+            {related.map((p, i) => (
+              <Reveal key={p.slug} index={i} className="h-full">
+                <PostCard post={p} />
+              </Reveal>
             ))}
           </div>
         </section>
@@ -122,12 +136,14 @@ export default async function BlogPostPage({ params }: Props) {
         data-theme="dark"
         className="mx-[7%] mt-16 rounded-[32px] bg-carbon px-8 py-14 text-center lg:py-16"
       >
-        <h2 className="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-          Questions? Ask us.
-        </h2>
-        <p className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65">
+        <RevealHeading
+          base="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em]"
+          className="text-white"
+          lines={["Questions? Ask us."]}
+        />
+        <Reveal as="p" delay={0.2} className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65">
           Book a free test ride, or message us and we will help you choose.
-        </p>
+        </Reveal>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/#book"

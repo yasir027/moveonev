@@ -36,7 +36,7 @@ const FIT = {
     floor: "bottom-[18%] sm:bottom-[13%]",
   },
   /* No thumbnails: body ~4%→88%, floor 88%. */
-  single: { box: "top-[5%] bottom-[2%] sm:top-[-8%]", floor: "bottom-[12%]" },
+single: { box: "top-[5%] bottom-[2%] sm:top-[0%]", floor: "bottom-[12%]" },
 } as const;
 
 export function ModelStage({
@@ -83,8 +83,8 @@ export function ModelStage({
     "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-carbon shadow-[0_6px_18px_-6px_rgba(16,20,18,0.35)] transition-[background-color,color,opacity] duration-200 hover:bg-carbon hover:text-volt disabled:pointer-events-none disabled:opacity-30";
 
   return (
-    <div className={`relative w-full overflow-hidden [container-type:size] ${className}`}>
-      {/* WATERMARK. Read bottom to top, cropped by the stage if it runs long. */}
+<div className={`group relative w-full overflow-hidden [container-type:size] ${className}`}>
+        {/* WATERMARK. Read bottom to top, cropped by the stage if it runs long. */}
       {!modal && (
         <div
           aria-hidden
@@ -139,8 +139,7 @@ export function ModelStage({
                   fill
                   priority={i === 0}
                   sizes="(min-width: 1024px) 560px, 90vw"
-                  className="relative object-contain object-bottom drop-shadow-[0_24px_22px_rgba(0,0,0,0.18)]"
-                />
+className="relative origin-bottom object-contain object-bottom drop-shadow-[0_24px_22px_rgba(0,0,0,0.18)] transition-transform duration-700 ease-premium group-hover:scale-110"                />
               </div>
             </div>
           ))
@@ -163,6 +162,7 @@ export function ModelStage({
             type="button"
             onClick={() => goTo(index - 1)}
             disabled={index === 0}
+            
             aria-label="Previous photo"
             className={arrow}
           >

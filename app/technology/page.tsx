@@ -30,13 +30,20 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { WHATSAPP_NUMBER } from "@/lib/heroModels";
+import { CountUp } from "@/components/ui/CountUp";
+import { ExpandPanel } from "@/components/ui/ExpandPanel";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { Reveal } from "@/components/ui/Reveal";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
  * /technology — one page, five blocks: hero, battery, motor + controller,
  * charging + app, smart ride. Icons and text carry it; the only photos are the battery
  * pack and the battery-app screenshot.
  *
- * Server component, no client JS. Every figure is from the XIDAA catalogue.
+ * Server component; the motion pieces (Reveal, RevealHeading, CountUp, ExpandPanel,
+ * Magnetic) are the home page's, and every reveal plays once. Every figure is from the
+ * XIDAA catalogue.
  */
 
 export const metadata: Metadata = {
@@ -56,9 +63,10 @@ export const metadata: Metadata = {
    Content
 --------------------------------------------------------------------------------- */
 
-const STATS = [
-  { value: "60V", label: "LFP lithium battery" },
-  { value: "2000", label: "Charge cycles" },
+/** `count` marks the plain numbers that count up as they appear. */
+const STATS: { value: string; label: string; count?: { to: number; suffix?: string } }[] = [
+  { value: "60V", label: "LFP lithium battery", count: { to: 60, suffix: "V" } },
+  { value: "2000", label: "Charge cycles", count: { to: 2000 } },
   { value: "IP67", label: "Water protection" },
   { value: "2+1 yrs", label: "Battery warranty" },
 ];
@@ -115,23 +123,28 @@ export default function TechnologyPage() {
   )}`;
 
   return (
-    <main className="bg-white pb-20 pt-[88px]">
+    <main className="bg-white pt-[88px]">
       {/* 1 — HERO */}
       <section className="px-[7%] pb-12 pt-12 lg:pb-14 lg:pt-16">
         <Eyebrow>Technology</Eyebrow>
-        <h1 className="max-w-[18ch] font-display text-[clamp(2.25rem,4.2vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.035em] text-carbon">
-          Built around the battery.
-        </h1>
-        <p className="mt-5 max-w-[58ch] text-[17px] leading-relaxed text-[#475569]">
+        <RevealHeading
+          as="h1"
+          base="max-w-[18ch] font-display text-[clamp(2.25rem,4.2vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.035em]"
+          className="text-carbon"
+          lines={["Built around the battery."]}
+        />
+        <Reveal as="p" delay={0.25} className="mt-5 max-w-[58ch] text-[17px] leading-relaxed text-[#475569]">
           Every MOVE ON scooter runs on XIDAA&rsquo;s lithium LFP battery with a smart BMS, a
           heavy-duty BLDC motor and a controller made to work together. Here is what that means
           on the road.
-        </p>
+        </Reveal>
 
         <dl className="mt-10 grid grid-cols-2 border-y border-carbon/10 lg:grid-cols-4">
           {STATS.map((s, i) => (
-            <div
+            <Reveal
               key={s.label}
+              index={i}
+              delay={0.3}
               className={[
                 "py-6 lg:px-8",
                 i % 2 === 1 ? "pl-6" : "",
@@ -140,10 +153,10 @@ export default function TechnologyPage() {
               ].join(" ")}
             >
               <dd className="font-display text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">
-                {s.value}
+                {s.count ? <CountUp value={s.count.to} suffix={s.count.suffix} /> : s.value}
               </dd>
               <dt className="mt-2 text-[14px] text-[#475569]">{s.label}</dt>
-            </div>
+            </Reveal>
           ))}
         </dl>
       </section>
@@ -154,15 +167,15 @@ export default function TechnologyPage() {
           <div>
             <Eyebrow>The battery</Eyebrow>
             <H2>LFP lithium, the safer chemistry.</H2>
-            <p className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-[#475569]">
+            <Reveal as="p" delay={0.2} className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-[#475569]">
               LFP (lithium iron phosphate) cells are known for staying stable under heat and for
               a long life. Each pack has a smart BMS that watches every cell and keeps the pack
               balanced, so it lasts and stays safe.
-            </p>
+            </Reveal>
 
             <ul className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2">
-              {PROTECTION.map(({ icon: Icon, title, body }) => (
-                <li key={title} className="flex gap-4">
+              {PROTECTION.map(({ icon: Icon, title, body }, i) => (
+                <Reveal as="li" key={title} index={i} className="group flex gap-4">
                   <IconChip>
                     <Icon size={20} strokeWidth={2.25} aria-hidden />
                   </IconChip>
@@ -172,12 +185,12 @@ export default function TechnologyPage() {
                     </h3>
                     <p className="mt-0.5 text-[14px] leading-snug text-[#475569]">{body}</p>
                   </div>
-                </li>
+                </Reveal>
               ))}
             </ul>
           </div>
 
-          <div className="relative mx-auto aspect-square w-full max-w-[420px]">
+          <Reveal delay={0.1} className="relative mx-auto aspect-square w-full max-w-[420px]">
             <span aria-hidden className="absolute inset-[8%] rounded-full bg-volt/15" />
             <Image
               src="/Battery.png"
@@ -186,11 +199,11 @@ export default function TechnologyPage() {
               sizes="(min-width: 1024px) 34vw, 80vw"
               className="object-contain p-[6%] drop-shadow-[0_18px_18px_rgba(0,0,0,0.18)]"
             />
-          </div>
+          </Reveal>
         </div>
 
         {/* Two packs, as a plain table */}
-        <div className="mt-10 overflow-x-auto">
+        <Reveal className="mt-10 overflow-x-auto">
           <table className="w-full min-w-[480px] text-left">
             <thead>
               <tr className="border-b border-carbon/15 text-[13px] font-bold uppercase tracking-[0.12em] text-[#475569]">
@@ -215,7 +228,7 @@ export default function TechnologyPage() {
           <p className="mt-4 text-[14px] font-medium text-[#9B0B22]">
             No battery warranty in case of deep discharge.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* 3 — MOTOR + CONTROLLER */}
@@ -224,8 +237,8 @@ export default function TechnologyPage() {
         <H2>Power that doesn&rsquo;t fuss.</H2>
 
         <ul className="mt-8 grid gap-6 md:grid-cols-3 md:gap-10">
-          {MOTOR_POINTS.map(({ icon: Icon, title, body }) => (
-            <li key={title} className="border-t border-carbon/15 pt-6">
+          {MOTOR_POINTS.map(({ icon: Icon, title, body }, i) => (
+            <Reveal as="li" key={title} index={i} className="group border-t border-carbon/15 pt-6">
               <IconChip>
                 <Icon size={20} strokeWidth={2.25} aria-hidden />
               </IconChip>
@@ -233,7 +246,7 @@ export default function TechnologyPage() {
                 {title}
               </h3>
               <p className="mt-2 text-[15px] leading-relaxed text-[#475569]">{body}</p>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </section>
@@ -244,18 +257,18 @@ export default function TechnologyPage() {
           <div>
             <Eyebrow>Charging &amp; battery app</Eyebrow>
             <H2>Know your battery, always.</H2>
-            <p className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-[#475569]">
+            <Reveal as="p" delay={0.2} className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-[#475569]">
               Pick the charger that fits your routine. The display shows charge percentage,
               charging status and when the battery is full, and the charger carries a 1 year
               warranty.
-            </p>
+            </Reveal>
 
             <dl className="mt-8 divide-y divide-carbon/10 border-y border-carbon/10">
               {[
                 ["60V / 6A charger", "4–5 hours"],
                 ["60V / 10A charger", "2–3 hours"],
-              ].map(([label, time]) => (
-                <div key={label} className="flex items-center justify-between gap-6 py-5">
+              ].map(([label, time], i) => (
+                <Reveal key={label} index={i} className="flex items-center justify-between gap-6 py-5">
                   <dt className="flex items-center gap-3 text-[16px] font-medium text-carbon">
                     <BatteryCharging size={20} className="text-leaf" aria-hidden />
                     {label}
@@ -263,11 +276,11 @@ export default function TechnologyPage() {
                   <dd className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">
                     {time}
                   </dd>
-                </div>
+                </Reveal>
               ))}
             </dl>
 
-            <div className="mt-8 flex gap-4">
+            <Reveal className="mt-8 flex gap-4">
               <IconChip>
                 <Smartphone size={20} strokeWidth={2.25} aria-hidden />
               </IconChip>
@@ -276,11 +289,11 @@ export default function TechnologyPage() {
                 QR on the battery and watch live voltage, cell health, temperature and charge
                 status from your phone. Free on the Google Play Store.
               </p>
-            </div>
+            </Reveal>
           </div>
 
           {/* Phone frame: the top of the screenshot only, so it reads as a UI, not a data dump. */}
-          <div className="relative mx-auto h-[460px] w-[240px] overflow-hidden rounded-[36px] border-[7px] border-carbon bg-carbon shadow-[0_30px_60px_-24px_rgba(16,20,18,0.45)]">
+          <Reveal delay={0.1} className="relative mx-auto h-[460px] w-[240px] overflow-hidden rounded-[36px] border-[7px] border-carbon bg-carbon shadow-[0_30px_60px_-24px_rgba(16,20,18,0.45)]">
             <Image
               src="/battery-app.png"
               alt="JK BMS battery app showing live voltage, cell data and temperature"
@@ -288,7 +301,7 @@ export default function TechnologyPage() {
               sizes="240px"
               className="object-cover object-top"
             />
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -298,52 +311,71 @@ export default function TechnologyPage() {
         <H2>Start it. Park it. Protect it.</H2>
 
         <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
-          {SMART.map(({ icon: Icon, title }) => (
-            <li key={title} className="flex items-center gap-4">
+          {SMART.map(({ icon: Icon, title }, i) => (
+            <Reveal as="li" key={title} index={i} className="group flex items-center gap-4">
               <IconChip>
                 <Icon size={20} strokeWidth={2.25} aria-hidden />
               </IconChip>
               <span className="font-display text-[15px] font-bold leading-tight tracking-tight text-carbon">
                 {title}
               </span>
-            </li>
+            </Reveal>
           ))}
         </ul>
 
-        <p className="mt-8 flex items-center gap-2 text-[14px] text-[#475569]">
+        <Reveal as="p" className="mt-8 flex items-center gap-2 text-[14px] text-[#475569]">
           <Check size={16} className="text-leaf" strokeWidth={3} aria-hidden />
           Feature availability can vary by model. Ask us for the sheet for the one you like.
-        </p>
+        </Reveal>
       </section>
-<LineupSection/>
-      {/* CTA */}
-      <section
-        data-theme="dark"
-        className="mx-[7%] mt-6 rounded-[32px] bg-carbon px-8 py-14 text-center lg:py-16"
-      >
-        <h2 className="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-          See it in person.
-        </h2>
-        <p className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65">
-          Book a free test ride, or ask us anything about the battery, charging or warranty.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/#book"
-            className="rounded-full bg-volt px-8 py-4 font-display text-[16px] font-bold text-carbon transition-colors duration-200 hover:bg-white"
-          >
-            Book a test ride
-          </Link>
-          <a
-            href={whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-white/25 px-8 py-4 font-display text-[16px] font-bold text-white transition-colors duration-200 hover:bg-white/10"
-          >
-            Chat on WhatsApp
-          </a>
-        </div>
-      </section>
+      <LineupSection />
+
+      {/* CLOSING CTA — dark, opening from an inset panel to full width as it scrolls in (like
+          the model pages), and running straight on into the dark footer. */}
+      <ExpandPanel gutterClassName="bg-mist">
+        <section data-theme="dark" className="relative bg-carbon px-8 py-16 text-center lg:py-20">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(60% 50% at 20% 15%, rgb(125 255 64 / 0.16), transparent 62%), radial-gradient(55% 50% at 92% 88%, rgb(0 168 107 / 0.14), transparent 62%)",
+            }}
+          />
+          <div className="relative">
+            <RevealHeading
+              base="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em]"
+              className="text-white"
+              lines={["See it in person."]}
+            />
+            <Reveal
+              as="p"
+              delay={0.25}
+              className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65"
+            >
+              Book a free test ride, or ask us anything about the battery, charging or warranty.
+            </Reveal>
+            <Reveal delay={0.35} className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Magnetic>
+                <Link
+                  href="/#book"
+                  className="inline-block rounded-full bg-volt px-8 py-4 font-display text-[16px] font-bold text-carbon transition-colors duration-200 hover:bg-white"
+                >
+                  Book a test ride
+                </Link>
+              </Magnetic>
+              <a
+                href={whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/25 px-8 py-4 font-display text-[16px] font-bold text-white transition-colors duration-200 hover:bg-white/10"
+              >
+                Chat on WhatsApp
+              </a>
+            </Reveal>
+          </div>
+        </section>
+      </ExpandPanel>
     </main>
   );
 }
@@ -360,17 +392,21 @@ function Eyebrow({ children }: { children: ReactNode }) {
   );
 }
 
+/** Rises out of its mask the first time it's seen (RevealHeading), at this page's h2 size. */
 function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em] text-carbon">
-      {children}
-    </h2>
+    <RevealHeading
+      base="max-w-[26ch] font-display text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.1] tracking-[-0.03em]"
+      className="text-carbon"
+      lines={[children]}
+    />
   );
 }
 
+/** Fills with solid volt when its `group` parent is hovered. */
 function IconChip({ children }: { children: ReactNode }) {
   return (
-    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-volt/25 text-carbon">
+    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-volt/25 text-carbon transition-colors duration-300 ease-premium group-hover:bg-volt">
       {children}
     </span>
   );

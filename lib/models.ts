@@ -112,7 +112,7 @@ export const models: Model[] = [
     },
     motor: "Confirm motor power",
     finishes: ["Creme", "Light Blue", "Ivory White", "Glossy Red", "Dark Blue"],
-    image: null,
+    image: "/Lineup/xtorvo.png",
   }),
   define({
     slug: "x-e4",
@@ -124,11 +124,11 @@ export const models: Model[] = [
     },
     motor: "Confirm motor power",
     finishes: ["Glossy Red", "Glossy Black", "Glossy Grey", "Matte Blue", "Ivory White", "Matte Green"],
-    image: null,
+    image: "/Lineup/xe4.png",
   }),
   define({
-    slug: "x-fx-big-activa",
-    name: "X-FX Big Activa",
+    slug: "x-fh-big-activa",
+    name: "X-FH Big Activa",
     blurb: "A bold, practical electric scooter built for everyday rides and dependable utility.",
     pricing: {
       "30ah": { mrp: 80000, offer: 73999 },
@@ -136,7 +136,7 @@ export const models: Model[] = [
     },
     motor: "Confirm motor power",
     finishes: ["Glossy Red", "Glossy Black", "Glossy Grey", "Matte Blue", "Ivory White", "Matte Green"],
-    image: null,
+    image: "/Lineup/xfh.png",
   }),
   define({
     slug: "x-lambretta",
@@ -148,7 +148,7 @@ export const models: Model[] = [
     },
     motor: "Confirm motor power",
     finishes: ["Glacier Blue", "Rose Pearl", "Glossy Green"],
-    image: null,
+    image: "/Lineup/xlambretta.png",
   }),
 ];
 

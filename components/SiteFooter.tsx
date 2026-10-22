@@ -66,6 +66,7 @@ const EXPLORE = [
   { label: "Batteries", href: "/#batteries" },
   { label: "FAQ", href: "/#faq" },
   { label: "Book a test ride", href: "/#book" },
+  { label: "Contact us", href: "/contact" },
 ];
 
 export function SiteFooter() {

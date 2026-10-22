@@ -292,7 +292,7 @@ export function GetInTouchSection() {
 }
 
 /* Refined Input Skin: Replaced hard inset shadows with a clean border, added slightly more padding, and a glowing ring on focus. */
-const INPUT =
+export const INPUT =
   "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3.5 text-[14px] text-white placeholder:text-white/30 outline-none transition-all duration-300 ease-out focus:bg-white/[0.08] focus:border-volt/50 focus:ring-1 focus:ring-volt/50";
 
 function VehiclePeek() {
@@ -315,7 +315,7 @@ function VehiclePeek() {
   );
 }
 
-function Field({
+export function Field({
   id,
   label,
   hint,

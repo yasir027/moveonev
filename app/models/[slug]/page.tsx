@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getModel, models } from "@/lib/models";
 import { ModelView } from "@/components/models/ModelView";
+import { LineupSection } from "@/components/LineupSection";
 
 /*
  * The real page behind /models/<slug>: what a refresh, a shared link, a bookmark, the
@@ -80,6 +81,7 @@ export default async function ModelPage({ params }: Props) {
         <h2 className="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
           Ride the {model.name} before you decide.
         </h2>
+        
         <p className="mx-auto mt-4 max-w-[46ch] text-[17px] leading-relaxed text-white/65">
           Book a free test ride. No paperwork, no licence — just turn up.
         </p>
@@ -89,7 +91,10 @@ export default async function ModelPage({ params }: Props) {
         >
           Book a test ride
         </Link>
+        
       </section>
+    <LineupSection/>
     </main>
-  );
+  
+);
 }

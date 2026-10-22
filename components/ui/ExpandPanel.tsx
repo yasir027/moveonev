@@ -14,7 +14,8 @@ const RADIUS = "48px";
  * `--p` (0 closed, 1 open) is the only thing that moves. It defaults to 1 in the markup, so
  * server render, no-JS and reduced motion all get the finished full-bleed section.
  *
- * Inset and radius only — no scale, which would resize the text inside the panel. A plain scroll
+ * Inset and radius only, drawn as a clip-path — no scale or margin, either of which would
+ * resize or rewrap the text inside the panel. A plain scroll
  * listener writes the variable straight to the node, like ScrollCurtain: framer's useScroll did
  * not track targets on this page.
  */
@@ -60,10 +61,13 @@ export function ExpandPanel({
     };
   }, [reducedMotion]);
 
+  /* Clipped, not margined: a margin narrows the content box, so the text inside rewrapped on
+     every frame and the section's height (and everything below it) jumped while scrolling.
+     The clip leaves layout alone. */
+  const inset = `calc((1 - var(--p, 1)) * ${INSET})`;
+  const radius = `calc((1 - var(--p, 1)) * ${RADIUS})`;
   const panel: CSSProperties = {
-    marginInline: `calc((1 - var(--p, 1)) * ${INSET})`,
-    borderRadius: `calc((1 - var(--p, 1)) * ${RADIUS}) calc((1 - var(--p, 1)) * ${RADIUS}) 0 0`,
-    overflow: "clip",
+    clipPath: `inset(0 ${inset} 0 ${inset} round ${radius} ${radius} 0 0)`,
   };
 
   return (

@@ -11,9 +11,9 @@ import { EASE_PREMIUM } from "@/lib/motion";
 
 const LINKS = [
   { label: "Models", href: "/models" },
-  { label: "Technology", href: "#technology" },
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
+  { label: "Technology", href: "/technology" },
+  { label: "About", href: "/about" },
+  { label: "Blogs", href: "/blogs" },
 ];
 
 const MORPH = { duration: 0.5, ease: EASE_PREMIUM };

@@ -12,6 +12,9 @@ import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
  * `replay` plays it again every time it comes back into view (hiding as it leaves), like
  * ExpandPanel, instead of only the first time.
  *
+ * `fade` drops the rise and keeps the fade, for glass: a transform on the element (or any
+ * ancestor) kills its backdrop blur.
+ *
  * Keep CSS hover transforms off this element: framer leaves an inline `transform` behind,
  * which beats a hover lift. Put the hover on a child.
  */
@@ -20,6 +23,7 @@ export function Reveal({
   index = 0,
   delay = 0,
   replay = false,
+  fade = false,
   className,
   children,
 }: {
@@ -27,6 +31,7 @@ export function Reveal({
   index?: number;
   delay?: number;
   replay?: boolean;
+  fade?: boolean;
   className?: string;
   children: ReactNode;
 }) {
@@ -36,7 +41,7 @@ export function Reveal({
   return (
     <Tag
       className={className}
-      initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
+      initial={{ opacity: 0, y: reducedMotion || fade ? 0 : 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: !replay, margin: "-10%" }}
       transition={{

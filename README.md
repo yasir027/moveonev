@@ -10,6 +10,22 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
   build. **Fix before deploying:** delete `lib/oldmodels.ts` if it's no longer needed
   (confirm with Yasir), or add the missing `"55ah"` pricing.
 
+## Contact form email
+
+The `/contact` form emails each enquiry to **moveonevmoto@gmail.com** through
+[Web3Forms](https://web3forms.com). It needs a free access key:
+
+1. On web3forms.com, enter `moveonevmoto@gmail.com` to create an access key (it arrives in
+   that inbox).
+2. Put it in `.env.local` at the project root (git ignores it, so each machine needs its own):
+   ```
+   NEXT_PUBLIC_WEB3FORMS_KEY=your-access-key
+   ```
+3. Restart `npm run dev`. When deploying, add the same variable in the host's environment
+   settings.
+
+Without the key the form shows its "didn't go through" message and logs a warning.
+
 ## Getting Started
 
 First, run the development server:

@@ -71,7 +71,7 @@ export function ModelView({
   const Heading = asPage ? "h1" : "h3";
 
   /* The carousel's slides. With real angles in `gallery` they show here; until then the
-     same photo repeats. A finish that has its own photo replaces the first slide. */
+     same photo repeats. A finish that has its own photo replaces the first slide. 
   const base = model.gallery?.length
     ? model.gallery
     : model.image
@@ -80,10 +80,13 @@ export function ModelView({
   const slides = base.map((src, i) =>
     i === 0 ? (model.colorImages?.[finish] ?? src) : src,
   );
+  */
+
+  const slides = model.image ? [model.image] : [];
 
   /* Pre-filled, so the enquiry arrives already saying which scooter, colour and pack. */
   const whatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    `Hi MOVE ON, I'd like to book a test ride of the ${model.name} (${finish}, ${pack.label}).`,
+    `Hi MOVE ON, I'd like to book a test ride of the ${model.name}, ${pack.label}).`,
   )}`;
 
   const label =
@@ -94,16 +97,19 @@ export function ModelView({
       className={[
         "grid w-full lg:grid-cols-[1.05fr_1fr]",
         expanded
-          ? "gap-6 px-[7%] pb-12 pt-16 sm:pt-20 lg:gap-14 lg:pt-20"
-          : "",
+ ? asPage
+    ? "gap-6 px-[7%] pb-12 pt-4 lg:gap-14 lg:pt-6"
+    : "gap-6 px-[7%] pb-12 pt-16 sm:pt-20 lg:gap-14 lg:pt-20"
+  : "",
       ].join(" ")}
     >
       {/* LEFT — the stage. `layout` counter-scales it during the morph so the
           scooter doesn't visibly stretch. */}
       <motion.div layout className="min-w-0">
         <ModelStage
-          slides={slides}
-          alt={`MOVE ON ${model.name} in ${finish}`}
+          slides={slides.slice(0, 1)}
+          //slides={slides} thumnails.
+          alt={`MOVE ON ${model.name} `}
           name={model.name}
           variant="modal"
           className={
@@ -166,7 +172,7 @@ export function ModelView({
         </p>
 
         {/* Finish. The chosen name sits right beside the header, so the two read
-            as one label. Picking one re-tints the stage's arc. */}
+            as one label. Picking one re-tints the stage's arc. 
         <div className="mt-5">
           <p className="mb-2 flex items-baseline gap-3">
             <span className={label}>Finish</span>
@@ -196,7 +202,28 @@ export function ModelView({
             })}
           </div>
         </div>
-
+*/}
+<div className="mt-5">
+  <p className={`${label} mb-2`}>Available colours</p>
+  <div className="flex flex-wrap gap-3">
+    {model.finishes.map((name) => (
+      <span
+        key={name}
+        role="img"
+        aria-label={name}
+        className="group/dot relative h-6 w-6 cursor-default rounded-full ring-1 ring-carbon/15"
+        style={{ backgroundColor: FINISH[name] ?? "#8A9199" }}
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-carbon px-3 py-1 font-display text-[11px] font-bold text-white opacity-0 transition-opacity duration-150 group-hover/dot:opacity-100"
+        >
+          {name}
+        </span>
+      </span>
+    ))}
+  </div>
+</div>
         {/* Battery — the choice that sets the price. The selected card is white
             with a thick green border and a 5% green wash. Both states carry the
             same 3px border, so picking one never shifts the layout. ev-green,
@@ -236,8 +263,12 @@ export function ModelView({
         </div>
 
         {/* USPs — fill the space between battery and booking, centred   in it. */}
-        <div className="flex items-center py-4 lg:flex-1">
-          <ul className="grid w-full grid-cols-4 gap-2">
+<div
+  className={[
+    "mt-2 flex items-center gap-3",
+    expanded ? "lg:pt-8" : "lg:pt-2",
+  ].join(" ")}
+>          <ul className="grid w-full grid-cols-4 gap-2">
             {USP.map(({ icon: Icon, short, long }) => (
               <li
                 key={long}

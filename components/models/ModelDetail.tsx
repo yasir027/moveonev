@@ -105,7 +105,15 @@ const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
 /* One lifestyle photo per model, from /public/people. A model without one gets the
    features at full width instead. */
 const PEOPLE: Record<string, string> = {
+  "x-single-light": "/people/x-singlelight.png",
+  "x-double-light": "/people/x-doublelight.png",
+  "x-torvo": "/people/x-torvo.png",
+  "x-e4": "/people/x-e4.png",
+  "x-fh-big-activa": "/people/x-fh.png",
   "x-ozone": "/people/x-ozone.png",
+  "x-orl-cheetah": "/people/x-orlcheetah.png",
+  "x-robox": "/people/x-robox.png",
+  "x-lambretta": "/people/x-lambretta.png",
 };
 
 /* Pack photos from /public. Keyed by the battery ids in lib/models.ts. */

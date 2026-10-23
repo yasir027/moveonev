@@ -72,8 +72,8 @@ export function GetInTouchSection() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[1240px] px-5 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-16">
+<div className="relative mx-auto w-full max-w-[1440px] px-[7%]">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-16">
           {/* Left: the ask */}
           <div className="lg:pt-4">
             <span className="mb-4 block h-px w-10 bg-volt" />
@@ -309,7 +309,7 @@ function VehiclePeek() {
         alt=""
         width={1400}
         height={1000}
-        className="absolute -top-[30px] left-[2%] h-[360px] w-auto object-contain sm:-top-[40px] sm:left-[4%] sm:h-[470px] lg:top-[20px] lg:left-[1%] lg:h-[660px]"
+        className="absolute -top-[30px] left-[2%] h-[360px] w-auto object-contain sm:-top-[40px] sm:left-[4%] sm:h-[470px] lg:top-[60px] lg:left-[1%] lg:h-[660px]"
       />
     </div>
   );

@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
+  ArrowRight,
   Flame,
   Droplets,
   Zap,
@@ -36,41 +38,42 @@ interface Pack {
   chip?: string;
 }
 
+/* Figures from the XIDAA catalogue: 60V 30AH = 70–80 km, 60V 45AH = 110–120 km, both LFP
+   with a smart BMS. kWh is volts x amp-hours (60 x 30 = 1.8, 60 x 45 = 2.7). Both packs
+   carry the same feature set, so they share one perk list. On phones only the first four
+   show, so both cards fit on screen together. */
+const PERKS = [
+  "Fire proof",
+  "IP67 sealed",
+  "Laser-welded",
+  "Nickel strips",
+  "Cell balancing",
+  "App tracking",
+  "Fast charge",
+  "2,000 cycles",
+];
+
 const packs: Pack[] = [
   {
     label: "01",
     name: "60V 30AH",
     title: "Everyday",
     range: "70–80",
-    specs: "1.8 kWh · LFP cells · 12 kg",
-    perks: [
-      "Fire proof",
-      "IP67 sealed",
-      "Laser-welded",
-      "App tracking",
-      "Fast charge",
-      "2,000 cycles",
-    ],
+    specs: "1.8 kWh · LFP cells · Smart BMS",
+    perks: PERKS,
     image: "/Battery1.png",
     alt: "MOVE ON 60V 30AH lithium battery",
     placeholder: "PACK PNG",
   },
   {
     label: "02",
-    name: "60V 55AH",
+    name: "60V 45AH",
     title: "Long range",
-    range: "160–170",
-    specs: "3.3 kWh · Pouch cells · 19 kg",
-    perks: [
-      "Fire proof",
-      "IP67 sealed",
-      "Cell balancing",
-      "Nickel strips",
-      "App tracking",
-      "2,000 cycles",
-    ],
+    range: "110–120",
+    specs: "2.7 kWh · LFP cells · Smart BMS",
+    perks: PERKS,
     image: "/Battery3.png",
-    alt: "MOVE ON 60V 55AH lithium battery",
+    alt: "MOVE ON 60V 45AH lithium battery",
     placeholder: "PACK PNG",
     featured: true,
     chip: "Most picked",
@@ -93,9 +96,10 @@ function getPerkIcon(perk: string) {
 
 export function BatterySection() {
   return (
+    /* overflow-x-clip, not overflow-hidden — same as LineupSection. Spacing matches it too. */
     <section
       id="batteries"
-      className="relative w-full overflow-hidden bg-mist py-24 lg:py-32"
+      className="relative w-full overflow-x-clip bg-mist py-16 lg:py-24"
     >
       <div
         aria-hidden
@@ -106,20 +110,16 @@ export function BatterySection() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-10">
+      {/* Same container as LineupSection. */}
+      <div className="relative mx-auto w-full max-w-[1440px] px-[7%]">
         <span
           aria-hidden
-          className="pointer-events-none absolute right-12 top-8 hidden select-none whitespace-nowrap font-display text-[8vw] font-extrabold leading-[0.8] tracking-[-0.04em] text-carbon/[0.03] lg:block"
+          className="pointer-events-none absolute right-0 top-8 hidden select-none whitespace-nowrap font-display text-[8vw] font-extrabold leading-[0.8] tracking-[-0.04em] text-carbon/[0.03] lg:block"
         >
           RANGE
         </span>
 
-        <header className="relative mb-16 max-w-2xl lg:mb-20">
-          {/* <span className="mb-5 block h-1 w-12 rounded-full bg-volt" />
-
-          <span className="mb-4 block font-display text-xs font-bold uppercase tracking-[0.2em] text-carbon/40">
-            The Battery
-          </span> */}
+        <header className="relative mb-8 max-w-2xl lg:mb-14">
           <RevealHeading
             className="text-carbon"
             lines={["Pick the pack", "that fits your day."]}
@@ -130,14 +130,15 @@ export function BatterySection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
-            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+            className="mt-4 max-w-[480px] text-base leading-relaxed text-carbon/60 lg:mt-6"
           >
-            Same protection, same charger, same three-year cover across all
-            three. The only question is how far you ride between charges.
+            Same protection, same smart BMS, same 2 + 1 year cover on both
+            packs. The only question is how far you ride between charges.
           </motion.p>
         </header>
 
-        <div className="focus-siblings mx-auto grid grid-cols-1 gap-6 xl:grid-cols-2 xl:gap-8">
+        {/* Always two columns, so both packs show together even on a phone. */}
+        <div className=" mx-auto grid grid-cols-2 gap-3 sm:gap-5 lg:gap-6">
           {packs.map((pack, i) => (
             <motion.article
               key={pack.name}
@@ -154,138 +155,176 @@ export function BatterySection() {
           ))}
         </div>
 
-        <p className="relative mt-16 text-center text-sm font-medium tracking-wide text-carbon/50 lg:mt-20">
-          2 + 1 years warranty on every pack. Swappable, and fits every MOVE ON
-          model.
-        </p>
+        <div className="relative mt-8 flex flex-col items-center gap-4 lg:mt-14 lg:gap-5">
+          <p className="text-center text-xs font-medium tracking-wide text-carbon/50 sm:text-sm">
+            2 + 1 years / 40,000 km warranty on every pack.
+          </p>
+
+          {/* Subtle: transparent, volt outline, fills lightly on hover. */}
+          <Link
+            href="/technology"
+className="
+              inline-flex items-center justify-center gap-2
+              rounded-full border border-carbon/25
+              bg-transparent px-7 py-3.5
+              text-sm font-medium text-carbon
+              transition-all duration-300
+              hover:border-carbon
+              hover:bg-carbon hover:text-white
+            "          >
+            Read more about our technology
+            <ArrowRight
+              size={15}
+              strokeWidth={2.5}
+              aria-hidden
+              className="transition-transform duration-300 group-hover/btn:translate-x-0.5"
+            />
+          </Link>
+        </div>
       </div>
     </section>
   );
 }
 
+/*
+ * Desktop (lg+): the top of the card is two halves, details on the left and the battery
+ * on the right, with the feature pills and the button underneath.
+ * Below lg the card is a narrow column: battery on top, details under it. It is sized so
+ * two of them sit side by side on a phone.
+ */
 function PackCard({ pack }: { pack: Pack }) {
   const isFeatured = pack.featured;
 
   return (
     <div
       className={[
-        "group relative flex h-full flex-col items-center gap-6 rounded-[32px] bg-white p-6 sm:flex-row sm:items-stretch sm:p-7",
+        "group relative flex h-full flex-col gap-3 rounded-[22px] bg-white p-3 sm:gap-4 sm:rounded-[28px] sm:p-5",
         "shadow-[0_20px_40px_-15px_rgba(16,20,18,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-15px_rgba(16,20,18,0.12)]",
         isFeatured ? "border-2 border-carbon" : "border border-carbon/10",
       ].join(" ")}
     >
-      <span aria-hidden className="focus-veil" />
+      {pack.chip && (
+        <span className="absolute left-2.5 top-2.5 z-20 rounded-full bg-volt px-2 py-1 font-display text-[8px] font-bold uppercase tracking-[0.14em] text-carbon shadow-sm sm:left-5 sm:top-5 sm:px-3 sm:py-1.5 sm:text-[9px]">
+          {pack.chip}
+        </span>
+      )}
 
-{pack.chip && (
-  <span className="absolute left-5 top-5 z-20 rounded-full bg-volt px-3 py-1.5 font-display text-[9px] font-bold uppercase tracking-[0.16em] text-carbon shadow-sm sm:left-7 sm:top-7">
-    {pack.chip}
-  </span>
-)}
-
-      {/* Left side: Image Frame */}
-      <PackFrame pack={pack} />
-
-      {/* Right side: Content */}
-      <div className="flex flex-1 flex-col justify-center py-2">
-        <div className="flex items-center gap-3.5">
-          {/* Increased label size */}
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-carbon font-display text-sm font-bold text-volt">
-            {pack.label}
-          </span>
-          <div className="min-w-0">
-            <p className="font-display text-xs font-bold uppercase tracking-[0.16em] text-carbon/40">
-              {pack.name}
-            </p>
-            {/* Increased title size */}
-            <h3 className="truncate font-display text-2xl font-bold leading-tight tracking-tight text-carbon sm:text-3xl">
-              {pack.title}
-            </h3>
+      {/* Top: details (left on desktop) and battery (right on desktop). The battery is
+          first in the DOM order on phones via `order-first`. */}
+      <div className="grid items-center gap-2 lg:grid-cols-2 lg:gap-6">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon font-display text-[11px] font-bold text-volt sm:h-9 sm:w-9 sm:text-[13px]">
+              {pack.label}
+            </span>
+            <div className="min-w-0">
+              <p className="font-display text-[9px] font-bold uppercase tracking-[0.14em] text-carbon/40 sm:text-[11px] sm:tracking-[0.16em]">
+                {pack.name}
+              </p>
+              <h3 className="truncate font-display text-base font-bold leading-tight tracking-tight text-carbon sm:text-xl lg:text-2xl">
+                {pack.title}
+              </h3>
+            </div>
           </div>
+
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-2 sm:mt-4">
+            <span className="font-display text-2xl font-extrabold leading-none tracking-[-0.03em] text-carbon sm:text-3xl lg:text-4xl">
+              {pack.range}
+            </span>
+            <span className="text-[11px] font-semibold text-carbon/50 sm:text-sm">
+              km per charge
+            </span>
+          </div>
+
+          <p className="mt-1.5 hidden text-[13px] font-medium tracking-wide text-carbon/60 sm:block">
+            {pack.specs}
+          </p>
         </div>
 
-        <div className="mt-6 flex items-baseline gap-2">
-          {/* Increased range sizing */}
-          <span className="font-display text-4xl font-extrabold leading-none tracking-[-0.03em] text-carbon lg:text-5xl">
-            {pack.range}
-          </span>
-          <span className="text-sm font-semibold text-carbon/50">km per charge</span>
-        </div>
-
-        {/* Increased specs font size */}
-        <p className="mt-2 text-base font-medium tracking-wide text-carbon/60">
-          {pack.specs}
-        </p>
-
-        <ul className="mt-6 grid grid-cols-1 gap-x-4 gap-y-3.5 border-t border-carbon/10 pt-6 sm:grid-cols-2">
-          {pack.perks.map((perk) => {
-            const Icon = getPerkIcon(perk);
-            return (
-              <li key={perk} className="flex items-center gap-3">
-                {/* Increased icon bounding box and icon size */}
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-volt/20">
-                  <Icon
-                    className="h-4 w-4 text-[#42ce00]"
-                    strokeWidth={2.5}
-                    aria-hidden
-                  />
-                </span>
-                {/* Increased perk text size */}
-                <span className="truncate text-[15px] font-semibold text-carbon/80">
-                  {perk}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Wrapped button to push it further down */}
-        <div className="mt-10 w-full sm:mt-auto sm:pt-6">
-          <button
-            type="button"
-            className={[
-              "w-full rounded-full py-4 font-display text-[15px] font-bold tracking-wide transition-colors duration-300 ease-premium",
-              isFeatured
-                ? "bg-volt text-carbon hover:bg-carbon hover:text-white"
-                : "bg-carbon text-white hover:bg-volt hover:text-carbon",
-            ].join(" ")}
-          >
-            Book a test ride
-          </button>
-        </div>
+        <PackFrame pack={pack} className="order-first lg:order-last" />
       </div>
+
+      {/* Features, as pills. */}
+      <ul className="flex flex-wrap gap-1.5 border-t border-carbon/10 pt-3 sm:gap-2 sm:pt-4">
+        {pack.perks.map((perk, idx) => {
+          const Icon = getPerkIcon(perk);
+          return (
+            <li
+              key={perk}
+              className={[
+                "items-center gap-1 rounded-full bg-volt/15 py-0.5 pl-1.5 pr-2 sm:gap-1.5 sm:py-1 sm:pl-2 sm:pr-3",
+                idx > 3 ? "hidden sm:flex" : "flex",
+              ].join(" ")}
+            >
+              <Icon
+                className="h-3 w-3 shrink-0 text-leaf sm:h-3.5 sm:w-3.5"
+                strokeWidth={2.5}
+                aria-hidden
+              />
+              <span className="text-[10px] font-semibold text-carbon/80 sm:text-[12px]">
+                {perk}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* mt-auto pins the button to the bottom, so both cards' buttons line up. */}
+      {/* Two buttons. Stacked on phones (the cards are narrow), side by side from sm up. */}
+<div className="mt-auto flex w-full flex-col gap-2 sm:flex-row sm:gap-3">
+  <Link
+    href="/models"
+  className="flex-1 rounded-full border border-carbon/15 bg-transparent py-2.5 text-center font-display text-[13px] font-bold tracking-wide text-carbon transition-colors duration-300 hover:border-carbon hover:bg-carbon hover:text-volt sm:py-3 sm:text-[15px]"
+  >
+    View scooters
+  </Link>
+  <Link
+    href="/#book"
+    className={[
+      "flex-1 rounded-full py-2.5 text-center font-display text-[13px] font-bold tracking-wide transition-colors duration-300 ease-premium sm:py-3 sm:text-[15px]",
+      isFeatured
+        ? "bg-volt text-carbon hover:bg-carbon hover:text-white"
+        : "bg-carbon text-white hover:bg-volt hover:text-carbon",
+    ].join(" ")}
+  >
+    Book a test ride
+  </Link>
+</div>
     </div>
   );
 }
 
-function PackFrame({ pack }: { pack: Pack }) {
+function PackFrame({ pack, className = "" }: { pack: Pack; className?: string }) {
   return (
-    <div className="relative isolate flex w-full shrink-0 items-center justify-center rounded-[24px] sm:w-[220px] lg:w-[260px]">
+    <div
+      className={`relative isolate flex h-[105px] w-full shrink-0 items-center justify-center rounded-[16px] sm:h-[150px] lg:h-[190px] ${className}`}
+    >
       <span
         aria-hidden
-        className="absolute inset-0 rounded-[24px] bg-[radial-gradient(50%_50%_at_50%_50%,rgba(16,20,18,0.05),transparent_80%)]"
+        className="absolute inset-0 rounded-[16px] bg-[radial-gradient(50%_50%_at_50%_50%,rgba(16,20,18,0.05),transparent_80%)]"
       />
 
       {pack.image ? (
-        <div className="relative flex aspect-square w-full items-center justify-center">
+        <div className="relative h-full w-full">
           <span
             aria-hidden
-            className="absolute bottom-[10%] h-5 w-[70%] rounded-[50%] bg-carbon/15 blur-xl"
+            className="absolute bottom-[8%] left-1/2 h-5 w-[45%] -translate-x-1/2 rounded-[50%] bg-carbon/15 blur-xl"
           />
           <span
             aria-hidden
-            className="absolute bottom-[15%] h-2 w-[45%] rounded-[50%] bg-carbon/30 blur-md"
+            className="absolute bottom-[12%] left-1/2 h-2 w-[30%] -translate-x-1/2 rounded-[50%] bg-carbon/30 blur-md"
           />
 
           <Image
             src={pack.image}
             alt={pack.alt}
-            width={400}
-            height={400}
-            className="relative z-10 w-[95%] -translate-y-2 object-contain drop-shadow-[0_20px_25px_rgba(16,20,18,0.25)] transition-transform duration-500 ease-premium group-hover:-translate-y-3 group-hover:scale-105 md:w-[105%]"
+            fill
+            sizes="(min-width: 1024px) 25vw, 45vw"
+            className="relative z-10 object-contain p-1 drop-shadow-[0_20px_25px_rgba(16,20,18,0.25)] transition-transform duration-500 ease-premium group-hover:-translate-y-1 group-hover:scale-105"
           />
         </div>
       ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 overflow-hidden rounded-[24px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 overflow-hidden rounded-[16px]">
           <span className="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-none tracking-[-0.05em] text-carbon/[0.07]">
             {pack.label}
           </span>

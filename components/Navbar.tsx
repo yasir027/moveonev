@@ -17,6 +17,7 @@ const LINKS = [
   { label: "Technology", href: "/technology" },
   { label: "About", href: "/about" },
   { label: "Blogs", href: "/blogs" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const MORPH = { duration: 0.5, ease: EASE_PREMIUM };

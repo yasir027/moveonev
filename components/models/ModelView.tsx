@@ -263,28 +263,24 @@ export function ModelView({
         </div>
 
         {/* USPs — fill the space between battery and booking, centred   in it. */}
-<div
-  className={[
-    "mt-2 flex items-center gap-3",
-    expanded ? "lg:pt-8" : "lg:pt-2",
-  ].join(" ")}
->          <ul className="grid w-full grid-cols-4 gap-2">
-            {USP.map(({ icon: Icon, short, long }) => (
-              <li
-                key={long}
-                title={long}
-                className="flex flex-col items-center gap-2 text-center"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-soft-grey">
-                  <Icon size={20} strokeWidth={2.25} className="text-leaf" aria-hidden />
-                </span>
-                <span className="text-[13px] font-semibold leading-tight text-carbon">
-                  {short}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+<div className="flex items-center py-8 sm:py-10 lg:flex-1">
+  <ul className="grid w-full grid-cols-4 gap-2">
+    {USP.map(({ icon: Icon, short, long }) => (
+      <li
+        key={long}
+        title={long}
+        className="flex flex-col items-center gap-2 text-center"
+      >
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-soft-grey">
+          <Icon size={20} strokeWidth={2.25} className="text-leaf" aria-hidden />
+        </span>
+        <span className="text-[13px] font-semibold leading-tight text-carbon">
+          {short}
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
 
         {/* Booking row: the button takes the width, WhatsApp is the small round
             one beside it. */}

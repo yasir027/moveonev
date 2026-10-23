@@ -38,9 +38,9 @@ export function ModelGrid({
     <div
       className="
         grid w-full min-w-0
-        grid-cols-1
-        gap-x-5 gap-y-10
-        sm:grid-cols-2
+        grid-cols-2
+        gap-x-3 gap-y-6
+        sm:gap-x-5 sm:gap-y-10
         lg:grid-cols-4
         xl:gap-x-6
       "

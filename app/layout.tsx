@@ -8,6 +8,7 @@ import { GlassFilter } from "@/components/ui/GlassFilter";
 import { BrandLoader } from "@/components/loader/BrandLoader";
 import { RouteTransition } from "@/components/loader/RouteTransition";
 import { LOADER_BOOT_SCRIPT } from "@/lib/intro/loader";
+import { WhatsAppFloat } from "@/components/ui/WhatsAppFloat";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -38,19 +39,8 @@ export default function RootLayout({
             blur to the refracting backdrop filter.
             Disabled for now — uncomment to bring the lens back. */}
         {/* <GlassLens /> */}
-        {/* The header lives in the layout so it stays put between pages; so does the floating
-            Book now / Contact us pill, which rides along with it outside the sliding page. */}
-        <RouteTransition
-          header={
-            <>
-              <Navbar />
-              <FloatingCta />
-            </>
-          }
-        >
-          {children}
-          <SiteFooter />
-        </RouteTransition>
+        {/* The header lives in the layout so it stays put between pages. */}
+        <RouteTransition header={<Navbar />}>{children}<WhatsAppFloat/></RouteTransition>
       </body>
     </html>
   );

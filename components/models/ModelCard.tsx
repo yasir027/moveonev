@@ -71,7 +71,7 @@ const start =
           cursor-pointer flex-col
           overflow-hidden
           border border-soft-grey
-          bg-white p-5 xl:p-5
+bg-white p-3 sm:p-5
           font-body
           transition-[translate,box-shadow,border-color]
           duration-500 ease-premium
@@ -84,72 +84,60 @@ const start =
         "
       >
         {/* 1. Product name and arrow */}
-        <div className="flex items-center justify-between gap-3">
-          <h3
-            className="
-              min-w-0 font-display
-              text-[22px] font-extrabold
-              leading-tight tracking-[-0.04em]
-              text-carbon sm:text-[21px]
-            "
-          >
-            {model.name}
-          </h3>
+        <div className="flex items-start justify-between gap-2 sm:items-center sm:gap-3">
+  <h3
+    className="
+      min-w-0 font-display
+      text-[15px] font-extrabold
+      leading-tight tracking-[-0.03em]
+      text-carbon sm:text-[21px] sm:tracking-[-0.04em]
+    "
+  >
+    {model.name}
+  </h3>
 
-          <span
-           className="
-            flex h-9 w-9 shrink-0
-            items-center justify-center
-            rounded-full bg-mist
-            text-carbon
-            transition-colors duration-300
-            group-hover:bg-volt
-            group-hover:text-black">
-            <ArrowUpRight size={16} strokeWidth={2.2} />
-          </span>
-        </div>
+  <span
+    className="
+      hidden h-9 w-9 shrink-0
+      items-center justify-center
+      rounded-full bg-mist
+      text-carbon
+      transition-colors duration-300
+      group-hover:bg-volt
+      group-hover:text-black sm:flex"
+  >
+    <ArrowUpRight size={16} strokeWidth={2.2} />
+  </span>
+</div>
 
         
 {/* 2. OFFER PRICE + MRP */}
-<div className="mt-3">
-  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-    {/* Offer price — unchanged */}
+<div className="mt-2 sm:mt-3">
+  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 sm:gap-x-3 sm:gap-y-1">
     <span
       className="
         font-display
-        text-[29px] font-extrabold
+        text-[21px] font-extrabold
         leading-none
-        tracking-[-0.055em]
+        tracking-[-0.05em]
         text-leaf
+        sm:text-[29px]
         lg:text-[clamp(25px,2vw,32px)]
       "
     >
       {formatPrice(start.offer)}
     </span>
 
-    {/* MRP — same row */}
-    <span className="font-body text-[12px] font-medium text-carbon/75">
-      {" "}
+    <span className="font-body text-[10px] font-medium text-carbon/75 sm:text-[12px]">
       <s className="font-semibold text-carbon/70">
         {formatPrice(start.mrp)}
       </s>
     </span>
 
-    {/* OFFER BADGE — TEMPORARILY DISABLED
-    <span className="rounded-md bg-volt/20 px-2 py-1 font-display text-[10px] font-extrabold text-leaf">
-      OFFER
+    <span className="w-full font-body text-[10px] font-medium italic text-carbon/65 sm:w-auto sm:text-[12px]">
+      On-road price*
     </span>
-    */}
-
-
-  <span className="
-                font-body text-[12px]
-                font-medium italic
-                text-carbon/65
-              ">
-    On-road price*
-  </span>
-</div>
+  </div>
 </div>
 
         {/* 4. Compact scooter showcase */}
@@ -269,6 +257,7 @@ const start =
               className="
                 font-body text-[11px]
                 font-medium text-carbon/45
+                
               "
             >
               Available colours
@@ -277,36 +266,31 @@ const start =
 
           {/* 6. Slim Explore Details CTA */}
           <div
-            className="
-              mt-4 flex w-full
-              items-center justify-center gap-2
-              rounded-full
-              bg-volt px-4 py-2.5
-              text-carbon
-              transition-all duration-300 ease-premium
-              group-hover:bg-carbon
-              group-hover:text-white
-            "
-          >
-            <span
-              className="
-                font-display text-[13px]
-                font-bold tracking-tight
-              "
-            >
-              Explore Details
-            </span>
+  className="
+    mt-3 flex w-full
+    items-center justify-center gap-2
+    rounded-full
+    bg-volt px-3 py-2 sm:mt-4 sm:px-4 sm:py-2.5
+    text-carbon
+    transition-all duration-300 ease-premium
+    group-hover:bg-carbon
+    group-hover:text-white
+  "
+>
+  <span className="whitespace-nowrap font-display text-[12px] font-bold tracking-tight sm:text-[13px]">
+    Explore Details
+  </span>
 
-            <ArrowRight
-              size={16}
-              strokeWidth={2.3}
-              className="
-                transition-transform duration-300
-                ease-premium
-                group-hover:translate-x-1
-              "
-            />
-          </div>
+  <ArrowRight
+    size={16}
+    strokeWidth={2.3}
+    className="
+      hidden transition-transform duration-300
+      ease-premium sm:block
+      group-hover:translate-x-1
+    "
+  />
+</div>
         </div>
       </motion.div>
 

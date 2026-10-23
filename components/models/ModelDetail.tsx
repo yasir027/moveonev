@@ -133,36 +133,43 @@ export function ModelDetail({ model }: { model: Model }) {
     lines={["Four ways to start. No fumbling for keys."]}
   />
 
-  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    {START_METHODS.map((method, i) => {
-      const Icon = ICONS[method.icon];
-      const photo = START_IMAGES[method.icon];
-      return (
-        <Reveal replay key={method.title} index={i} className="rounded-[28px] bg-volt/10 p-6">
-          <div className="relative aspect-square">
-<span aria-hidden className="absolute inset-[3%] rounded-full bg-volt/25" />
-            {photo && (
-              <Image
-                src={photo}
-                alt={method.title}
-                fill
-                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
-                className="object-contain p-[4%] drop-shadow-[0_14px_14px_rgba(0,0,0,0.18)]"
-              />
-            )}
-            <span className="absolute bottom-2 left-0 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-carbon text-volt shadow-[0_8px_20px_-6px_rgba(16,20,18,0.5)]">
-              <Icon size={22} strokeWidth={2.25} aria-hidden />
-            </span>
-          </div>
+  <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+  {START_METHODS.map((method, i) => {
+    const Icon = ICONS[method.icon];
+    const photo = START_IMAGES[method.icon];
+    return (
+      <Reveal
+        replay
+        key={method.title}
+        index={i}
+        className="rounded-[20px] bg-volt/10 p-3 sm:rounded-[28px] sm:p-6"
+      >
+        <div className="relative aspect-square">
+          <span aria-hidden className="absolute inset-[3%] rounded-full bg-volt/25" />
+          {photo && (
+            <Image
+              src={photo}
+              alt={method.title}
+              fill
+              sizes="(min-width: 1024px) 22vw, 45vw"
+              className="object-contain p-[4%] drop-shadow-[0_14px_14px_rgba(0,0,0,0.18)]"
+            />
+          )}
+          <span className="absolute bottom-1 left-0 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-carbon text-volt shadow-[0_8px_20px_-6px_rgba(16,20,18,0.5)] sm:bottom-2 sm:h-12 sm:w-12">
+            <Icon className="h-4 w-4 sm:h-[22px] sm:w-[22px]" strokeWidth={2.25} aria-hidden />
+          </span>
+        </div>
 
-          <h3 className="mt-5 font-display text-[18px] font-bold tracking-tight text-carbon">
-            {method.title}
-          </h3>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-[#475569]">{method.body}</p>
-        </Reveal>
-      );
-    })}
-  </div>
+        <h3 className="mt-3 font-display text-[14px] font-bold tracking-tight text-carbon sm:mt-5 sm:text-[18px]">
+          {method.title}
+        </h3>
+        <p className="mt-1 text-[12px] leading-snug text-[#475569] sm:mt-1.5 sm:text-[14px] sm:leading-relaxed">
+          {method.body}
+        </p>
+      </Reveal>
+    );
+  })}
+</div>
 </section>
       
       
@@ -188,28 +195,29 @@ export function ModelDetail({ model }: { model: Model }) {
         Thoughtful technology that makes every ride easier.
       </Reveal>
 
-      <ul className="grid gap-3 sm:grid-cols-2">
-        {FEATURES.map(({ icon: Icon, title, body }, i) => (
-          <Reveal replay
-            as="li"
-            key={title}
-            index={i}
-            className="flex items-center gap-4 rounded-[20px] bg-volt/10 p-4"
-          >
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-volt/25">
-              <Icon size={24} strokeWidth={2} className="text-leaf" aria-hidden />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-display text-[15px] font-bold tracking-tight text-carbon">
-                {title}
-              </span>
-              <span className="mt-0.5 block text-[14px] leading-snug text-[#475569]">
-                {body}
-              </span>
-            </span>
-          </Reveal>
-        ))}
-      </ul>
+      <ul className="grid grid-cols-2 gap-2 sm:gap-3">
+  {FEATURES.map(({ icon: Icon, title, body }, i) => (
+    <Reveal
+      replay
+      as="li"
+      key={title}
+      index={i}
+      className="flex flex-col items-start gap-2.5 rounded-[16px] bg-volt/10 p-3 sm:flex-row sm:items-center sm:gap-4 sm:rounded-[20px] sm:p-4"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-volt/25 sm:h-14 sm:w-14">
+        <Icon className="h-[18px] w-[18px] text-leaf sm:h-6 sm:w-6" strokeWidth={2} aria-hidden />
+      </span>
+      <span className="min-w-0">
+        <span className="block font-display text-[13px] font-bold leading-tight tracking-tight text-carbon sm:text-[15px]">
+          {title}
+        </span>
+        <span className="mt-0.5 block text-[12px] leading-snug text-[#475569] sm:text-[14px]">
+          {body}
+        </span>
+      </span>
+    </Reveal>
+  ))}
+</ul>
     </div>
 
     {PEOPLE[model.slug] && (
@@ -231,32 +239,34 @@ export function ModelDetail({ model }: { model: Model }) {
 
       {/* 3 */}
 <Section eyebrow="The battery" title="Two packs. Same protection, different distance.">
-  <div className="grid gap-4 lg:grid-cols-2">
-    {BATTERIES.map((pack, i) => (
-      <Reveal replay
-        key={pack.id}
-        index={i}
-        className={[
-          "relative min-h-[300px] overflow-hidden rounded-[28px] p-6 lg:p-8",
-          i === 0 ? "bg-soft-grey" : "bg-volt/10",
-        ].join(" ")}
-      >
-        {/* Text on the left, the pack photo on the right. */}
-        <div className="relative z-10 w-[52%] sm:w-1/2">
-          <p className="font-display text-[13px] font-bold uppercase tracking-[0.14em] text-leaf">
+<div className="grid grid-cols-2 gap-2.5 sm:grid-cols-1 sm:gap-4 lg:grid-cols-2">
+  {BATTERIES.map((pack, i) => (
+    <Reveal
+      replay
+      key={pack.id}
+      index={i}
+      className={[
+        "relative overflow-hidden rounded-[20px] p-3 sm:min-h-[300px] sm:rounded-[28px] sm:p-6 lg:p-8",
+        i === 0 ? "bg-soft-grey" : "bg-volt/10",
+      ].join(" ")}
+    >
+      {/* Phone: a two-column grid, with the title and range on the left, the photo on the
+          right and the details beneath both. From sm up it is a block: text on the
+          left and the photo pinned to the right edge of the card. */}
+      <div className="grid grid-cols-2 items-center gap-x-1 gap-y-3 sm:block">
+        {/* Left: title + range */}
+        <div className="relative z-10 min-w-0 sm:w-1/2">
+          <p className="font-display text-[10px] font-bold uppercase leading-tight tracking-[0.1em] text-leaf sm:text-[13px] sm:tracking-[0.14em]">
             {pack.label}
           </p>
-<p className="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">            {pack.range}
+          <p className="mt-1.5 font-display text-[18px] font-extrabold leading-none tracking-[-0.04em] text-carbon sm:mt-2 sm:text-[clamp(1.5rem,2.6vw,2.25rem)]">
+            {pack.range}
           </p>
-          <p className="mt-1.5 text-[14px] text-[#475569]">per charge</p>
-
-          <dl className="mt-6 space-y-3 border-t border-carbon/10 pt-5">
-            <Row label="Cells" value={pack.cells} />
-            <Row label="Warranty" value={pack.warranty} />
-          </dl>
+          <p className="mt-1 text-[11px] text-[#475569] sm:mt-1.5 sm:text-[14px]">per charge</p>
         </div>
 
-        <div className="absolute inset-y-6 right-4 w-[46%] lg:right-6">
+        {/* Right: the photo */}
+        <div className="relative h-[96px] sm:absolute sm:inset-y-6 sm:right-4 sm:h-auto sm:w-[46%] lg:right-6">
           <Image
             src={BATTERY_IMAGES[pack.id]}
             alt={`${pack.label} battery`}
@@ -265,9 +275,28 @@ export function ModelDetail({ model }: { model: Model }) {
             className="object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.25)]"
           />
         </div>
-      </Reveal>
-    ))}
-  </div>
+
+        {/* Beneath: the details */}
+        <dl className="relative z-10 col-span-2 space-y-2 border-t border-carbon/10 pt-3 sm:mt-6 sm:w-1/2 sm:space-y-3 sm:pt-5">
+          {[
+            ["Cells", pack.cells],
+            ["Warranty", pack.warranty],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
+            >
+              <dt className="text-[11px] text-carbon/55 sm:text-[15px]">{label}</dt>
+              <dd className="text-[12px] font-medium leading-snug text-carbon/85 sm:text-right sm:text-[15px]">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </Reveal>
+  ))}
+</div>
 
   {/* Protection panel */}
 <div className="mt-4 py-6 lg:py-8">
@@ -328,18 +357,28 @@ export function ModelDetail({ model }: { model: Model }) {
     </Reveal>
 
     <div>
-      <div className="divide-y divide-carbon/15">
-        {CHARGERS.map((charger, i) => (
-          <Reveal replay key={charger.label} index={i} delay={0.1} className="py-5 first:pt-0">
-            <p className="font-display text-[13px] font-bold uppercase tracking-[0.14em] text-[#475569]">
-              {charger.label}
-            </p>
-<p className="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">              {charger.time}
-            </p>
-            <p className="mt-1.5 text-[14px] text-[#475569]">Full charge</p>
-          </Reveal>
-        ))}
-      </div>
+     <div className="grid grid-cols-2 lg:block lg:divide-y lg:divide-carbon/15">
+  {CHARGERS.map((charger, i) => (
+    <Reveal
+      replay
+      key={charger.label}
+      index={i}
+      delay={0.1}
+      className={[
+        "py-1 lg:py-5 lg:first:pt-0",
+        i > 0 ? "border-l border-carbon/15 pl-4 lg:border-l-0 lg:pl-0" : "",
+      ].join(" ")}
+    >
+      <p className="font-display text-[11px] font-bold uppercase tracking-[0.12em] text-[#475569] sm:text-[13px] sm:tracking-[0.14em]">
+        {charger.label}
+      </p>
+      <p className="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">
+        {charger.time}
+      </p>
+      <p className="mt-1.5 text-[14px] text-[#475569]">Full charge</p>
+    </Reveal>
+  ))}
+</div>
 
       <Reveal replay
         as="p"

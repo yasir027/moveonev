@@ -1,6 +1,7 @@
 import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { FloatingCta } from "@/components/FloatingCta";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GlassFilter } from "@/components/ui/GlassFilter";
 // import { GlassLens } from "@/components/ui/GlassLens";
@@ -37,8 +38,16 @@ export default function RootLayout({
             blur to the refracting backdrop filter.
             Disabled for now — uncomment to bring the lens back. */}
         {/* <GlassLens /> */}
-        {/* The header lives in the layout so it stays put between pages. */}
-        <RouteTransition header={<Navbar />}>
+        {/* The header lives in the layout so it stays put between pages; so does the floating
+            Book now / Contact us pill, which rides along with it outside the sliding page. */}
+        <RouteTransition
+          header={
+            <>
+              <Navbar />
+              <FloatingCta />
+            </>
+          }
+        >
           {children}
           <SiteFooter />
         </RouteTransition>

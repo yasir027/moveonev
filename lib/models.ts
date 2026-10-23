@@ -75,7 +75,7 @@ export const models: Model[] = [
       "55ah": { mrp: 102000, offer: 97999 },
     },
     motor: "Confirm motor power",
-    finishes: ["Ice Blue", "Orange", "Matte Green", "Matte Blue", "Ivory White"],
+    finishes: ["Orange","Ice Blue", "Matte Green", "Matte Blue", "Ivory White"],
     image: "/Lineup/xozone.png",
   }),
   define({
@@ -87,7 +87,7 @@ export const models: Model[] = [
       "55ah": { mrp: 106000, offer: 101999 },
     },
     motor: "Confirm motor power",
-    finishes: ["Glossy Red", "Glossy Black", "Glossy Grey", "Matte Green", "Matte Beige", "Glossy Blue"],
+    finishes: [ "Glossy Blue", "Glossy Black", "Glossy Grey", "Matte Green", "Matte Beige"],
     image: "/Lineup/xorlcheetah.png",
   }),
   define({
@@ -99,7 +99,7 @@ export const models: Model[] = [
       "55ah": { mrp: 115000, offer: 109999 },
     },
     motor: "Confirm motor power",
-    finishes: ["Golden Yellow", "Aqua Blue", "Beige Gold"],
+    finishes: ["Ivory White", "Golden Yellow", "Aqua Blue", "Beige Gold"],
     image: "/Lineup/xrobox.png",
   }),
   define({

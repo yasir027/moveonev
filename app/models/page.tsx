@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ModelsBrowser } from "@/components/models/ModelsBrowser";
 import {GetInTouchSection} from "@/components/GetInTouch";
+import { LineupSection } from "@/components/LineupSection";
 
 export const metadata: Metadata = {
   title: "Models | MOVE ON",
@@ -13,7 +14,6 @@ export default function ModelsPage() {
     <main>
       <ModelsBrowser />
       <GetInTouchSection/>
-
     </main>
   );
 }

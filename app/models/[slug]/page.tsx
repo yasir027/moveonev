@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
+import { blueprintForModel } from "@/lib/blueprints";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BATTERIES, getModel, models } from "@/lib/models";
@@ -79,7 +81,12 @@ export default async function ModelPage({ params, searchParams }: Props) {
   return (
     /* pt clears the fixed navbar; tune it until the scooter sits exactly where it did in
        the grown popup. */
-    <main className="bg-white pt-[88px]">
+    <main className="relative isolate overflow-x-clip bg-white pt-[88px]">
+      {/* Background art: this model's own outline, big and faint behind the page. */}
+      <BlueprintBg
+        name={blueprintForModel(model.slug)}
+        className="right-[-30%] top-[110px] h-[460px] sm:right-[-8%] sm:h-[620px] lg:right-[-2%] lg:top-[96px] lg:h-[820px]"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

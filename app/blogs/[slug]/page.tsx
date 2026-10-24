@@ -6,6 +6,8 @@ import { WHATSAPP_NUMBER } from "@/lib/heroModels";
 import { formatDate, getPost, posts } from "@/lib/blogs";
 import { PostCard } from "@/components/blog/PostCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
+import { blueprintForArticle } from "@/lib/blueprints";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
@@ -67,8 +69,22 @@ export default async function BlogPostPage({ params }: Props) {
     publisher: { "@type": "Organization", name: "MOVE ON EV MOTO", url: SITE },
   };
 
+  const art = blueprintForArticle(posts.findIndex((p) => p.slug === post.slug));
+
   return (
-    <main className="bg-white pb-20 pt-[88px]">
+    <main className="relative isolate overflow-x-clip bg-white pb-20 pt-[88px]">
+      {/* Background art: a big, faint blueprint, a different angle per post. Beside the text
+          column on laptops, behind the top-right on phones. */}
+      <BlueprintBg
+        name={art.name}
+        flip={art.flip}
+        className={
+          art.name === "side"
+            ? // Landscape: less height for the same presence.
+              "right-[-40%] top-[150px] h-[280px] sm:right-[-20%] sm:h-[360px] lg:right-[-8%] lg:top-[120px] lg:h-[480px]"
+            : "right-[-26%] top-[130px] h-[440px] sm:right-[-12%] sm:h-[580px] lg:right-[-3%] lg:top-[100px] lg:h-[780px]"
+        }
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

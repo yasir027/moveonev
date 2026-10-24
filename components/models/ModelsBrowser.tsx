@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 
@@ -116,15 +117,20 @@ const visible = models.flatMap((model) => {
   return (
     <div
       id="lineup"
-      className="relative w-full"
+      className="relative isolate w-full overflow-x-clip"
     >
+      {/* Background art: a big, faint blueprint behind the page (BlueprintBg). */}
+      <BlueprintBg
+        name="lambretta"
+        className="right-[-22%] top-20 h-[460px] sm:right-[-6%] sm:h-[620px] lg:right-[2%] lg:top-8 lg:h-[780px]"
+      />
       {/* ================================================
           HEADER
       ================================================= */}
 
       <section
         className="
-          w-full bg-white
+          w-full
           pb-10 pt-24
           sm:pt-28 lg:pt-32
         "

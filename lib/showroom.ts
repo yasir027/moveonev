@@ -1,6 +1,7 @@
 /**
  * The showroom, in one place: the home page's lead-in to the footer (ShowroomLead in
- * SiteFooter), the footer's Visit column and the contact section (GetInTouch) read from here.
+ * SiteFooter), the footer's Visit column, the contact section (GetInTouch) and the contact page
+ * read from here.
  */
 import { WHATSAPP_NUMBER } from "@/lib/heroModels";
 
@@ -18,3 +19,8 @@ export const SHOWROOM = {
   /** Google share link for the building; opens Maps / Search on the place. */
   mapsUrl: "https://share.google/kqXIeEfAfQR2Vq3ru",
 } as const;
+
+/** A WhatsApp chat with the showroom, pre-filled with a general question. */
+export const SHOWROOM_WHATSAPP = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Hi MOVE ON, I have a question about your electric scooters.",
+)}`;

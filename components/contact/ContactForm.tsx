@@ -2,14 +2,21 @@
 
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { Check, Clock } from "lucide-react";
+import { Check, Clock, MapPin, MessageCircle, Phone } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Field, INPUT, VehiclePeek } from "@/components/GetInTouch";
-import { SHOWROOM } from "@/lib/showroom";
+import { SHOWROOM, SHOWROOM_WHATSAPP } from "@/lib/showroom";
 
 const TOPICS = ["Test ride", "Buying a scooter", "Service", "Battery", "Something else"];
+
+/** Laptops only: the page's three ways to reach us, as small buttons beside the form. */
+const QUICK_WAYS = [
+  { icon: Phone, label: "Call", href: `tel:${SHOWROOM.phone.tel}` },
+  { icon: MessageCircle, label: "WhatsApp", href: SHOWROOM_WHATSAPP, external: true },
+  { icon: MapPin, label: "Directions", href: SHOWROOM.mapsUrl, external: true },
+];
 
 /**
  * Web3Forms access key, registered to moveonevmoto@gmail.com: every enquiry is emailed there.
@@ -110,7 +117,8 @@ export function ContactFormSection() {
                 and someone from the showroom will ring you.
               </p>
 
-              <div className="mt-8 flex items-start gap-3.5">
+              {/* Phones and tablets: the cards above the form already cover these. */}
+              <div className="mt-8 flex items-start gap-3.5 lg:hidden">
                 <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.05]">
                   <Clock className="h-3.5 w-3.5 text-volt" strokeWidth={2.5} aria-hidden />
                 </span>
@@ -123,6 +131,24 @@ export function ContactFormSection() {
                   </p>
                 </div>
               </div>
+
+              {/* Laptops: the page opens on this form, so the ways to reach us live here. */}
+              <div className="mt-8 hidden flex-wrap gap-3 lg:flex">
+                {QUICK_WAYS.map(({ icon: Icon, label, href, external }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-2.5 font-display text-[13px] font-bold text-white transition-colors duration-300 ease-premium hover:border-volt hover:bg-volt hover:text-carbon"
+                  >
+                    <Icon className="h-4 w-4 text-volt transition-colors duration-300 group-hover:text-carbon" strokeWidth={2.25} aria-hidden />
+                    {label}
+                  </a>
+                ))}
+              </div>
+              <p className="mt-4 hidden text-[13px] text-white/45 lg:block">
+                {SHOWROOM.phone.display} · Open {SHOWROOM.hours.label}
+              </p>
             </Reveal>
           </div>
 

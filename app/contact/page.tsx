@@ -5,6 +5,7 @@ import { ContactFormSection } from "@/components/contact/ContactForm";
 import { ExpandPanel } from "@/components/ui/ExpandPanel";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Reveal } from "@/components/ui/Reveal";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 import { SHOWROOM, SHOWROOM_WHATSAPP } from "@/lib/showroom";
 
@@ -64,7 +65,14 @@ const WAYS: { icon: LucideIcon; label: string; value: ReactNode; note: string; h
 
 export default function ContactPage() {
   return (
-    <main className="bg-white pt-[88px]">
+    <main className="relative isolate overflow-x-clip bg-white pt-[88px]">
+      {/* Background art: a big, faint blueprint. Phones and tablets only: laptops open on the
+          dark form. */}
+      <BlueprintBg
+        name="ozone"
+        flip
+        className="right-[-26%] top-[90px] h-[460px] sm:right-[-6%] sm:h-[620px] lg:hidden"
+      />
       {/* 1 — HERO + ways to reach us. Phones and tablets only: on laptops the form comes
           first, with these as small buttons beside it (ContactFormSection). */}
       <section className="px-[7%] pb-16 pt-2 sm:pt-12 lg:hidden">

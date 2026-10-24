@@ -34,6 +34,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { ExpandPanel } from "@/components/ui/ExpandPanel";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Reveal } from "@/components/ui/Reveal";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 
 /*
@@ -123,7 +124,12 @@ export default function TechnologyPage() {
   )}`;
 
   return (
-    <main className="bg-white pt-[88px]">
+    <main className="relative isolate overflow-x-clip bg-white pt-[88px]">
+      {/* Background art: a big, faint blueprint behind the page (BlueprintBg). */}
+      <BlueprintBg
+        name="front"
+        className="right-[-24%] top-[96px] h-[480px] sm:right-[-6%] sm:h-[640px] lg:right-[3%] lg:top-[80px] lg:h-[820px]"
+      />
       {/* 1 — HERO */}
       <section className="px-[7%] pb-12 pt-2 sm:pt-12 lg:pb-14 lg:pt-16">
         <Eyebrow>Technology</Eyebrow>

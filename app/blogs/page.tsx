@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { posts } from "@/lib/blogs";
 import { PostCard } from "@/components/blog/PostCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { BlueprintBg } from "@/components/ui/BlueprintBg";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 
 export const metadata: Metadata = {
@@ -23,7 +24,12 @@ export default function BlogsPage() {
   const [featured, ...rest] = posts;
 
   return (
-    <main className="bg-white pb-20 pt-[88px]">
+    <main className="relative isolate overflow-x-clip bg-white pb-20 pt-[88px]">
+      {/* Background art: a big, faint blueprint behind the page (BlueprintBg). */}
+      <BlueprintBg
+        name="rear"
+        className="right-[-26%] top-[96px] h-[420px] sm:right-[-6%] sm:h-[560px] lg:right-[2%] lg:top-[70px] lg:h-[720px]"
+      />
       <header className="px-[7%] pb-10 pt-2 sm:pt-12 lg:pb-12 lg:pt-16">
         <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
           Blog

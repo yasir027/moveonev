@@ -3,7 +3,7 @@
 import { useEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useInView, useReducedMotion, useScroll, useTransform, type MotionValue, type Variants } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { rechargeLogo, TransitionLink } from "@/components/loader/RouteTransition";
 import { Magnetic } from "@/components/ui/Magnetic";
@@ -119,7 +119,7 @@ export function SiteFooter() {
       className="relative overflow-hidden text-white"
       style={{ background: COLORS.night }}
     >
-      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-16 sm:px-8 sm:pb-16 sm:pt-20">
+      <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-12 sm:px-8 sm:pb-16 sm:pt-20">
         {/* the drawing's ground is its bottom edge, so it stands on the bar's rule */}
         <div
           aria-hidden="true"
@@ -136,11 +136,12 @@ export function SiteFooter() {
           </motion.div>
         </div>
 
-        <div key={pathname} className="relative grid gap-12 lg:grid-cols-12 lg:gap-8">
+        <div key={pathname} className="relative grid gap-9 sm:gap-12 lg:grid-cols-12 lg:gap-8">
           <Rise index={0} className="lg:col-span-5">
             <FooterBrand />
           </Rise>
-          <FooterLinks className="lg:col-span-7" />
+          <FooterLinks className="hidden sm:grid lg:col-span-7" />
+          <PhoneFooterLinks />
         </div>
       </div>
       <FooterBar />
@@ -236,15 +237,15 @@ function FooterBrand() {
   return (
     <div>
       <TransitionLink href="/" aria-label="MoveOn home" className="inline-block" onPointerEnter={recharge}>
-        <Logo tone="dark" className="h-12 w-auto sm:h-14" />
+        <Logo tone="dark" className="h-9 w-auto sm:h-14" />
       </TransitionLink>
-      <p className="mt-6 max-w-sm font-display text-2xl font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[26px]">
+      <p className="mt-5 max-w-sm font-display text-xl font-semibold leading-tight tracking-[-0.02em] text-white sm:mt-6 sm:text-[26px]">
         Made for the road ahead.
       </p>
-      <p className="mt-2 max-w-sm text-[15px] leading-relaxed text-white/50">
+      <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-white/50 sm:text-[15px]">
         Electric scooters drawn for the city. Quiet, light and ready when you are.
       </p>
-      <Magnetic className="mt-7">
+      <Magnetic className="mt-5 sm:mt-7">
         <a
           href={whatsappUrl()}
           target="_blank"
@@ -309,12 +310,67 @@ function FooterLinks({ className = "" }: { className?: string }) {
   );
 }
 
+/** Phones only (FooterLinks from sm): one short row of links, then Call / WhatsApp /
+    Directions as buttons with the opening hours. */
+const PHONE_LINKS = [
+  { label: "All models", href: "/models", transition: true },
+  { label: "Batteries", href: "/#batteries" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact us", href: "/contact", transition: true },
+];
+
+function PhoneFooterLinks() {
+  const ways = [
+    { icon: Phone, label: "Call", href: `tel:${SHOWROOM.phone.tel}` },
+    { icon: MessageCircle, label: "WhatsApp", href: whatsappUrl(), external: true },
+    { icon: MapPin, label: "Directions", href: SHOWROOM.mapsUrl, external: true },
+  ];
+
+  return (
+    <Rise index={1} className="sm:hidden">
+      <nav aria-label="Footer">
+        <ul className="flex flex-wrap gap-x-5 gap-y-3">
+          {PHONE_LINKS.map((l) => (
+            <li key={l.href}>
+              {l.transition ? (
+                <TransitionLink href={l.href} className={LINK}>
+                  {l.label}
+                </TransitionLink>
+              ) : (
+                <a href={l.href} className={LINK}>
+                  {l.label}
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-8 grid grid-cols-3 gap-2">
+          {ways.map(({ icon: Icon, label, href, external }) => (
+            <a
+              key={label}
+              href={href}
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.04] py-3 font-display text-[13px] font-semibold text-white/85 transition-colors duration-300 hover:border-volt/50 hover:text-white"
+            >
+              <Icon className="h-4 w-4 text-volt" strokeWidth={2.25} aria-hidden />
+              {label}
+            </a>
+          ))}
+        </div>
+        <p className="mt-3 text-[13px] text-white/45">Showroom open {SHOWROOM.hours.label}</p>
+      </nav>
+    </Rise>
+  );
+}
+
 /** The last line of the page; its top rule is the ground the drawing stands on. */
 function FooterBar() {
   const reduced = useReducedMotion();
   return (
     <div className="border-t" style={{ borderColor: "rgb(125 255 64 / 0.4)" }}>
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-5 sm:px-8 ${MONO}`}>
+      {/* Phones: stacked on the left, clear of the WhatsApp button in the bottom-right corner. */}
+      <div className={`mx-auto flex max-w-7xl flex-col items-start gap-3 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 ${MONO}`}>
         <span>© {new Date().getFullYear()} MOVE ON</span>
         <a
           href="#top"

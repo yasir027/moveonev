@@ -9,6 +9,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Field, INPUT, VehiclePeek } from "@/components/GetInTouch";
 import { SHOWROOM, SHOWROOM_WHATSAPP } from "@/lib/showroom";
 import { sendEnquiry } from "@/lib/enquiry";
+import { OffersCheckbox, PrivacyNote } from "@/components/legal/FormConsent";
 
 const TOPICS = ["Test ride", "Buying a scooter", "Service", "Battery", "Something else"];
 
@@ -36,6 +37,7 @@ export function ContactFormSection() {
   const [form, setForm] = useState(INITIAL);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [botField, setBotField] = useState("");
+  const [offers, setOffers] = useState(false);
 
   function set<K extends keyof typeof INITIAL>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -52,9 +54,10 @@ export function ContactFormSection() {
         name: form.name,
         phone: form.phone,
         email: form.email,
-        fields: { topic: form.topic, message: form.message },
+        fields: { topic: form.topic, message: form.message, offers: offers ? "Yes" : "No" },
       });
       setStatus("sent");
+      setOffers(false);
       setForm(INITIAL);
     } catch {
       setStatus("error");
@@ -254,6 +257,8 @@ export function ContactFormSection() {
                     </Field>
                   </div>
 
+                  <OffersCheckbox id="contact-offers" checked={offers} onChange={setOffers} />
+
                   {status === "error" && (
                     <p role="alert" className="mt-5 text-[13px] font-medium text-[#FF8080]">
                       That didn&apos;t go through. Try again, or call the showroom directly.
@@ -268,9 +273,7 @@ export function ContactFormSection() {
                     {status === "sending" ? "Sending…" : "Send message"}
                   </button>
 
-                  <p className="mt-5 text-center text-[12px] leading-relaxed text-white/30">
-                    We use your details to reply to you and nothing else.
-                  </p>
+                  <PrivacyNote purpose="reply to your enquiry" />
                 </form>
               )}
             </div>

@@ -8,6 +8,7 @@ import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 import { SHOWROOM } from "@/lib/showroom";
 import { sendEnquiry } from "@/lib/enquiry";
+import { OffersCheckbox, PrivacyNote } from "@/components/legal/FormConsent";
 
 const MODELS = [
   "X Double Light",
@@ -36,6 +37,7 @@ export function GetInTouchSection() {
     "idle",
   );
   const [botField, setBotField] = useState("");
+  const [offers, setOffers] = useState(false);
 
   function set<K extends keyof typeof INITIAL>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -53,10 +55,11 @@ export function GetInTouchSection() {
         name: form.name,
         phone: form.phone,
         email: form.email,
-        fields: { model: form.model, queries: form.query },
+        fields: { model: form.model, queries: form.query, offers: offers ? "Yes" : "No" },
       });
       setStatus("sent");
       setForm(INITIAL);
+      setOffers(false);
     } catch {
       setStatus("error");
     }
@@ -265,6 +268,8 @@ export function GetInTouchSection() {
                     </Field>
                   </div>
 
+                  <OffersCheckbox id="book-offers" checked={offers} onChange={setOffers} />
+
                   {status === "error" && (
                     <p
                       role="alert"
@@ -284,9 +289,7 @@ export function GetInTouchSection() {
                     {status === "sending" ? "Sending…" : "Book my test ride"}
                   </button>
 
-                  <p className="mt-5 text-center text-[12px] leading-relaxed text-white/30">
-                    We use your details to arrange the ride and nothing else.
-                  </p>
+                  <PrivacyNote purpose="arrange your test ride" />
                 </form>
               )}
             </div>

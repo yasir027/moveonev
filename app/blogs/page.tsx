@@ -24,7 +24,7 @@ export default function BlogsPage() {
 
   return (
     <main className="bg-white pb-20 pt-[88px]">
-      <header className="px-[7%] pb-10 pt-12 lg:pb-12 lg:pt-16">
+      <header className="px-[7%] pb-10 pt-2 sm:pt-12 lg:pb-12 lg:pt-16">
         <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
           Blog
         </p>

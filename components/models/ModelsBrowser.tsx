@@ -125,8 +125,8 @@ const visible = models.flatMap((model) => {
       <section
         className="
           w-full bg-white
-          pb-10 pt-28
-          lg:pt-32
+          pb-10 pt-24
+          sm:pt-28 lg:pt-32
         "
       >
         <div

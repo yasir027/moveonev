@@ -68,7 +68,7 @@ export default function ContactPage() {
   return (
     <main className="bg-white pt-[88px]">
       {/* 1 — HERO + ways to reach us */}
-      <section className="px-[7%] pb-16 pt-12 lg:pb-20 lg:pt-16">
+      <section className="px-[7%] pb-16 pt-2 sm:pt-12 lg:pb-20 lg:pt-16">
         <Eyebrow>Contact us</Eyebrow>
         <RevealHeading
           as="h1"

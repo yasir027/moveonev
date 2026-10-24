@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="px-[7%] pt-10 lg:pt-14">
+      <article className="px-[7%] pt-2 sm:pt-10 lg:pt-14">
         <div className="mx-auto max-w-[760px]">
           <Link
             href="/blogs"

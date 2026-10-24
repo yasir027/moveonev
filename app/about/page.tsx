@@ -20,7 +20,6 @@ import { ExpandPanel } from "@/components/ui/ExpandPanel";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Reveal } from "@/components/ui/Reveal";
 import { RevealHeading } from "@/components/ui/RevealHeading";
-import { ScrollZoom } from "@/components/ui/ScrollZoom";
 
 /*
  * /about — one page, everything inside this file: hero with the building photo, stats,
@@ -141,108 +140,68 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* 1 — HERO: the storefront itself, full width, with the story laid over it */}
-      <section className="pb-12 pt-3 lg:pb-14">
-        <div
-          data-theme="dark"
-          className="relative mx-[clamp(12px,3vw,48px)] flex h-[min(86svh,860px)] min-h-[600px] flex-col justify-end overflow-hidden rounded-[32px] bg-carbon text-white"
-        >
-          {/* The photo eases out of a slight zoom as the page scrolls. A sibling of the glass
-              strip, never its parent: its transform would kill the strip's blur. */}
-          <ScrollZoom className="absolute inset-0">
+      {/* 1 — HERO */}
+      <section className="px-[7%] pb-12 pt-2 sm:pt-12 lg:pb-14 lg:pt-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+          <div>
+            <Eyebrow>About us</Eyebrow>
+            <RevealHeading
+              as="h1"
+              base="max-w-[14ch] font-display text-[clamp(2.25rem,4.2vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.035em]"
+              className="text-carbon"
+              lines={["Freedom to ride.", "No hassle."]}
+            />
+            <Reveal as="p" delay={0.25} className="mt-5 max-w-[52ch] text-[17px] leading-relaxed text-[#475569]">
+              MOVE ON EV MOTO is an authorised XIDAA dealership, run from Shabbir Medical Hall, a
+              name this community has trusted since 1920.
+            </Reveal>
+            <Reveal delay={0.35} className="mt-8 flex flex-wrap items-center gap-3">
+              <Magnetic>
+                <Link
+                  href="/models"
+                  className="inline-flex items-center gap-2 rounded-full bg-carbon px-7 py-3.5 font-display text-[15px] font-bold text-white transition-colors duration-300 hover:bg-leaf"
+                >
+                  See the scooters
+                  <ArrowRight size={16} strokeWidth={2.75} aria-hidden />
+                </Link>
+              </Magnetic>
+              <Link
+                href="/#book"
+                className="rounded-full border border-carbon/15 px-7 py-3.5 font-display text-[15px] font-bold text-carbon transition-colors duration-200 hover:bg-carbon/5"
+              >
+                Book a test ride
+              </Link>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.1} className="relative aspect-[1312/1199] w-full overflow-hidden rounded-[32px] shadow-[0_0_0_1px_rgba(16,20,18,0.08),0_28px_56px_-24px_rgba(16,20,18,0.35)]">
             <Image
               src="/SMH.png"
               alt="The MOVE ON EV MOTO showroom beside Shabbir Medical Hall, since 1920"
               fill
               priority
-              sizes="100vw"
-              className="object-cover object-[50%_85%]"
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="object-cover"
             />
-          </ScrollZoom>
-
-          {/* Readability: dark from the bottom (under the copy and stats), a little from the left.
-              Phones stack the copy over the signboard, so their fade climbs higher. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 sm:hidden"
-            style={{
-              background:
-                "linear-gradient(to top, rgb(16 20 18 / 0.92) 0%, rgb(16 20 18 / 0.75) 45%, rgb(16 20 18 / 0) 85%)",
-            }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 hidden sm:block"
-            style={{
-              background:
-                "linear-gradient(to top, rgb(16 20 18 / 0.88) 0%, rgb(16 20 18 / 0.6) 32%, rgb(16 20 18 / 0) 62%), linear-gradient(to right, rgb(16 20 18 / 0.35) 0%, rgb(16 20 18 / 0) 55%)",
-            }}
-          />
-
-          {/* Copy bottom-left, stats bottom-right on desktop: side by side keeps the headline
-              below the signboard on short laptop screens. Stacked on smaller screens. */}
-          <div className="relative flex flex-col gap-8 px-6 pb-6 sm:px-10 sm:pb-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10 lg:px-12 lg:pb-10">
-            <div className="max-w-[560px]">
-              <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-volt">
-                About us
-              </p>
-              <RevealHeading
-                as="h1"
-                base="max-w-[14ch] font-display text-[clamp(2.25rem,4.2vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.035em]"
-                className="text-white"
-                lines={["Freedom to ride.", "No hassle."]}
-              />
-              <Reveal as="p" delay={0.25} className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-white/75">
-                MOVE ON EV MOTO is an authorised XIDAA dealership, run from Shabbir Medical Hall, a
-                name this community has trusted since 1920.
-              </Reveal>
-              <Reveal delay={0.35} className="mt-7 flex flex-wrap items-center gap-3">
-                <Magnetic>
-                  <Link
-                    href="/models"
-                    className="inline-flex items-center gap-2 rounded-full bg-volt px-7 py-3.5 font-display text-[15px] font-bold text-carbon transition-colors duration-300 hover:bg-white"
-                  >
-                    See the scooters
-                    <ArrowRight size={16} strokeWidth={2.75} aria-hidden />
-                  </Link>
-                </Magnetic>
-                <Link
-                  href="/#book"
-                  className="rounded-full border border-white/35 px-7 py-3.5 font-display text-[15px] font-bold text-white transition-colors duration-200 hover:bg-white/10"
-                >
-                  Book a test ride
-                </Link>
-              </Reveal>
-            </div>
-
-            {/* Stats on frosted glass at the photo's foot. Fades only (a rise would be a
-                transform, and that kills the blur). */}
-            <Reveal
-              fade
-              delay={0.5}
-              className="rounded-[20px] border border-white/20 bg-white/[0.12] backdrop-blur-xl lg:w-[min(46%,560px)] lg:shrink-0"
-            >
-              <dl className="grid grid-cols-3">
-                {STATS.map((s, i) => (
-                  <div
-                    key={s.label}
-                    className={[
-                      "px-3 py-4 sm:px-6 sm:py-5",
-                      i > 0 ? "border-l border-white/15" : "",
-                    ].join(" ")}
-                  >
-                    <dd className="font-display text-[clamp(1.25rem,2.6vw,2.25rem)] font-extrabold leading-none tracking-[-0.04em] text-white">
-                      {s.count ? <CountUp value={s.count.to} suffix={s.count.suffix} /> : s.value}
-                    </dd>
-                    <dt className="mt-1.5 text-[11px] leading-snug text-white/70 sm:text-[13px]">
-                      {s.label}
-                    </dt>
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
-          </div>
+          </Reveal>
         </div>
+
+        <dl className="mt-12 grid grid-cols-3 border-y border-carbon/10">
+          {STATS.map((s, i) => (
+            <Reveal
+              key={s.label}
+              index={i}
+              className={["py-6 pl-4 sm:pl-8", i === 0 ? "!pl-0" : "border-l border-carbon/10"].join(" ")}
+            >
+              <dd className="font-display text-[clamp(1.5rem,3vw,2.5rem)] font-extrabold leading-none tracking-[-0.04em] text-carbon">
+                {s.count ? <CountUp value={s.count.to} suffix={s.count.suffix} /> : s.value}
+              </dd>
+              <dt className="mt-2 text-[13px] leading-snug text-[#475569] sm:text-[14px]">
+                {s.label}
+              </dt>
+            </Reveal>
+          ))}
+        </dl>
       </section>
 
       {/* 2 — OUR STORY */}

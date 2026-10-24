@@ -67,19 +67,20 @@ export function HeroEditorial() {
       className={
         floating
           ? "flex flex-col justify-center gap-0.5 px-8 py-2 text-center"
-          : "flex flex-col justify-center gap-1 bg-[#FBFBFA] px-6 py-5 sm:px-8"
+          : "flex flex-col justify-center gap-0.5 bg-[#FBFBFA] px-5 py-3 sm:gap-1 sm:px-8 sm:py-5"
       }
     >
       <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/">
         {fact.label}
       </p>
-<p className="font-display text-xl font-bold tracking-tight text-carbon lg:text-[22px]">
+<p className="font-display text-lg font-bold tracking-tight text-carbon sm:text-xl lg:text-[22px]">
           {fact.value}
       </p>
       {fact.note && (
         <p
           className={`text-xs text-carbon/55 ${
-            floating ? "flex justify-center" : ""
+            // Phones keep the facts to one line each; the notes come back from sm.
+            floating ? "flex justify-center" : "hidden sm:block"
           }`}
         >
           {fact.note}
@@ -90,22 +91,22 @@ export function HeroEditorial() {
 }
   return (
     // Reduced pt-24 to pt-20, and lg:pb-10 to lg:pb-8
-    <section className="w-full bg-white px-4 pb-8 pt-20 sm:px-6 lg:px-8 lg:pb-8">
+    <section className="w-full bg-white px-4 pb-8 pt-2 sm:px-6 sm:pt-20 lg:px-8 lg:pb-8">
       <div className="mx-auto max-w-[1600px]">
         <div className="relative flex flex-col overflow-hidden rounded-[40px] bg-[#F6F7F6] lg:h-[calc(100svh-8.5rem)] lg:min-h-[620px]">
 
-          <div className="grid flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6.5fr)]">
+          <div className="grid flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,6.5fr)]">
 
             {/* LEFT: type */}
             <div
               data-intro="hero"
               // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8. On lg the facts bar floats over
               // the bottom 16% of the card, so the copy is centred in the space above it.
-              className="flex flex-col justify-between gap-6 px-7 pb-2 pt-10 sm:px-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-14   lg:pl-20"
+              className="flex flex-col justify-between gap-5 px-6 pb-2 pt-6 sm:gap-6 sm:px-10 sm:pt-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-14   lg:pl-20"
             >
               {/* Model selector */}
 <div>
-  <div role="tablist" aria-label="Model" className="flex flex-wrap gap-3">
+  <div role="tablist" aria-label="Model" className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 sm:mx-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
     {MODELS.map((model, index) => {
       const isActive = index === activeIndex;
       return (
@@ -114,7 +115,7 @@ export function HeroEditorial() {
           role="tab"
           aria-selected={isActive}
           onClick={() => selectModel(index)}
-          className={`flex items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
+          className={`flex shrink-0 items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
             isActive
               ? "bg-carbon text-white shadow-md"
               : "bg-white text-carbon/60 shadow-sm hover:bg-white/80 hover:text-carbon"
@@ -153,13 +154,13 @@ export function HeroEditorial() {
                   <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
                     {active.tagline}
                   </p>
-                 <h1 className="mt-4 font-display text-[clamp(2.5rem,4.5vw,5rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
+                 <h1 className="mt-2 font-display text-[36px] font-extrabold sm:mt-4 sm:text-[clamp(2.5rem,4.5vw,5rem)] leading-[0.86] tracking-[-0.055em] text-carbon">
   <span className="type-outline" style={{ "--outline-fill": "#F6F7F6" } as CSSProperties}>
     X&#8202;-
   </span>
   {active.code}
 </h1>
-                  <p className="mt-6 max-w-[400px] text-[15px] leading-relaxed text-carbon/60">
+                  <p className="mt-3 line-clamp-2 max-w-[400px] text-[15px] leading-relaxed text-carbon/60 sm:mt-6 sm:line-clamp-none">
                     {active.description}
                   </p>
                 </motion.div>
@@ -190,7 +191,7 @@ export function HeroEditorial() {
             </div>
 
             {/* RIGHT: product panel, inset inside the stage */}
-            <div className="relative m-3 h-[50vh] min-h-[380px] overflow-hidden rounded-[32px] bg-gradient-to-br from-[#E4E8E4] via-[#EDF0ED] to-[#DCE1DC] lg:m-4 lg:ml-0 lg:h-auto lg:min-h-0">
+            <div className="relative m-3 h-[38svh] min-h-[280px] overflow-hidden sm:h-[50svh] sm:min-h-[380px] rounded-[32px] bg-gradient-to-br from-[#E4E8E4] via-[#EDF0ED] to-[#DCE1DC] lg:m-4 lg:ml-0 lg:h-auto lg:min-h-0">
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#D3D8D3]/70 to-transparent" />
 
               {/* Shot close: the box runs past the bottom and right edges, so the panel crops it */}

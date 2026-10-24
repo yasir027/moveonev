@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { EASE_PREMIUM, useIsCompact, usePrefersReducedMotion } from "@/lib/motion";
 
 /**
  * The home page's card reveal, shared: fades up 20px the first time it scrolls into view.
@@ -36,16 +36,18 @@ export function Reveal({
   children: ReactNode;
 }) {
   const reducedMotion = usePrefersReducedMotion();
+  // Phones: a shorter, quicker rise, so a fast thumb-scroll never waits on cards.
+  const compact = useIsCompact();
   const Tag = motion[as];
 
   return (
     <Tag
       className={className}
-      initial={{ opacity: 0, y: reducedMotion || fade ? 0 : 20 }}
+      initial={{ opacity: 0, y: reducedMotion || fade ? 0 : compact ? 12 : 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: !replay, margin: "-10%" }}
       transition={{
-        duration: 0.6,
+        duration: compact ? 0.45 : 0.6,
         ease: EASE_PREMIUM,
         delay: delay + Math.min(index * 0.06, 0.36),
       }}

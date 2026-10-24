@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
+import { useIsCompact } from "@/lib/motion";
 
 interface Model {
   id: string;
@@ -77,6 +78,9 @@ export function HeroSection() {
   const [direction, setDirection] = useState<1 | -1>(1);
 
   const reducedMotion = useReducedMotion();
+  // Phones: shorter ride, gentler float, no animated blur on the giant code word.
+  const compact = useIsCompact();
+  const ride = compact ? 80 : 150;
   const active = MODELS[activeIndex];
 
   function selectModel(index: number) {
@@ -93,11 +97,11 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative w-full bg-white px-4 pb-8 pt-24 sm:px-6 lg:px-8 lg:pb-12 lg:pt-28">
+    <section className="relative w-full bg-white px-4 pb-3 pt-24 sm:px-6 sm:pb-8 lg:px-8 lg:pb-12 lg:pt-28">
       <div className="mx-auto max-w-[1600px]">
         
         {/* HERO STAGE */}
-        <div className="relative flex min-h-[80vh] w-full flex-col overflow-hidden rounded-[40px] bg-[#F8F9FA] lg:min-h-[85vh] lg:flex-row">
+        <div className="relative flex min-h-[80svh] w-full flex-col overflow-hidden rounded-[40px] bg-[#F8F9FA] lg:min-h-[85vh] lg:flex-row">
           
           {/* Subtle Studio Lighting Radial */}
           <motion.div
@@ -108,21 +112,22 @@ export function HeroSection() {
           />
 
           {/* LEFT COLUMN: Content & Selectors */}
-          <div className="relative z-20 flex w-full flex-col justify-center px-8 pb-10 pt-20 lg:w-[45%] lg:px-16 lg:pb-32 lg:pt-0">
+          <div className="relative z-20 flex w-full flex-col justify-center px-6 pb-4 pt-6 sm:px-8 sm:pb-10 sm:pt-16 lg:w-[45%] lg:px-16 lg:pb-32 lg:pt-0">
             
             {/* Model Selector */}
-            <div className="mb-10">
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.15em] text-carbon/40">
+            <div className="mb-5 sm:mb-10">
+              <p className="mb-4 hidden text-[10px] font-bold uppercase tracking-[0.15em] text-carbon/40 sm:block">
                 Select Model
               </p>
-              <div className="flex flex-wrap gap-3">
+              {/* Phones: one row you can swipe, running to the stage's edges. */}
+              <div className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 sm:mx-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
                 {MODELS.map((model, index) => {
                   const isActive = index === activeIndex;
                   return (
                     <button
                       key={model.id}
                       onClick={() => selectModel(index)}
-                      className={`flex items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
+                      className={`flex shrink-0 items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
                         isActive
                           ? "bg-carbon text-white shadow-md"
                           : "bg-white text-carbon/60 shadow-sm hover:bg-white/80 hover:text-carbon"
@@ -158,21 +163,21 @@ export function HeroSection() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: LUXURY_EASE }}
               >
-                <p className="mb-4 font-display text-xs font-bold tracking-[0.2em]" style={{ color: active.accent }}>
+                <p className="mb-2 font-display text-[11px] font-bold tracking-[0.2em] sm:mb-4 sm:text-xs" style={{ color: active.accent }}>
                   {active.tagline.toUpperCase()}
                 </p>
 
-                <h1 className="font-display text-[clamp(3rem,5vw,5rem)] font-bold leading-[0.95] tracking-[-0.04em] text-carbon">
+                <h1 className="font-display text-[34px] font-bold sm:text-[clamp(3rem,5vw,5rem)] leading-[0.95] tracking-[-0.04em] text-carbon">
                   {active.name}
                 </h1>
 
-                <p className="mt-6 max-w-[400px] text-sm leading-relaxed text-carbon/60 sm:text-base">
+                <p className="mt-3 line-clamp-2 max-w-[400px] text-sm leading-relaxed text-carbon/60 sm:mt-6 sm:line-clamp-none sm:text-base">
                   {active.description}
                 </p>
               </motion.div>
             </AnimatePresence>
 
-            <div className="mt-10 flex flex-col gap-8">
+            <div className="mt-5 flex flex-col gap-8 sm:mt-10">
               {/* Dummy Color Selector */}
               <AnimatePresence mode="wait">
                 <motion.div
@@ -182,7 +187,7 @@ export function HeroSection() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.15em] text-carbon/40">
+                  <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-carbon/40 sm:mb-4">
                     Exterior Color — {active.colors[activeColorIndex].name}
                   </p>
                   <div className="flex gap-4">
@@ -211,17 +216,18 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Product Stage */}
-          <div className="relative z-10 flex w-full items-center justify-center pb-32 pt-10 lg:w-[55%] lg:py-0">
+          {/* RIGHT COLUMN: Product Stage. Below lg it gets its own height, so the scooter
+              sits in its own band instead of spilling over the copy and under the dock. */}
+          <div className="relative z-10 flex h-[30svh] min-h-[220px] w-full items-center justify-center sm:h-[50svh] lg:h-auto lg:min-h-0 lg:w-[55%]">
             {/* Background Typography */}
             <div className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-[55%] select-none lg:-translate-x-[40%]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active.id + "-bg-text"}
-                  initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                  transition={{ duration: 1.2, ease: LUXURY_EASE }}
+                  initial={compact ? { opacity: 0 } : { opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                  animate={compact ? { opacity: 1 } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={compact ? { opacity: 0 } : { opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+                  transition={{ duration: compact ? 0.6 : 1.2, ease: LUXURY_EASE }}
                   className="font-display text-[35vw] font-bold leading-none tracking-tighter text-carbon/[0.03] lg:text-[28vw]"
                 >
                   {active.code}
@@ -236,7 +242,7 @@ export function HeroSection() {
                 custom={direction}
                 initial={reducedMotion ? { opacity: 0 } : { 
                   opacity: 0, 
-                  x: direction * 150,
+                  x: direction * ride,
                   scale: 0.9,
                 }}
                 animate={{ 
@@ -246,16 +252,16 @@ export function HeroSection() {
                 }}
                 exit={reducedMotion ? { opacity: 0 } : { 
                   opacity: 0, 
-                  x: direction * -150,
+                  x: direction * -ride,
                   scale: 0.95,
                 }}
-                transition={{ duration: 0.9, ease: LUXURY_EASE }}
+                transition={{ duration: compact ? 0.7 : 0.9, ease: LUXURY_EASE }}
                 className="absolute inset-0 flex items-center justify-center"
               >
                 <motion.div
-                  animate={reducedMotion ? undefined : { y: [0, -12, 0] }}
+                  animate={reducedMotion ? undefined : { y: [0, compact ? -6 : -12, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative h-[50vh] w-[130%] sm:h-[60vh] sm:w-[100%] lg:h-[75vh] lg:w-[105%]"
+                  className="relative h-full w-full lg:h-[75vh] lg:w-[105%]"
                 >
                   <Image
                     src={active.image}
@@ -270,41 +276,42 @@ export function HeroSection() {
             </AnimatePresence>
           </div>
 
-          {/* FLOATING COMMAND CENTER (Glassmorphism Dock) */}
-          <div className="absolute bottom-6 left-1/2 z-30 w-[92%] -translate-x-1/2 sm:bottom-10 lg:w-[85%] max-w-[1200px]">
-            <div className="flex flex-col items-center justify-between gap-6 rounded-[32px] border border-white/50 bg-white/40 px-6 py-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] backdrop-blur-2xl sm:flex-row sm:px-8 sm:py-4 lg:rounded-full">
+          {/* FLOATING COMMAND CENTER (Glassmorphism Dock). Floats over the stage from lg;
+              below that it sits under the scooter so it never covers it. */}
+          <div className="relative z-30 mx-auto mb-4 w-[92%] max-w-[1200px] sm:mb-6 lg:absolute lg:bottom-10 lg:left-1/2 lg:mx-0 lg:mb-0 lg:w-[85%] lg:-translate-x-1/2">
+            <div className="flex flex-col items-center justify-between gap-3 rounded-[32px] border border-white/50 bg-white/40 px-4 py-3 shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] backdrop-blur-md sm:flex-row sm:gap-6 sm:px-8 sm:py-4 lg:rounded-full lg:backdrop-blur-2xl">
               
               {/* Left Actions */}
-              <div className="flex flex-1 items-center justify-center gap-3 sm:justify-start">
+              <div className="flex w-full flex-1 items-center justify-center gap-3 sm:w-auto sm:justify-start">
                 <button
                   onClick={scrollToLineup}
-                  className="group flex h-12 items-center gap-2 rounded-full bg-carbon px-6 font-display text-xs font-bold tracking-wide text-white transition-all hover:bg-carbon/90 hover:shadow-lg hover:shadow-carbon/20"
+                  className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-carbon px-6 font-display sm:flex-none text-xs font-bold tracking-wide text-white transition-all hover:bg-carbon/90 hover:shadow-lg hover:shadow-carbon/20"
                 >
                   Configure
                   <ArrowRight size={14} strokeWidth={2} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </button>
                 <button
                   onClick={scrollToLineup}
-                  className="flex h-12 items-center rounded-full border border-carbon/20 bg-white/30 px-6 font-display text-xs font-bold tracking-wide text-carbon transition-all hover:bg-white hover:border-carbon/40"
+                  className="flex h-12 flex-1 items-center justify-center rounded-full border border-carbon/20 bg-white/30 px-6 font-display sm:flex-none text-xs font-bold tracking-wide text-carbon transition-all hover:bg-white hover:border-carbon/40"
                 >
                   Test Drive
                 </button>
               </div>
 
               {/* Central Specs */}
-              <div className="flex flex-1 items-center justify-center gap-8 border-y border-carbon/10 py-4 sm:border-x sm:border-y-0 sm:py-0">
+              <div className="flex flex-1 items-center justify-center gap-8 border-t border-carbon/10 pt-3 sm:border-x sm:border-t-0 sm:py-0">
                 <div className="text-center">
-                  <p className="font-display text-2xl font-bold text-carbon">{active.topSpeed}</p>
+                  <p className="font-display text-xl font-bold text-carbon sm:text-2xl">{active.topSpeed}</p>
                   <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-carbon/40">Top Speed</p>
                 </div>
                 <div className="text-center">
-                  <p className="font-display text-2xl font-bold text-carbon">{active.range}</p>
+                  <p className="font-display text-xl font-bold text-carbon sm:text-2xl">{active.range}</p>
                   <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-carbon/40">True Range</p>
                 </div>
               </div>
 
-              {/* Right Side: Google Rating */}
-              <div className="flex flex-1 items-center justify-center sm:justify-end">
+              {/* Right Side: Google Rating. Hidden on phones: the hero below shows it too. */}
+              <div className="hidden flex-1 items-center justify-center sm:flex sm:justify-end">
                 <div className="flex flex-col items-center sm:items-end">
                   <div className="flex items-center gap-1 text-[#FBBC04]">
                     <Star size={14} fill="currentColor" strokeWidth={0} />

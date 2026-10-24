@@ -12,6 +12,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { LUXURY_EASE, isNeutral, type Model } from "@/lib/heroModels";
+import { useIsCompact } from "@/lib/motion";
 
 interface ScooterStageProps {
   model: Model;
@@ -47,6 +48,8 @@ export function ScooterStage({
   const [riding, setRiding] = useState(false);
   const [shownId, setShownId] = useState(model.id);
   const reducedMotion = useReducedMotion();
+  // Phones: a smaller idle float. The ride itself is in % of the box, so it already scales.
+  const compact = useIsCompact();
 
   const color = model.colors[colorIndex];
   const tinted = colorIndex !== 0;
@@ -133,6 +136,7 @@ export function ScooterStage({
             boxClassName={boxClassName}
             primary={primary}
             reducedMotion={!!reducedMotion}
+            compact={compact}
             riding={riding}
             showHotspots={showHotspots}
             openHotspot={openHotspot}
@@ -153,6 +157,7 @@ function Rider({
   boxClassName,
   primary,
   reducedMotion,
+  compact,
   riding,
   showHotspots,
   openHotspot,
@@ -165,6 +170,7 @@ function Rider({
   boxClassName: string;
   primary: boolean;
   reducedMotion: boolean;
+  compact: boolean;
   riding: boolean;
   showHotspots: boolean;
   openHotspot: number | null;
@@ -199,7 +205,7 @@ function Rider({
             ? { y: 0, rotate: 0 }
             : riding
               ? { y: [0, -4, 0], rotate: [-1.6, -0.6, 0] }
-              : { y: [0, -10, 0], rotate: 0 }
+              : { y: [0, compact ? -5 : -10, 0], rotate: 0 }
         }
         transition={
           reducedMotion
@@ -267,6 +273,7 @@ function Rider({
                     animate={{ opacity: riding ? 0 : 1, scale: 1 }}
                     transition={{ delay: riding ? 0 : 1, duration: 0.4, ease: LUXURY_EASE }}
                   >
+                    {/* A 44px tap target around the 28px dot, so it's easy to hit with a finger. */}
                     <button
                       type="button"
                       aria-label={spot.label}
@@ -276,9 +283,11 @@ function Rider({
                       onFocus={() => setOpenHotspot(index)}
                       onBlur={() => setOpenHotspot(null)}
                       onClick={() => setOpenHotspot(open ? null : index)}
-                      className="glass-liquid flex h-7 w-7 items-center justify-center rounded-full transition-transform duration-300 hover:scale-110"
+                      className="group flex h-11 w-11 items-center justify-center rounded-full"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-carbon" />
+                      <span className="glass-liquid flex h-7 w-7 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110">
+                        <span className="h-1.5 w-1.5 rounded-full bg-carbon" />
+                      </span>
                     </button>
                     <AnimatePresence>
                       {open && (

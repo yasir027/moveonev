@@ -121,7 +121,7 @@ export function GetInTouchSection() {
             transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.08 }}
           >
             {/* Refined Panel: Replaced hard inset shadows with a soft border, backdrop blur, and slightly softer curves */}
-            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-7 shadow-2xl backdrop-blur-xl sm:p-10">
+            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-7 shadow-2xl backdrop-blur-md sm:p-10 lg:backdrop-blur-xl">
               {status === "sent" ? (
                 <div
                   role="status"
@@ -293,7 +293,7 @@ export function GetInTouchSection() {
 
 /* Refined Input Skin: Replaced hard inset shadows with a clean border, added slightly more padding, and a glowing ring on focus. */
 export const INPUT =
-  "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3.5 text-[14px] text-white placeholder:text-white/30 outline-none transition-all duration-300 ease-out focus:bg-white/[0.08] focus:border-volt/50 focus:ring-1 focus:ring-volt/50";
+  "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3.5 text-[16px] text-white lg:text-[14px] placeholder:text-white/30 outline-none transition-all duration-300 ease-out focus:bg-white/[0.08] focus:border-volt/50 focus:ring-1 focus:ring-volt/50";
 
 function VehiclePeek() {
   if (!CTA_VEHICLE) return null;

@@ -13,7 +13,7 @@ export function LineupSection() {
   return (
     <section
       id="lineup"
-      className="relative w-full bg-mist py-20 lg:py-24"
+      className="relative w-full bg-mist py-12 sm:py-20 lg:py-24"
     >
       <div
         className="
@@ -23,7 +23,7 @@ export function LineupSection() {
 "
       >
         {/* Section Header */}
-        <header className="mb-12 max-w-2xl lg:mb-14">
+        <header className="mb-8 max-w-2xl lg:mb-14">
           <RevealHeading
             className="text-carbon"
             lines={["Eight models.", "No licence, no RTO."]}
@@ -43,7 +43,7 @@ export function LineupSection() {
             }}
             className="
               mt-6 max-w-[480px]
-              text-base leading-relaxed
+              text-[15px] leading-relaxed lg:text-base
               text-carbon/60
             "
           >
@@ -54,8 +54,8 @@ export function LineupSection() {
           </motion.p>
         </header>
 
-        {/* First Four Models — Shared Responsive Grid */}
-        <ModelGrid models={models.slice(0, 4)} />
+        {/* First four models: a swipe row on phones, the shared grid from lg. */}
+        <ModelGrid models={models.slice(0, 4)} rail />
 
         {/* View All Models */}
         <motion.div
@@ -70,7 +70,7 @@ export function LineupSection() {
             ease: EASE_PREMIUM,
             delay: 0.2,
           }}
-          className="mt-10 flex justify-center lg:mt-12"
+          className="mt-8 flex justify-center lg:mt-12"
         >
           <Link
             href="/models"

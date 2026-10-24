@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
+import { StackCard, StackCards } from "@/components/ui/StackCards";
 
 /** Which visual treatment the section carries. Three are live so they can be compared. */
 export type UspVisual = "closeups" | "annotated" | "tile";
@@ -24,6 +25,8 @@ interface Usp {
    * can't show storage or a battery, so each card gets the nearest good-looking part.
    */
   closeup: string;
+  /** Phones: the short claim beside the lens, taken from the description. */
+  lens: { kicker: string; value: string };
 }
 
 const USPS: Usp[] = [
@@ -34,6 +37,7 @@ const USPS: Usp[] = [
       "Ride from day one — skip RTO registration, annual road tax and mandatory insurance entirely. Anyone 16 and up can legally ride, licence-free.",
     span: "sm:col-span-2 lg:col-span-2 lg:row-span-2",
     closeup: "/usp/closeup-registration.webp",
+    lens: { kicker: "Anyone 16+", value: "Licence-free" },
   },
   {
     label: "Battery",
@@ -42,6 +46,7 @@ const USPS: Usp[] = [
       "Fire-resistant LiFePO4 chemistry, engineered to stay stable through harsh Indian heat and rated for 2,500+ charge cycles of daily riding.",
     span: "",
     closeup: "/usp/closeup-battery.webp",
+    lens: { kicker: "LiFePO4", value: "2,500+ cycles" },
   },
   {
     label: "Storage",
@@ -50,6 +55,7 @@ const USPS: Usp[] = [
       "Heavy-duty carrying capacity with up to 45 litres of under-seat storage on select models — room enough for your daily groceries and essentials.",
     span: "",
     closeup: "/usp/closeup-storage.webp",
+    lens: { kicker: "Under-seat", value: "Up to 45 L" },
   },
   {
     label: "Security",
@@ -58,6 +64,7 @@ const USPS: Usp[] = [
       "Reverse assist for tight parking, keyless ignition, an anti-theft alarm and a one-touch Repair Switch — safety tech rare at this price.",
     span: "sm:col-span-2 lg:col-span-2",
     closeup: "/usp/closeup-security.webp",
+    lens: { kicker: "Keyless", value: "+ anti-theft alarm" },
   },
 ];
 
@@ -74,7 +81,7 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
   /* Written straight onto the node: four cards re-rendering on every mousemove is not a
      trade worth making for a highlight. */
   function trackPointer(event: React.PointerEvent<HTMLElement>) {
-    if (reducedMotion) return;
+    if (reducedMotion || event.pointerType !== "mouse") return;
     const card = event.currentTarget;
     const box = card.getBoundingClientRect();
     card.style.setProperty("--mx", `${event.clientX - box.left}px`);
@@ -82,7 +89,8 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
   }
 
   function lightUp(event: React.PointerEvent<HTMLElement>) {
-    if (reducedMotion) return;
+    // Mouse only: on a phone a tap would just flash the highlight.
+    if (reducedMotion || event.pointerType !== "mouse") return;
     event.currentTarget.style.setProperty("--card-lit", "1");
   }
 
@@ -102,7 +110,7 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
   return (
     /* A mist band rather than another white section: hero, this and the audience block are
        all light now, and the tone shift is what keeps this one from merging into them. */
-    <section className="relative w-full overflow-hidden bg-mist py-12 lg:py-14">
+    <section className="relative w-full overflow-x-clip bg-mist py-12 lg:py-14">
 
       {/* Tonal backdrop: the word is a shade of the ground, not a colour on top of it. */}
       {/* <div
@@ -131,7 +139,7 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: 0.25 }}
-            className="mt-5 max-w-[560px] text-base leading-relaxed text-carbon/65"
+            className="mt-5 max-w-[560px] text-[15px] leading-relaxed text-carbon/65 lg:text-base"
           >
             No paperwork, no licence, no annual tax — and none of the compromises that
             usually come with skipping them.
@@ -160,21 +168,28 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto] lg:gap-5">
+          /* Phones: the cards stack on top of each other as you scroll (StackCards). */
+          <StackCards className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[auto_auto] lg:gap-5">
             {USPS.map((usp, i) => {
               const isFeature = i === 0;
 
               return (
-                <Reveal key={usp.title} index={i} span={usp.span}>
+                <StackCard key={usp.title} index={i} className={usp.span}>
+                <Reveal index={i} span="h-full">
                   <article
                     {...cardProps}
                     className={`spec-card h-full ${isFeature ? "p-7 lg:p-8" : "p-5 lg:p-6"}`}
                   >
-                    {visual === "closeups" && <CloseUp src={usp.closeup} feature={isFeature} />}
+                    {visual === "closeups" && (
+                      <>
+                        <CloseUp src={usp.closeup} feature={isFeature} />
+                        <Lens src={usp.closeup} lens={usp.lens} />
+                      </>
+                    )}
 
                     {/* The right side belongs to the close-up, so the copy stops short of it. */}
                     <div
-                      className={`spec-content flex h-full flex-col ${
+                      className={`spec-content flex flex-col sm:h-full ${
                         visual === "closeups" ? "sm:pr-[34%]" : ""
                       }`}
                     >
@@ -182,11 +197,11 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
 
                       {isFeature && visual === "annotated" && <AnnotatedScooter />}
 
-                      <div className={isFeature ? "mt-auto pt-8" : "mt-5"}>
+                      <div className={isFeature ? "mt-auto pt-4 sm:pt-8" : "mt-5"}>
                         <h3
                           className={
                             isFeature
-                              ? "mb-4 font-display text-[clamp(2rem,3.2vw,2.75rem)] font-bold leading-[1.05] tracking-[-0.04em] text-carbon"
+                              ? "mb-4 font-display text-[28px] font-bold sm:text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.05] tracking-[-0.04em] text-carbon"
                               : "spec-title mb-2.5"
                           }
                         >
@@ -206,9 +221,10 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
                     </div>
                   </article>
                 </Reveal>
+                </StackCard>
               );
             })}
-          </div>
+          </StackCards>
         )}
       </div>
     </section>
@@ -258,14 +274,14 @@ function Title({ title }: { title: string }) {
  * past it; the card's own overflow-hidden clips the bleed. The tall front-end crop is pinned
  * to the top so the mirrors stay in frame when the slot is shorter than the image.
  *
- * On phones a side slot would leave ~180px for copy, so below `sm` it becomes a band across
- * the top of the card instead.
+ * From sm up only. On phones the crop was stretched into a wide band and read as a blurry
+ * zoom, so phones get it small and sharp in a Lens instead.
  */
 function CloseUp({ src, feature }: { src: string; feature: boolean }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none relative mb-5 h-40 select-none overflow-hidden rounded-2xl sm:absolute sm:inset-y-0 sm:-right-[8%] sm:mb-0 sm:h-auto sm:w-[40%] sm:rounded-none"
+      className="pointer-events-none hidden select-none overflow-hidden sm:absolute sm:inset-y-0 sm:-right-[8%] sm:block sm:w-[40%]"
     >
       <Image
         src={src}
@@ -316,6 +332,29 @@ function PhotoTile() {
         sizes="(min-width: 1024px) 45vw, 90vw"
         className="object-contain p-6"
       />
+    </div>
+  );
+}
+
+/**
+ * Phones only (below sm): the close-up at about its real size, in a round lens, with the
+ * card's claim beside it — a detail callout rather than a stretched banner.
+ */
+function Lens({ src, lens }: { src: string; lens: Usp["lens"] }) {
+  return (
+    <div aria-hidden className="pointer-events-none mb-5 flex select-none items-center gap-4 sm:hidden">
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-soft-grey ring-1 ring-carbon/10">
+        <Image src={src} alt="" fill sizes="96px" className="object-cover" />
+        <span className="absolute inset-1.5 rounded-full ring-1 ring-volt" />
+      </div>
+      <div>
+        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-carbon/45">
+          {lens.kicker}
+        </p>
+        <p className="mt-1 font-display text-xl font-bold leading-tight tracking-[-0.02em] text-carbon">
+          {lens.value}
+        </p>
+      </div>
     </div>
   );
 }

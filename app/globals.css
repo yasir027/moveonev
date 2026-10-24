@@ -457,6 +457,15 @@
       0 0 0 0.5px rgb(16 20 18 / 0.06);
   }
 
+  /* Phones and tablets: half the blur. Same look over flat ground, far cheaper to paint
+     when several frost cards are on screen at once. */
+  @media (max-width: 1023px) {
+    .glass-frost {
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      backdrop-filter: blur(12px) saturate(150%);
+    }
+  }
+
   /*
    * Frame ground. What an audience frame shows before its photograph exists: a lit gradient
    * with grain, so an empty frame reads as a surface rather than a gap. The volt wash is
@@ -612,4 +621,11 @@ main:has([data-footer-lead]) + footer[data-site-footer] {
   overflow-x: clip; /* still clips the roll-in sideways */
   overflow-y: visible; /* but not the mirrors */
   --wm-solid: 88%; /* only the very top of the drawing fades */
+}
+/* Swipe rows (SwipeRail): scroll sideways without showing a scrollbar. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

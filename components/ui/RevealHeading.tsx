@@ -2,11 +2,12 @@
 
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { EASE_PREMIUM, useIsCompact, usePrefersReducedMotion } from "@/lib/motion";
 
-/** The h2 style every section heading shares. */
+/** The h2 style every section heading shares. 30px on phones; from ~1000px up 4vw is past
+    40px, so desktop sizes are the same as before. */
 export const SECTION_HEADING =
-  "font-display text-[clamp(2.5rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em]";
+  "font-display text-[clamp(1.875rem,4vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em]";
 
 interface RevealHeadingProps {
   /** One entry per visual line; each slides up out of its own mask. */
@@ -34,6 +35,8 @@ export function RevealHeading({
   replay = false,
 }: RevealHeadingProps) {
   const reducedMotion = usePrefersReducedMotion();
+  // Phones: same mask rise, a touch quicker.
+  const compact = useIsCompact();
   const Tag = motion[as];
 
   return (
@@ -55,7 +58,10 @@ export function RevealHeading({
                 ? { hidden: { opacity: 0 }, shown: { opacity: 1 } }
                 : { hidden: { y: "110%" }, shown: { y: "0%" } }
             }
-            transition={{ duration: reducedMotion ? 0.3 : 0.75, ease: EASE_PREMIUM }}
+            transition={{
+              duration: reducedMotion ? 0.3 : compact ? 0.6 : 0.75,
+              ease: EASE_PREMIUM,
+            }}
           >
             {line}
           </motion.span>

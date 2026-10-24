@@ -6,11 +6,13 @@ import { ExpandPanel } from "@/components/ui/ExpandPanel";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Reveal } from "@/components/ui/Reveal";
 import { RevealHeading } from "@/components/ui/RevealHeading";
-import { WHATSAPP_NUMBER } from "@/lib/heroModels";
-import { SHOWROOM } from "@/lib/showroom";
+import { SHOWROOM, SHOWROOM_WHATSAPP } from "@/lib/showroom";
 
 /*
  * /contact — three ways to reach the showroom, an enquiry form, and a map.
+ *
+ * Laptops (lg+) open straight on the form: the hero and its three cards are hidden there, and
+ * the form section carries the same three ways as small buttons beside it.
  *
  * Motion is borrowed from the home page, a little of it: RevealHeading / Reveal for the
  * headings and cards (once, the first time they are seen), ExpandPanel opening the dark form
@@ -30,10 +32,6 @@ export const metadata: Metadata = {
   },
 };
 
-const WHATSAPP = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hi MOVE ON, I have a question about your electric scooters.",
-)}`;
-
 const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(
   `Shabbir Medical Hall, ${SHOWROOM.area}, ${SHOWROOM.city}`,
 )}&output=embed`;
@@ -51,7 +49,7 @@ const WAYS: { icon: LucideIcon; label: string; value: ReactNode; note: string; h
     label: "WhatsApp",
     value: "Message us",
     note: "Chat with the showroom",
-    href: WHATSAPP,
+    href: SHOWROOM_WHATSAPP,
     external: true,
   },
   {
@@ -67,8 +65,9 @@ const WAYS: { icon: LucideIcon; label: string; value: ReactNode; note: string; h
 export default function ContactPage() {
   return (
     <main className="bg-white pt-[88px]">
-      {/* 1 — HERO + ways to reach us */}
-      <section className="px-[7%] pb-16 pt-2 sm:pt-12 lg:pb-20 lg:pt-16">
+      {/* 1 — HERO + ways to reach us. Phones and tablets only: on laptops the form comes
+          first, with these as small buttons beside it (ContactFormSection). */}
+      <section className="px-[7%] pb-16 pt-2 sm:pt-12 lg:hidden">
         <Eyebrow>Contact us</Eyebrow>
         <RevealHeading
           as="h1"

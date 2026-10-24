@@ -7,6 +7,7 @@ import { ChevronDown, Phone, MapPin, Clock, Check } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 import { SHOWROOM } from "@/lib/showroom";
+import { sendEnquiry } from "@/lib/enquiry";
 
 const MODELS = [
   "X Double Light",
@@ -46,7 +47,14 @@ export function GetInTouchSection() {
 
     setStatus("sending");
     try {
-      await new Promise((r) => setTimeout(r, 600));
+      // Emailed to the showroom (lib/enquiry.ts), the same way as the contact page's form.
+      await sendEnquiry({
+        subject: `Test ride booking: ${form.model} — ${form.name}`,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        fields: { model: form.model, queries: form.query },
+      });
       setStatus("sent");
       setForm(INITIAL);
     } catch {

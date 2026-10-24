@@ -8,6 +8,7 @@ import { RevealHeading } from "@/components/ui/RevealHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Field, INPUT, VehiclePeek } from "@/components/GetInTouch";
 import { SHOWROOM, SHOWROOM_WHATSAPP } from "@/lib/showroom";
+import { sendEnquiry } from "@/lib/enquiry";
 
 const TOPICS = ["Test ride", "Buying a scooter", "Service", "Battery", "Something else"];
 
@@ -17,13 +18,6 @@ const QUICK_WAYS = [
   { icon: MessageCircle, label: "WhatsApp", href: SHOWROOM_WHATSAPP, external: true },
   { icon: MapPin, label: "Directions", href: SHOWROOM.mapsUrl, external: true },
 ];
-
-/**
- * Web3Forms access key, registered to moveonevmoto@gmail.com: every enquiry is emailed there.
- * The key is meant to sit in the browser (Web3Forms' free plan only takes browser submissions)
- * and lives in .env.local, which git ignores. Setup steps are in the README.
- */
-const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
 const INITIAL = {
   name: "",
@@ -51,31 +45,15 @@ export function ContactFormSection() {
     e.preventDefault();
     if (botField) return;
 
-    if (!WEB3FORMS_KEY) {
-      console.warn("Contact form: NEXT_PUBLIC_WEB3FORMS_KEY is not set (see README).");
-      setStatus("error");
-      return;
-    }
-
     setStatus("sending");
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `Website enquiry: ${form.topic} — ${form.name}`,
-          from_name: "MOVE ON website",
-          name: form.name,
-          phone: form.phone,
-          // Web3Forms sets this as the reply-to, so "Reply" in Gmail goes to the customer.
-          ...(form.email ? { email: form.email } : {}),
-          topic: form.topic,
-          message: form.message,
-        }),
+      await sendEnquiry({
+        subject: `Website enquiry: ${form.topic} — ${form.name}`,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        fields: { topic: form.topic, message: form.message },
       });
-      const data: { success?: boolean } = await res.json();
-      if (!res.ok || !data.success) throw new Error("Web3Forms rejected the enquiry");
       setStatus("sent");
       setForm(INITIAL);
     } catch {

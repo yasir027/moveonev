@@ -10,7 +10,7 @@ import { HANDOVER_EVENT, isHandover } from "@/lib/handover";
 import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
 import { SHOWROOM } from "@/lib/showroom";
 
-/** Scrolled this share of a screen before the pill shows: past the top section. */
+/** On the home page, scrolled this share of a screen before the pill shows: past the hero. */
 const SHOW_AFTER = 0.7;
 
 /**
@@ -49,7 +49,10 @@ export function FloatingCta() {
         const r = el.getBoundingClientRect();
         return r.top < vh && r.bottom > 0;
       });
-      setVisible(window.scrollY > vh * SHOW_AFTER && !covered && !isHandover());
+      // Home waits until the hero is scrolled past (the hero has its own buttons); every
+      // other page shows it from the top.
+      const pastTop = pathname !== "/" || window.scrollY > vh * SHOW_AFTER;
+      setVisible(pastTop && !covered && !isHandover());
 
       // The pill's own middle line, as the Navbar probes its own.
       const box = ref.current?.getBoundingClientRect();

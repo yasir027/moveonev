@@ -17,8 +17,17 @@ const LINKS = [
   { label: "Technology", href: "/technology" },
   { label: "About", href: "/about" },
   { label: "Blogs", href: "/blogs" },
-  { label: "Contact", href: "/contact" },
 ];
+
+/*
+ * Book test ride: depth from a soft top highlight, a slight vertical gradient and a dark
+ * drop shadow (no glow). On hover it lifts a touch and the shadow deepens; pressed, it
+ * settles back. Carbon on light sections, volt on dark ones.
+ */
+const BOOK_ON_LIGHT =
+  "bg-[linear-gradient(180deg,#2b332e_0%,#101412_100%)] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_1px_2px_rgb(16_20_18/0.25),0_8px_18px_-8px_rgb(16_20_18/0.5)] hover:bg-[linear-gradient(180deg,#37413b_0%,#161c19_100%)] hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.18),0_2px_4px_rgb(16_20_18/0.22),0_14px_26px_-10px_rgb(16_20_18/0.6)]";
+const BOOK_ON_DARK =
+  "bg-[linear-gradient(180deg,#9bff6a_0%,#6ee62f_100%)] text-carbon shadow-[inset_0_1px_0_rgb(255_255_255/0.55),0_1px_2px_rgb(0_0_0/0.3),0_8px_18px_-8px_rgb(0_0_0/0.7)] hover:bg-[linear-gradient(180deg,#adff84_0%,#7dff40_100%)] hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.6),0_2px_4px_rgb(0_0_0/0.3),0_14px_26px_-10px_rgb(0_0_0/0.8)]";
 
 const MORPH = { duration: 0.5, ease: EASE_PREMIUM };
 
@@ -192,10 +201,8 @@ export function Navbar() {
             href={whatsappUrl()}
             target="_blank"
             rel="noopener noreferrer"
-            className={`shrink-0 whitespace-nowrap rounded-full font-display font-semibold transition-colors duration-300 ${
-              onDark
-                ? "bg-volt text-carbon hover:bg-[#6ee62f]"
-                : "bg-carbon text-white hover:bg-[#1f2622]"
+            className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-display font-semibold transition-[background-color,box-shadow,transform] duration-300 ease-premium hover:-translate-y-0.5 active:translate-y-0 active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt ${
+              onDark ? BOOK_ON_DARK : BOOK_ON_LIGHT
             } ${
               scrolled
                 ? "px-4 py-2 text-sm sm:px-5 sm:py-2.5 sm:text-[15px]"
@@ -205,6 +212,12 @@ export function Navbar() {
             {/* Shorter on phones, where it shares the row with the menu button. */}
             <span className="sm:hidden">Test ride</span>
             <span className="hidden sm:inline">Book test ride</span>
+            <ArrowRight
+              size={16}
+              strokeWidth={2.5}
+              aria-hidden
+              className="hidden transition-transform duration-300 ease-premium group-hover:translate-x-0.5 sm:block"
+            />
           </a>
 
           {/* Two bars that cross into an X. Phones only. */}
@@ -306,10 +319,36 @@ export function Navbar() {
                 })}
               </ul>
 
+              {/* Phones only: Contact, highlighted. The laptop bar leaves it out. */}
+              <motion.div
+                initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: EASE_PREMIUM, delay: 0.06 + LINKS.length * 0.05 }}
+                className="px-1 pt-1"
+              >
+                <TransitionLink
+                  href="/contact"
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={pathname === "/contact" ? "page" : undefined}
+                  className="group flex items-center justify-between rounded-[22px] bg-volt px-5 py-4 font-display text-[22px] font-semibold tracking-tight text-carbon shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_8px_18px_-10px_rgb(16_20_18/0.45)] transition-colors duration-300 hover:bg-[#6ee62f]"
+                >
+                  <span className="flex items-center gap-3">
+                    Contact us
+                    {pathname === "/contact" && <span aria-hidden className="size-2 rounded-full bg-carbon" />}
+                  </span>
+                  <ArrowRight
+                    size={20}
+                    strokeWidth={2.5}
+                    aria-hidden
+                    className="transition-transform duration-300 ease-premium group-hover:translate-x-0.5"
+                  />
+                </TransitionLink>
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.06 + LINKS.length * 0.05 }}
+                transition={{ duration: 0.4, delay: 0.06 + (LINKS.length + 1) * 0.05 }}
                 className={`mx-3 mt-1 flex items-center justify-between gap-3 border-t py-4 pl-2 ${
                   onDark ? "border-white/10" : "border-carbon/10"
                 }`}
@@ -319,15 +358,6 @@ export function Navbar() {
                   <p className={onDark ? "text-white/60" : "text-carbon/60"}>{SHOWROOM.hours.label}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1.5">
-                  <TransitionLink
-                    href="/contact"
-                    onClick={() => setMenuOpen(false)}
-                    className={`rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors duration-300 ${
-                      onDark ? "bg-white/10 hover:bg-white/15" : "bg-carbon/[0.06] hover:bg-carbon/10"
-                    }`}
-                  >
-                    Contact
-                  </TransitionLink>
                   <a
                     href={`tel:${SHOWROOM.phone.tel}`}
                     aria-label={`Call ${SHOWROOM.phone.display}`}

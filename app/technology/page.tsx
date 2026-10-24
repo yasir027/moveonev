@@ -125,7 +125,7 @@ export default function TechnologyPage() {
   return (
     <main className="bg-white pt-[88px]">
       {/* 1 — HERO */}
-      <section className="px-[7%] pb-12 pt-12 lg:pb-14 lg:pt-16">
+      <section className="px-[7%] pb-12 pt-2 sm:pt-12 lg:pb-14 lg:pt-16">
         <Eyebrow>Technology</Eyebrow>
         <RevealHeading
           as="h1"

@@ -6,7 +6,7 @@ import { Check, Clock } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { Field, INPUT } from "@/components/GetInTouch";
+import { Field, INPUT, VehiclePeek } from "@/components/GetInTouch";
 import { SHOWROOM } from "@/lib/showroom";
 
 const TOPICS = ["Test ride", "Buying a scooter", "Service", "Battery", "Something else"];
@@ -28,7 +28,8 @@ const INITIAL = {
 
 /**
  * The contact page's enquiry form: any question, not just a test ride (that's GetInTouch on
- * the home page). Same dark ground, glow and input skin as GetInTouch so the two read as one.
+ * the home page). Laid out like GetInTouch — same container, spacing, panel and the scooter
+ * rising out of the foot — so the two read as one.
  */
 export function ContactFormSection() {
   const [form, setForm] = useState(INITIAL);
@@ -79,7 +80,7 @@ export function ContactFormSection() {
     <section
       id="message"
       data-theme="dark"
-      className="relative w-full overflow-x-clip bg-carbon py-12 text-white lg:py-12"
+      className="relative w-full overflow-x-clip bg-carbon py-16 pb-[150px] text-white sm:pb-[180px] lg:py-24 lg:pb-[100px]"
     >
       <div
         aria-hidden
@@ -90,10 +91,10 @@ export function ContactFormSection() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[1240px] px-5 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:items-center lg:gap-14">
+      <div className="relative mx-auto w-full max-w-[1440px] px-[7%]">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-16">
           {/* Left: the ask */}
-          <div>
+          <div className="lg:pt-4">
             <span className="mb-4 block h-px w-10 bg-volt" />
             <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
               Send us a message
@@ -132,12 +133,12 @@ export function ContactFormSection() {
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: 0.08 }}
           >
-            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 shadow-2xl backdrop-blur-xl sm:p-7">
+            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-7 shadow-2xl backdrop-blur-md sm:p-10 lg:backdrop-blur-xl">
               {status === "sent" ? (
                 <div
                   role="status"
                   aria-live="polite"
-                  className="flex min-h-[360px] flex-col items-center justify-center text-center"
+                  className="flex min-h-[420px] flex-col items-center justify-center text-center"
                 >
                   <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-volt">
                     <Check className="h-6 w-6 text-carbon" strokeWidth={3} aria-hidden />
@@ -169,7 +170,7 @@ export function ContactFormSection() {
                     className="pointer-events-none absolute h-0 w-0 opacity-0"
                   />
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-5 sm:grid-cols-2">
                     <Field id="contact-name" label="Full name" className="sm:col-span-2">
                       <input
                         id="contact-name"
@@ -258,12 +259,12 @@ export function ContactFormSection() {
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className="mt-6 w-full rounded-full bg-volt py-3.5 font-display text-[13px] font-bold tracking-[0.02em] text-carbon transition-colors duration-300 ease-premium hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-8 w-full rounded-full bg-volt py-4 font-display text-[13px] font-bold tracking-[0.02em] text-carbon transition-colors duration-300 ease-premium hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {status === "sending" ? "Sending…" : "Send message"}
                   </button>
 
-                  <p className="mt-3 text-center text-[12px] leading-relaxed text-white/30">
+                  <p className="mt-5 text-center text-[12px] leading-relaxed text-white/30">
                     We use your details to reply to you and nothing else.
                   </p>
                 </form>
@@ -272,6 +273,8 @@ export function ContactFormSection() {
           </motion.div>
         </div>
       </div>
+
+      <VehiclePeek />
     </section>
   );
 }

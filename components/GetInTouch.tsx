@@ -295,7 +295,8 @@ export function GetInTouchSection() {
 export const INPUT =
   "w-full rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3.5 text-[16px] text-white lg:text-[14px] placeholder:text-white/30 outline-none transition-all duration-300 ease-out focus:bg-white/[0.08] focus:border-volt/50 focus:ring-1 focus:ring-volt/50";
 
-function VehiclePeek() {
+/** The scooter rising out of the section's foot. Shared with the contact page's form. */
+export function VehiclePeek() {
   if (!CTA_VEHICLE) return null;
 
   return (

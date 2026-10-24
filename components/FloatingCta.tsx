@@ -81,11 +81,11 @@ export function FloatingCta() {
   }, [pathname]);
 
   const onContact = pathname === "/contact";
-  const ghost = `inline-flex items-center gap-2 rounded-full px-4 py-2.5 font-display text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt sm:px-5 sm:text-[15px] ${
+  const ghost = `inline-flex items-center gap-2 rounded-full px-3 py-2.5 font-display text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt sm:px-5 sm:text-[15px] ${
     onDark ? "text-white/85 hover:text-white" : "text-carbon/80 hover:text-carbon"
   }`;
   const primary =
-    "group inline-flex items-center gap-2 rounded-full bg-volt px-5 py-2.5 font-display text-[14px] font-bold text-carbon transition-colors duration-300 hover:bg-[#6ee62f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon sm:px-6 sm:text-[15px]";
+    "group inline-flex items-center gap-2 rounded-full bg-volt px-4 py-2.5 font-display text-[14px] font-bold text-carbon transition-colors duration-300 hover:bg-[#6ee62f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-carbon sm:px-6 sm:text-[15px]";
 
   const bookLabel = (
     <>
@@ -100,9 +100,11 @@ export function FloatingCta() {
   );
 
   return (
+    /* Phones: left-aligned, so it ends before the WhatsApp button in the bottom-right corner
+       (centred, the two overlapped below ~420px). Centred from sm up. */
     <div
       ref={ref}
-      className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4"
+      className="pointer-events-none fixed inset-x-0 z-40 flex justify-start px-4 sm:justify-center"
       style={{ bottom: "max(16px, env(safe-area-inset-bottom))" }}
     >
       <AnimatePresence>

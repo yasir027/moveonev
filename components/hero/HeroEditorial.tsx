@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import {
@@ -13,6 +13,7 @@ import {
   whatsappUrl,
 } from "@/lib/heroModels";
 import { Magnetic } from "@/components/ui/Magnetic";
+import { TransitionLink } from "@/components/loader/RouteTransition";
 import { ScooterStage } from "./ScooterStage";
 import { useHeroState } from "./useHeroState";
 
@@ -23,11 +24,6 @@ import { useHeroState } from "./useHeroState";
 export function HeroEditorial() {
   const { active, activeIndex, activeColor, colorIndex, selectModel, setColorIndex } =
     useHeroState();
-  const reducedMotion = useReducedMotion();
-
-  function scrollToLineup() {
-    document.getElementById("models")?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
-  }
 
   const pills = [`${active.range} range`, `${active.topSpeed} top speed`, "Swappable battery"];
 
@@ -180,13 +176,14 @@ export function HeroEditorial() {
                     </span>
                   </a>
                 </Magnetic>
-                <button
-                  onClick={scrollToLineup}
+                {/* The model on screen, on its own page. */}
+                <TransitionLink
+                  href={`/models/${active.slug}`}
                   className="group inline-flex items-center gap-1.5 font-display text-sm font-semibold text-carbon/70 transition-colors hover:text-carbon"
                 >
                   Explore {active.name}
                   <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                </TransitionLink>
               </div>
             </div>
 

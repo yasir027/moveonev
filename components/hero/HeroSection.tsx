@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
 import { useIsCompact } from "@/lib/motion";
+import { TransitionLink } from "@/components/loader/RouteTransition";
 
 interface Model {
   id: string;
@@ -90,8 +91,10 @@ export function HeroSection() {
     setActiveColorIndex(0); // Reset color when switching models
   }
 
-  function scrollToLineup() {
-    document.getElementById("models")?.scrollIntoView({
+  /* X1 / X2 / PRO have no model pages of their own, so Configure opens the full lineup and
+     Test Drive goes to the booking form further down this page. */
+  function scrollToBooking() {
+    document.getElementById("book")?.scrollIntoView({
       behavior: reducedMotion ? "auto" : "smooth",
     });
   }
@@ -283,15 +286,15 @@ export function HeroSection() {
               
               {/* Left Actions */}
               <div className="flex w-full flex-1 items-center justify-center gap-3 sm:w-auto sm:justify-start">
-                <button
-                  onClick={scrollToLineup}
+                <TransitionLink
+                  href="/models"
                   className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-carbon px-6 font-display sm:flex-none text-xs font-bold tracking-wide text-white transition-all hover:bg-carbon/90 hover:shadow-lg hover:shadow-carbon/20"
                 >
                   Configure
                   <ArrowRight size={14} strokeWidth={2} className="transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                </TransitionLink>
                 <button
-                  onClick={scrollToLineup}
+                  onClick={scrollToBooking}
                   className="flex h-12 flex-1 items-center justify-center rounded-full border border-carbon/20 bg-white/30 px-6 font-display sm:flex-none text-xs font-bold tracking-wide text-carbon transition-all hover:bg-white hover:border-carbon/40"
                 >
                   Test Drive

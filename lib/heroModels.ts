@@ -1,5 +1,7 @@
 export interface Model {
   id: string;
+  /** Its page: /models/<slug> (a slug from lib/models.ts). */
+  slug: string;
   code: string;
   name: string;
   tagline: string;
@@ -85,6 +87,7 @@ const SHARED_HOTSPOTS: Model["hotspots"] = [
 export const MODELS: Model[] = [
   {
     id: "double-light",
+    slug: "x-double-light",
     code: "DOUBLE LIGHT",
     name: "X-DOUBLE LIGHT",
     tagline: "Smooth. Comfortable. Reliable.",
@@ -107,6 +110,7 @@ export const MODELS: Model[] = [
   },
   {
     id: "torvo",
+    slug: "x-torvo",
     code: "TORVO",
     name: "X-TORVO",
     tagline: "Performance. Comfort. Smart.",
@@ -128,6 +132,7 @@ export const MODELS: Model[] = [
   },
   {
     id: "robox",
+    slug: "x-robox",
     code: "ROBOX",
     name: "X-ROBOX",
     tagline: "Comfort. Performance. Function.",

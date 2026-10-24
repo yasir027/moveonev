@@ -3,13 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { EASE_PREMIUM, useIsCompact, usePrefersReducedMotion } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
+import { StackCard, StackCards } from "@/components/ui/StackCards";
 
 /*
  * The frosted card material comes from .glass-frost in globals.css. The drop shadow is the
  * one thing added on top: .glass-frost deliberately casts no glow, which reads well over the
  * dark USP block but lets a card dissolve into white here.
+ *
+ * Reveal these with opacity only: a transform on the card or any ancestor (framer leaves an
+ * inline one behind after a slide) makes it a backdrop root and the frost stops blurring.
  */
 const GLASS_CARD =
   "glass-frost rounded-[24px] p-6 shadow-[0_24px_60px_-24px_rgba(16,20,18,0.22)] transition-shadow duration-300 hover:shadow-[0_32px_80px_-24px_rgba(16,20,18,0.3)]";
@@ -93,23 +97,6 @@ const DETAIL = {
 } satisfies FrameArt;
 
 /*
- * The glass cards fade in and never translate.
- *
- * An ancestor carrying `opacity < 1` or a transform becomes a backdrop root, and everything
- * inside it loses the page behind it — the same trap ScrollCurtain documents for the hero's
- * .glass-liquid chips. framer-motion leaves an inline `transform: translateX(0px)` behind
- * once a reveal settles, so animating x or y here would break the frost permanently rather
- * than just during the reveal. Opacity settles at exactly 1, which is not a backdrop root.
- *
- * The frames beside them hold no backdrop-filter, so those keep the directional reveal.
- */
-const CARD_REVEAL = {
-  initial: { opacity: 0 },
-  whileInView: { opacity: 1 },
-  viewport: { once: true, margin: "-10%" },
-} as const;
-
-/*
  * Desktop pacing. The collage pins and assembles itself: it arrives holding students alone,
  * and each further scroll adds the next piece while the section stays put.
  *
@@ -123,8 +110,8 @@ const CARD_REVEAL = {
  * would read as one event rather than two — and the detail tile closes on the shortest,
  * because it is an accent rather than a reveal.
  *
- * The mobile stack doesn't pin: its cards are stacked vertically and already arrive one at a
- * time, so it keeps the shared CARD_REVEAL viewport and its small delay.
+ * The phone stack doesn't use this: its cards stack on top of each other as you scroll
+ * (StackCards) instead.
  */
 const STEP_AT = [0, 0.24, 0.52, 0.8] as const;
 
@@ -133,6 +120,8 @@ const CARD_FOLLOW = 0.15;
 
 export function AudienceSection() {
   const reducedMotion = usePrefersReducedMotion();
+  // Below lg the pinned collage is hidden and phones get the plain stack, so don't listen.
+  const compact = useIsCompact();
   const trackRef = useRef<HTMLDivElement>(null);
   /* -1 until the collage is actually arriving, so students has an entrance of its own
      rather than already sitting there when the section pins. */
@@ -147,7 +136,7 @@ export function AudienceSection() {
    */
   useEffect(() => {
     const track = trackRef.current;
-    if (!track || reducedMotion) return;
+    if (!track || reducedMotion || compact) return;
 
     function update() {
       const box = track!.getBoundingClientRect();
@@ -180,7 +169,7 @@ export function AudienceSection() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, compact]);
 
   /* No pin and no sequence when motion is reduced — that would be 200svh of scrolling in
      which nothing happens — so the collage simply stands there complete. */
@@ -190,7 +179,7 @@ export function AudienceSection() {
     /* overflow-x-clip, not overflow-hidden: `hidden` makes this section a scroll container,
        and the sticky collage inside it would quietly stop sticking. Same distinction the
        body carries in globals.css. */
-    <section className="relative w-full overflow-x-clip bg-white py-16 lg:py-24">
+    <section className="relative w-full overflow-x-clip bg-white py-12 sm:py-16 lg:py-24">
 
       {/*
         STRICT BOXED CONTAINER
@@ -231,7 +220,7 @@ export function AudienceSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
-            className="mt-6 max-w-[480px] text-base leading-relaxed text-carbon/60"
+            className="mt-6 max-w-[480px] text-[15px] leading-relaxed text-carbon/60 lg:text-base"
           >
             Whether you&apos;re starting out, heading to class, or simply
             looking for an easier way around town — there&apos;s a MOVE ON
@@ -243,11 +232,13 @@ export function AudienceSection() {
             MOBILE / TABLET
             Simple editorial vertical stack
         ===================================================== */}
-        <div className="flex flex-col gap-8 lg:hidden">
-          <AudienceMobile audience={audiences.students} delay={0} />
-          <AudienceMobile audience={audiences.newbies} delay={0.08} />
-          <AudienceMobile audience={audiences.seniors} delay={0.16} />
-        </div>
+        <StackCards className="flex flex-col gap-6 lg:hidden">
+          {[audiences.students, audiences.newbies, audiences.seniors].map((audience, i) => (
+            <StackCard key={audience.label} index={i} radius="rounded-[28px]">
+              <AudienceMobile audience={audience} delay={i * 0.08} />
+            </StackCard>
+          ))}
+        </StackCards>
 
         {/* =====================================================
             DESKTOP
@@ -416,21 +407,25 @@ export function AudienceSection() {
    REUSABLE CONTENT
 ========================================================= */
 
-function AudienceContent({ audience }: { audience: Audience }) {
+function AudienceContent({ audience, compact = false }: { audience: Audience; compact?: boolean }) {
   return (
     <>
-      <div className="mb-5 flex items-center gap-3">
+      <div className={`${compact ? "mb-3" : "mb-5"} flex items-center gap-3`}>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-carbon font-display text-[10px] font-semibold text-volt">
           {audience.label}
         </span>
         <span className="h-px w-8 bg-carbon/15" />
       </div>
 
-      <h3 className="mb-3 font-display text-[21px] font-bold leading-[1.15] tracking-tight text-carbon">
+      <h3
+        className={`font-display font-bold leading-[1.15] tracking-tight text-carbon ${
+          compact ? "mb-1.5 text-[19px]" : "mb-3 text-[21px]"
+        }`}
+      >
         {audience.title}
       </h3>
 
-      <p className="text-[14px] leading-[1.65] text-carbon/70">
+      <p className={`${compact ? "text-[13.5px] leading-[1.6]" : "text-[14px] leading-[1.65]"} text-carbon/70`}>
         {audience.description}
       </p>
     </>
@@ -510,29 +505,22 @@ function AudienceMobile({
   delay: number;
 }) {
   return (
-    <div className="relative">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{
-          duration: 0.55,
-          ease: EASE_PREMIUM,
-          delay,
-        }}
-        className="h-[380px] sm:h-[440px]"
-      >
-        <AudienceFrame audience={audience} sizes="90vw" />
-      </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 0.55, ease: EASE_PREMIUM, delay }}
+      className="relative h-[440px] sm:h-[520px]"
+    >
+      <AudienceFrame audience={audience} sizes="90vw" />
 
-      {/* Opacity only — see CARD_REVEAL. */}
-      <motion.div
-        {...CARD_REVEAL}
-        transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: delay + 0.15 }}
-        className={`relative z-10 mx-4 -mt-12 ${GLASS_CARD}`}
-      >
-        <AudienceContent audience={audience} />
-      </motion.div>
-    </div>
+      {/* The card sits inside the photo along its bottom edge, so each rider is one object
+          rather than a photo with a card hanging off it. Near-solid white, not frost: on a
+          phone these stack (StackCards), and the shrink on the card underneath would take
+          a backdrop blur away. */}
+      <div className="absolute inset-x-3 bottom-3 z-10 rounded-[20px] bg-white/95 p-5 shadow-[0_18px_40px_-18px_rgba(16,20,18,0.35)]">
+        <AudienceContent audience={audience} compact />
+      </div>
+    </motion.div>
   );
 }

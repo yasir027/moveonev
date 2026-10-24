@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { EASE_PREMIUM } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
+import { SwipeRail } from "@/components/ui/SwipeRail";
 
 const CARD_REVEAL = {
   initial: { opacity: 0, y: 20 },
@@ -99,7 +100,7 @@ export function BatterySection() {
     /* overflow-x-clip, not overflow-hidden — same as LineupSection. Spacing matches it too. */
     <section
       id="batteries"
-      className="relative w-full overflow-x-clip bg-mist py-16 lg:py-24"
+      className="relative w-full overflow-x-clip bg-mist py-12 sm:py-16 lg:py-24"
     >
       <div
         aria-hidden
@@ -130,15 +131,16 @@ export function BatterySection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.55, ease: EASE_PREMIUM, delay: 0.25 }}
-            className="mt-4 max-w-[480px] text-base leading-relaxed text-carbon/60 lg:mt-6"
+            className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-carbon/60 lg:mt-6 lg:text-base"
           >
             Same protection, same smart BMS, same 2 + 1 year cover on both
             packs. The only question is how far you ride between charges.
           </motion.p>
         </header>
 
-        {/* Always two columns, so both packs show together even on a phone. */}
-        <div className=" mx-auto grid grid-cols-2 gap-3 sm:gap-5 lg:gap-6">
+        {/* A swipe row below lg (side by side on a tablet, the second peeking on a phone);
+            two columns from lg. */}
+        <SwipeRail className="lg:mx-auto lg:grid lg:grid-cols-2 lg:gap-6">
           {packs.map((pack, i) => (
             <motion.article
               key={pack.name}
@@ -148,12 +150,12 @@ export function BatterySection() {
                 ease: EASE_PREMIUM,
                 delay: i * 0.1,
               }}
-              className="relative z-10 w-full"
+              className="relative z-10 h-full w-full"
             >
               <PackCard pack={pack} />
             </motion.article>
           ))}
-        </div>
+        </SwipeRail>
 
         <div className="relative mt-8 flex flex-col items-center gap-4 lg:mt-14 lg:gap-5">
           <p className="text-center text-xs font-medium tracking-wide text-carbon/50 sm:text-sm">

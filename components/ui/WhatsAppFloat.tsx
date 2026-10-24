@@ -1,89 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { WHATSAPP_NUMBER } from "@/lib/heroModels";
 
-/* Pre-filled messages. Edit freely. */
+/* Pre-filled message. Edit freely. */
 const MESSAGE = "Hi MOVE ON, I'd like to know more about your electric scooters.";
-const BUBBLE_MESSAGE = "Hi MOVE ON, I'd like to book a free test drive.";
-const BUBBLE_TEXT = "Book a test drive, it's free";
-const KEY = "wa-bubble-dismissed";
 
 const wa = (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
 /*
- * Floating WhatsApp button, bottom-right on every page.
- * About 2.5s after load a "1" badge appears on the icon and a message bubble pops up
- * above it. Clicking the bubble, the icon or the × clears both, and they stay away for
- * the rest of the visit. z-40 keeps it under the navbar (z-50) and the model popup (z-60).
+ * Floating WhatsApp button, bottom-right on every page. Just the button: the pop-up
+ * "Book a test drive" bubble sat over the content on phones, so it was removed.
+ * z-40 keeps it under the navbar (z-50) and the model popup (z-60).
  */
 export function WhatsAppFloat() {
-  const [bubble, setBubble] = useState(false);
-  // Starts true so nothing flashes before the sessionStorage check below.
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
-    let was = false;
-    try {
-      was = sessionStorage.getItem(KEY) === "1";
-    } catch {}
-    setDismissed(was);
-    if (was) return;
-    const t = window.setTimeout(() => setBubble(true), 2500);
-    return () => window.clearTimeout(t);
-  }, []);
-
-  function dismiss() {
-    setBubble(false);
-    setDismissed(true);
-    try {
-      sessionStorage.setItem(KEY, "1");
-    } catch {}
-  }
-
-  const show = bubble && !dismissed;
-
   return (
     <div className="fixed bottom-5 right-5 z-40 sm:bottom-6 sm:right-6">
-      {/* Message bubble, above the icon */}
-      <div
-        className={[
-          "absolute bottom-full right-0 mb-3 w-max max-w-[240px] transition-all duration-300",
-          show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0",
-        ].join(" ")}
-      >
-        <div className="relative flex items-center gap-2 rounded-2xl bg-white py-3 pl-4 pr-2 shadow-[0_0_0_1px_rgba(16,20,18,0.08),0_16px_36px_-12px_rgba(16,20,18,0.35)]">
-          <a
-            href={wa(BUBBLE_MESSAGE)}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={dismiss}
-            className="font-display text-[15px] font-bold leading-snug text-carbon"
-          >
-            {BUBBLE_TEXT}
-          </a>
-          <button
-            type="button"
-            onClick={dismiss}
-            aria-label="Dismiss"
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[#64748B] transition-colors hover:bg-carbon/5 hover:text-carbon"
-          >
-            ×
-          </button>
-          {/* Tail, pointing at the icon */}
-          <span
-            aria-hidden
-            className="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 bg-white shadow-[2px_2px_3px_-1px_rgba(16,20,18,0.15)]"
-          />
-        </div>
-      </div>
-
-      {/* The button */}
       <a
         href={wa(MESSAGE)}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={dismiss}
         aria-label="Chat with us on WhatsApp"
         className="group relative flex items-center rounded-full bg-[#25D366] p-3.5 text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.6)] transition-transform duration-300 hover:scale-105"
       >
@@ -92,17 +27,6 @@ export function WhatsAppFloat() {
         </svg>
         <span className="max-w-0 overflow-hidden whitespace-nowrap font-display text-[15px] font-bold opacity-0 transition-all duration-300 group-hover:ml-2.5 group-hover:max-w-[160px] group-hover:opacity-100">
           Chat with us
-        </span>
-
-        {/* Notification badge */}
-        <span
-          aria-hidden
-          className={[
-            "absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#E11D48] font-display text-[11px] font-bold text-white ring-2 ring-white transition-transform duration-300",
-            show ? "scale-100" : "scale-0",
-          ].join(" ")}
-        >
-          1
         </span>
       </a>
     </div>

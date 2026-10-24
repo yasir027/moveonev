@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { EASE_PREMIUM, usePrefersReducedMotion } from "@/lib/motion";
+import { EASE_PREMIUM, useIsCompact, usePrefersReducedMotion } from "@/lib/motion";
 import { RevealHeading } from "@/components/ui/RevealHeading";
 
 const faqs = [
@@ -75,9 +75,16 @@ const avatars = [
   { src: "/audience/seniors.jpg", alt: "MOVE ON rider" },
 ];
 
+/** Questions shown on phones and tablets before "See all". */
+const PHONE_COUNT = 5;
+
 export function FaqSection() {
   const reducedMotion = usePrefersReducedMotion();
+  // Phones: fifteen rows replaying on every flick is too busy, so they rise once.
+  const compact = useIsCompact();
   const [open, setOpen] = useState<number | null>(0);
+  // Phones and tablets list the first few, then "See all". CSS-only, so nothing jumps on load.
+  const [showAll, setShowAll] = useState(false);
   const baseId = useId();
 
   /* The bar tracks how far down the list the open answer sits; with everything closed it
@@ -85,8 +92,8 @@ export function FaqSection() {
   const progress = ((open ?? 0) + 1) / faqs.length;
 
   return (
-    <section id="faq" className="relative border-t border-carbon/10 bg-mist py-16 lg:py-24">
-      <div className="mx-auto grid w-full max-w-[1300px] gap-12 px-5 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:px-8">
+    <section id="faq" className="relative border-t border-carbon/10 bg-mist py-12 sm:py-16 lg:py-24">
+      <div className="mx-auto grid w-full max-w-[1300px] gap-8 px-5 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:px-8">
         {/* Left column — heading and social proof, pinned while the list scrolls. */}
         <motion.div
           /* Not `once`: the reveal plays in reverse on the way out, so every visit to the
@@ -105,12 +112,12 @@ export function FaqSection() {
             className="text-carbon"
             lines={["Smarter way to", <span key="b" className="text-carbon/30">ride every day.</span>]}
           />
-          <p className="mt-6 max-w-[420px] text-base leading-relaxed text-carbon/60">
+          <p className="mt-6 max-w-[420px] text-[15px] leading-relaxed text-carbon/60 lg:text-base">
             Everything you need to know before your first ride — range,
             charging, licences and upkeep.
           </p>
 
-          <div className="mt-12 lg:mt-auto">
+          <div className="mt-8 lg:mt-auto">
             <p className="max-w-[220px] font-display text-[17px] font-medium leading-snug text-carbon">
               Reliable scooters built for comfort
             </p>
@@ -171,9 +178,11 @@ export function FaqSection() {
                     delay: Math.min(i, 5) * 0.06,
                   },
                 }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: compact, amount: 0.3 }}
                 transition={{ duration: 0.3, ease: EASE_PREMIUM }}
                 className={`border-b transition-[background-color,box-shadow,border-color] duration-300 ease-premium ${
+                  !showAll && i >= PHONE_COUNT ? "max-lg:hidden" : ""
+                } ${
                   isOpen
                     ? "rounded-[24px] border-transparent bg-white shadow-[0_1px_2px_rgba(16,20,18,0.04),0_18px_40px_-22px_rgba(16,20,18,0.18)]"
                     : "border-carbon/10"
@@ -185,9 +194,9 @@ export function FaqSection() {
                   aria-expanded={isOpen}
                   aria-controls={panelId}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center gap-4 px-5 py-6 text-left sm:gap-6 sm:px-8 lg:py-8"
+                  className="flex w-full items-center gap-3 px-4 py-5 text-left sm:gap-6 sm:px-8 sm:py-6 lg:py-8"
                 >
-                  <span className="w-10 shrink-0 font-display text-[clamp(1.5rem,2.2vw,2rem)] font-bold leading-none tracking-[-0.03em] text-carbon sm:w-12">
+                  <span className="w-8 shrink-0 font-display text-[clamp(1.5rem,2.2vw,2rem)] font-bold leading-none tracking-[-0.03em] text-carbon sm:w-12">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="flex-1 font-display text-base font-semibold leading-snug tracking-[-0.01em] text-carbon sm:text-lg lg:text-xl">
@@ -195,7 +204,7 @@ export function FaqSection() {
                   </span>
                   <span
                     aria-hidden
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ease-premium sm:h-12 sm:w-12 ${
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ease-premium sm:h-12 sm:w-12 ${
                       isOpen
                         ? "border-carbon bg-carbon text-volt"
                         : "border-carbon/70 text-carbon"
@@ -232,7 +241,7 @@ export function FaqSection() {
                       }}
                       className="overflow-hidden"
                     >
-                      <p className="px-5 pb-7 text-[15px] leading-[1.75] text-carbon/65 sm:pl-[6.5rem] sm:pr-24 lg:pb-8">
+                      <p className="px-4 pb-7 text-[15px] leading-[1.75] text-carbon/65 sm:pl-[6.5rem] sm:pr-24 lg:pb-8">
                         {item.a}
                       </p>
                     </motion.div>
@@ -241,6 +250,18 @@ export function FaqSection() {
               </motion.li>
             );
           })}
+          {!showAll && (
+            <li className="flex justify-center pt-8 lg:hidden">
+              <button
+                type="button"
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-carbon/25 px-7 py-3.5 font-display text-sm font-semibold text-carbon transition-colors duration-300 hover:border-carbon hover:bg-carbon hover:text-white"
+              >
+                See all {faqs.length} questions
+                <span aria-hidden>↓</span>
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </section>

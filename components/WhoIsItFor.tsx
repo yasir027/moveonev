@@ -410,13 +410,6 @@ export function AudienceSection() {
 function AudienceContent({ audience, compact = false }: { audience: Audience; compact?: boolean }) {
   return (
     <>
-      <div className={`${compact ? "mb-3" : "mb-5"} flex items-center gap-3`}>
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-carbon font-display text-[10px] font-semibold text-volt">
-          {audience.label}
-        </span>
-        <span className="h-px w-8 bg-carbon/15" />
-      </div>
-
       <h3
         className={`font-display font-bold leading-[1.15] tracking-tight text-carbon ${
           compact ? "mb-1.5 text-[19px]" : "mb-3 text-[21px]"

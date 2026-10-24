@@ -61,6 +61,9 @@ const UNDERLINE =
 const LINK = `text-[15px] text-white/70 hover:text-white ${UNDERLINE}`;
 const NUDGE = "transition-transform duration-300 ease-premium group-hover:-translate-y-0.5 group-hover:translate-x-0.5";
 
+/** The models the footer names, in this order; the rest are one click away under "View all models". */
+const FOOTER_MODELS = ["x-double-light", "x-torvo", "x-robox"];
+
 const EXPLORE = [
   { label: "The lineup", href: "/#lineup" },
   { label: "Batteries", href: "/#batteries" },
@@ -266,7 +269,7 @@ function FooterLinks({ className = "" }: { className?: string }) {
       <Rise index={1}>
         <h2 className={HEADING}>Models</h2>
         <ul className="mt-5 space-y-3">
-          {models.map((m) => (
+          {FOOTER_MODELS.map((slug) => models.find((m) => m.slug === slug)!).map((m) => (
             <li key={m.slug}>
               <TransitionLink href={`/models/${m.slug}`} className={LINK}>
                 {m.name}
@@ -275,7 +278,7 @@ function FooterLinks({ className = "" }: { className?: string }) {
           ))}
           <li>
             <TransitionLink href="/models" className={`group inline-flex items-center gap-1.5 text-[15px] text-volt/80 hover:text-volt ${UNDERLINE}`}>
-              All models <ArrowUpRight size={14} className={NUDGE} />
+              View all models <ArrowUpRight size={14} className={NUDGE} />
             </TransitionLink>
           </li>
         </ul>
@@ -371,7 +374,15 @@ function FooterBar() {
     <div className="border-t" style={{ borderColor: "rgb(125 255 64 / 0.4)" }}>
       {/* Phones: stacked on the left, clear of the WhatsApp button in the bottom-right corner. */}
       <div className={`mx-auto flex max-w-7xl flex-col items-start gap-3 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 ${MONO}`}>
-        <span>© {new Date().getFullYear()} MOVE ON</span>
+        <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span>© {new Date().getFullYear()} MOVE ON</span>
+          <TransitionLink href="/privacy" className="transition-colors hover:text-white">
+            Privacy
+          </TransitionLink>
+          <TransitionLink href="/terms" className="transition-colors hover:text-white">
+            Terms
+          </TransitionLink>
+        </span>
         <a
           href="#top"
           onClick={(e) => {

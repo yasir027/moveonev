@@ -16,7 +16,7 @@ import { StackCard, StackCards } from "@/components/ui/StackCards";
  * inline one behind after a slide) makes it a backdrop root and the frost stops blurring.
  */
 const GLASS_CARD =
-  "glass-frost rounded-[24px] p-6 shadow-[0_24px_60px_-24px_rgba(16,20,18,0.22)] transition-shadow duration-300 hover:shadow-[0_32px_80px_-24px_rgba(16,20,18,0.3)]";
+  "glass-frost rounded-[clamp(16px,1.75cqw,24px)] p-[clamp(14px,1.75cqw,24px)] shadow-[0_24px_60px_-24px_rgba(16,20,18,0.22)] transition-shadow duration-300 hover:shadow-[0_32px_80px_-24px_rgba(16,20,18,0.3)]";
 
 interface Audience {
   /** The numeral in the volt pill. */
@@ -250,9 +250,15 @@ export function AudienceSection() {
           className={`relative hidden lg:block ${reducedMotion ? "" : "lg:h-[300svh]"}`}
         >
           <div className={reducedMotion ? "" : "sticky top-0 flex h-svh items-center"}>
-            {/* The cap keeps today's 620px on any normal screen; the min() only bites on a
-                short one, and every piece inside is percentage-height so they follow. */}
-            <div className="relative h-[min(620px,calc(100svh-5rem))] w-full">
+            {/*
+              One fixed design, scaled as a whole: the collage keeps the proportions it has at
+              its full size (1376 x 620, a 1920-wide screen) and shrinks to fit both the
+              column's width and the window's height, minus room for the navbar and the
+              floating pill. Inside, frames are percentages and the cards are sized and placed
+              in cqw (1% of the collage's width), so every piece keeps its place at any size.
+              Fixed pixel cards were what squeezed it on smaller laptops.
+            */}
+            <div className="relative mx-auto aspect-[1376/620] w-[min(100%,1376px,calc((100svh-12rem)*2.219))] [container-type:inline-size]">
 
               {/* -------------------------------------------------
                   STUDENTS — LEFT ANCHOR
@@ -288,7 +294,7 @@ export function AudienceSection() {
                   }}
                   className={`
                     ${GLASS_CARD}
-                    absolute bottom-12 right-[-50px] z-20 w-[340px]
+                    absolute bottom-[3.5cqw] right-[-3.63cqw] z-20 w-[24.7cqw]
                   `}
                 >
                   <AudienceContent audience={audiences.students} />
@@ -325,7 +331,7 @@ export function AudienceSection() {
                   }}
                   className={`
                     ${GLASS_CARD}
-                    absolute bottom-8 left-[-60px] z-20 w-[340px]
+                    absolute bottom-[2.33cqw] left-[-4.36cqw] z-20 w-[24.7cqw]
                   `}
                 >
                   <AudienceContent audience={audiences.newbies} />
@@ -368,7 +374,7 @@ export function AudienceSection() {
                   }}
                   className={`
                     ${GLASS_CARD}
-                    absolute left-[-180px] top-[-44px] z-20 w-[340px]
+                    absolute left-[-13.08cqw] top-[-3.2cqw] z-20 w-[24.7cqw]
                   `}
                 >
                   <AudienceContent audience={audiences.seniors} />
@@ -412,13 +418,17 @@ function AudienceContent({ audience, compact = false }: { audience: Audience; co
     <>
       <h3
         className={`font-display font-bold leading-[1.15] tracking-tight text-carbon ${
-          compact ? "mb-1.5 text-[19px]" : "mb-3 text-[21px]"
+          compact ? "mb-1.5 text-[19px]" : "mb-[clamp(6px,0.87cqw,12px)] text-[clamp(16px,1.53cqw,21px)]"
         }`}
       >
         {audience.title}
       </h3>
 
-      <p className={`${compact ? "text-[13.5px] leading-[1.6]" : "text-[14px] leading-[1.65]"} text-carbon/70`}>
+      <p
+        className={`${
+          compact ? "text-[13.5px] leading-[1.6]" : "text-[clamp(11.5px,1.02cqw,14px)] leading-[1.6]"
+        } text-carbon/70`}
+      >
         {audience.description}
       </p>
     </>

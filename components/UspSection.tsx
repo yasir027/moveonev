@@ -25,6 +25,8 @@ interface Usp {
    * can't show storage or a battery, so each card gets the nearest good-looking part.
    */
   closeup: string;
+  /** Where the crop is framed when it becomes a top band on narrow cards (default centre). */
+  bandFocus?: string;
   /** Phones: the short claim beside the lens, taken from the description. */
   lens: { kicker: string; value: string };
 }
@@ -55,6 +57,8 @@ const USPS: Usp[] = [
       "Heavy-duty carrying capacity with up to 45 litres of under-seat storage on select models — room enough for your daily groceries and essentials.",
     span: "",
     closeup: "/usp/closeup-storage.webp",
+    // The middle of this crop is plain side panel; the band keeps the tail light instead.
+    bandFocus: "object-[50%_12%]",
     lens: { kicker: "Under-seat", value: "Up to 45 L" },
   },
   {
@@ -178,19 +182,21 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
                 <Reveal index={i} span="h-full">
                   <article
                     {...cardProps}
-                    className={`spec-card h-full ${isFeature ? "p-7 lg:p-8" : "p-5 lg:p-6"}`}
+                    className={`spec-card @container h-full ${isFeature ? "p-7 lg:p-8" : "p-5 lg:p-6"}`}
                   >
                     {visual === "closeups" && (
                       <>
-                        <CloseUp src={usp.closeup} feature={isFeature} />
+                        <CloseUp src={usp.closeup} feature={isFeature} bandFocus={usp.bandFocus} />
                         <Lens src={usp.closeup} lens={usp.lens} />
                       </>
                     )}
 
-                    {/* The right side belongs to the close-up, so the copy stops short of it. */}
+                    {/* On a wide card the right side belongs to the close-up, so the copy stops
+                        short of it. A narrow card puts the close-up on top instead (CloseUp),
+                        and the copy gets the full width. */}
                     <div
                       className={`spec-content flex flex-col sm:h-full ${
-                        visual === "closeups" ? "sm:pr-[34%]" : ""
+                        visual === "closeups" ? "sm:@[256px]:pr-[34%]" : ""
                       }`}
                     >
                       <Label index={i} usp={usp} />
@@ -276,12 +282,17 @@ function Title({ title }: { title: string }) {
  *
  * From sm up only. On phones the crop was stretched into a wide band and read as a blurry
  * zoom, so phones get it small and sharp in a Lens instead.
+ *
+ * It follows the card's own width (the card is a container): from 256px of inner width (the small cards on 1440-and-up screens are 263px) it sits against
+ * the right edge as above. Narrower than that (the small cards on 1366-and-below laptops),
+ * a side slot became a tall sliver and squeezed the copy into ~110-160px, so it becomes a
+ * rounded band across the top and the copy takes the full width.
  */
-function CloseUp({ src, feature }: { src: string; feature: boolean }) {
+function CloseUp({ src, feature, bandFocus }: { src: string; feature: boolean; bandFocus?: string }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none hidden select-none overflow-hidden sm:absolute sm:inset-y-0 sm:-right-[8%] sm:block sm:w-[40%]"
+      className="pointer-events-none relative hidden select-none overflow-hidden sm:mb-5 sm:block sm:h-[clamp(110px,42cqw,150px)] sm:w-full sm:rounded-2xl sm:@[256px]:absolute sm:@[256px]:inset-y-0 sm:@[256px]:-right-[8%] sm:@[256px]:mb-0 sm:@[256px]:h-auto sm:@[256px]:w-[40%] sm:@[256px]:rounded-none"
     >
       <Image
         src={src}
@@ -290,7 +301,7 @@ function CloseUp({ src, feature }: { src: string; feature: boolean }) {
         /* object-cover fills these slots by height, so the image is wider than the slot:
            size for the covered width, not the slot's, or it gets served small and upscaled. */
         sizes={feature ? "(min-width: 1024px) 560px, 90vw" : "(min-width: 1024px) 300px, 90vw"}
-        className={`object-cover object-center ${feature ? "sm:object-top" : ""}`}
+        className={`object-cover ${bandFocus ? `${bandFocus} sm:@[256px]:object-center` : "object-center"} ${feature ? "sm:object-top" : ""}`}
       />
     </div>
   );

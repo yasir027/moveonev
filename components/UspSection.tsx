@@ -126,8 +126,7 @@ export function UspSection({ visual = "closeups" }: { visual?: UspVisual }) {
         </span>
       </div> */}
 
-      <div className="relative mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
-
+<div className="relative mx-auto w-full max-w-[1440px] px-[7%]">
         <header className="mb-8 max-w-2xl">
           {/* <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/65">
             Why Move On

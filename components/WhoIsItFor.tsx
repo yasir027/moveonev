@@ -45,7 +45,7 @@ const audiences = {
     title: "Students",
     description:
       "Affordable, hassle-free commuting between campus, home and everywhere between — no licence, no queue at the RTO.",
-    image: "/audience/students.jpg",
+    image: "/audience/students.png",
     alt: "A student riding a MOVE ON scooter to campus",
     focal: "50% 40%",
     chip: "No licence",
@@ -55,26 +55,25 @@ const audiences = {
     label: "02",
     title: "Newbies",
     description:
-      "First scooter, first EV, first anything — intuitive controls and a Repair Switch that talks you through it, not at you.",
-    image: "/audience/newbies.jpg",
+      "First scooter, first EV, first anything — intuitive controls and a reverse Switch that talks you through it, not at you.",
+    image: "/audience/newbies.png",
     alt: "A first-time rider getting comfortable on a MOVE ON scooter",
     focal: "50% 42%",
-    chip: "Repair Switch",
+    chip: "reverse Switch",
     placeholder: "LANDSCAPE",
   },
-  seniors: {
+   seniors: {
     label: "03",
     title: "Seniors",
     description:
       "Light enough to manoeuvre, simple enough to trust — an easy, dignified way to stay independent with no licence renewal to chase.",
-    image: "/audience/seniors.jpg",
+    image: "/audience/seniors.png",
     alt: "An older rider setting off on a MOVE ON scooter",
-    focal: "50% 50%",
+    focal: "0% 50%",
     chip: "Step-through",
     placeholder: "SQUARE",
   },
 } satisfies Record<string, Audience>;
-
 /**
  * What a frame needs to paint itself. The three audiences satisfy it; so does the detail
  * tile, which is not an audience — it has no card, no copy and no chip.
@@ -89,9 +88,9 @@ type FrameArt = Pick<Audience, "image" | "alt" | "focal" | "label" | "placeholde
  * reads as texture rather than a subject anyone has to see whole.
  */
 const DETAIL = {
-  image: "/audience/detail.jpg",
+  image: "/audience/details.png",
   alt: "Close-up of an electric scooter's handlebar",
-  focal: "50% 50%",
+  focal: "20% 0%",
   label: "04",
   placeholder: "DETAIL",
 } satisfies FrameArt;
@@ -185,8 +184,7 @@ export function AudienceSection() {
         STRICT BOXED CONTAINER
         mx-auto and max-w guarantee it will never be full-width on large screens
       */}
-      <div className="relative mx-auto w-full max-w-[1440px] px-8 sm:px-8 lg:px-8">
-
+<div className="relative mx-auto w-full max-w-[1440px] px-[7%]">
         {/* Tonal backdrop, the light-section counterpart to the dark block's "OWN IT".
             It sits in the void beside the heading rather than behind the collage — the
             collage leaves no gaps wide enough to read a word through, and carbon on white
@@ -204,8 +202,7 @@ export function AudienceSection() {
 
 
         {/* Universal section heading */}
-        <header className="mb-10 max-w-2xl lg:mb-12">
-          {/* <span className="mb-4 block h-px w-10 bg-volt" />
+<header className="mb-10 max-w-2xl lg:mx-auto lg:mb-12 lg:max-w-none lg:w-[min(100%,1376px,calc((100svh-12rem)*2.219))]">          {/* <span className="mb-4 block h-px w-10 bg-volt" />
 
           <span className="mb-4 block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-carbon/40">
             For Every Rider
@@ -488,8 +485,9 @@ function AudienceFrame({
           has something to refract, the same reason the lens lives in the dark block.
           The detail tile has no claim to make, so it gets no chip. */}
       {audience.chip ? (
-        <span className={`glass-liquid absolute ${chipPos} rounded-full px-3 py-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-carbon`}>
-          {audience.chip}
+<span
+  className={`absolute ${chipPos} rounded-full border border-white/60 bg-white/70 px-3 py-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-carbon shadow-[0_4px_16px_rgba(0,0,0,0.10),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-md backdrop-saturate-150`}
+>          {audience.chip}
         </span>
       ) : null}
     </div>

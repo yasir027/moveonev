@@ -7,13 +7,11 @@ import { FaqSection } from "@/components/FaqSection";
 import { BatterySection } from "@/components/BatterySection";
 import { LineupSection } from "@/components/LineupSection";
 import {GetInTouchSection} from "@/components/GetInTouch";
-import {HeroSection} from "@/components/hero/HeroSection"
 import { ExpandPanel } from "@/components/ui/ExpandPanel";
 import { ShowroomLead } from "@/components/SiteFooter";
 export default function Home() {
   return (
     <main>
-      <HeroSection/>
       {/* The full-bleed studio direction is parked in components/hero/HeroStudio.tsx. */}
       <HeroEditorial />
       {/* TEMP: three USP visual directions stacked — keep one, delete the rest. */}

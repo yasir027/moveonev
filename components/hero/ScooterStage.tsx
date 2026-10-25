@@ -9,7 +9,6 @@ import {
   useReducedMotion,
   useSpring,
   useTransform,
-  type MotionValue,
 } from "framer-motion";
 import { LUXURY_EASE, isNeutral, type Model } from "@/lib/heroModels";
 import { useIsCompact } from "@/lib/motion";
@@ -28,14 +27,10 @@ interface ScooterStageProps {
 const RIDE_OUT = { duration: 0.6, ease: [0.45, 0, 0.9, 0.55] as const };
 const RIDE_IN = { duration: 0.75, delay: 0.32, ease: LUXURY_EASE };
 const RIDE_MS = 1150;
-/** One wheel turn per ~1.3 box widths is true to life but reads as slow, so wind it on. */
-const SPIN_GAIN = 2.6;
 
 /**
- * The hero scooter. Changing model rides the old one out and the new one in, with the
- * wheels actually turning — they are separate layers cut from the photo (see
- * scripts/build-wheel-sprites.mjs) that spin in their own tilted plane, behind the fender,
- * fork and housing. Also handles the idle float, cursor tilt, paint tint and hotspots.
+ * The hero scooter. Changing model rides the old one out and the new one in. Also handles
+ * the idle float, cursor tilt, paint tint and hotspots.
  */
 export function ScooterStage({
   model,
@@ -52,7 +47,7 @@ export function ScooterStage({
   const compact = useIsCompact();
 
   const color = model.colors[colorIndex];
-  const tinted = colorIndex !== 0;
+  const tinted = !color.inPhoto;
   const neutralPaint = isNeutral(color.hex);
 
   if (model.id !== shownId) {
@@ -148,7 +143,7 @@ export function ScooterStage({
   );
 }
 
-/** One scooter: rides in, sits still, rides out — wheels turning with the distance covered. */
+/** One scooter: rides in, sits still, rides out. */
 function Rider({
   model,
   colorIndex,
@@ -177,10 +172,6 @@ function Rider({
   setOpenHotspot: (index: number | null) => void;
 }) {
   const color = model.colors[colorIndex];
-  // How far along the box this scooter has moved, in percent — the wheels read this.
-  const travel = useMotionValue(reducedMotion ? 0 : 100);
-  // The photo's own pixel width, so travel and wheel radius are in the same units.
-  const photoWidth = Number(model.imageAspect.split("/")[0]);
 
   return (
     <motion.div
@@ -192,10 +183,6 @@ function Rider({
           : { opacity: 0, x: "-105%", transition: { ...RIDE_OUT, opacity: { duration: 0.45, delay: 0.15 } } }
       }
       transition={reducedMotion ? { duration: 0.3 } : { ...RIDE_IN, opacity: { duration: 0.2, delay: 0.32 } }}
-      onUpdate={(latest) => {
-        const x = latest.x;
-        if (typeof x === "string") travel.set(parseFloat(x));
-      }}
       className={`absolute ${boxClassName}`}
     >
       <motion.div
@@ -228,22 +215,10 @@ function Rider({
           className="select-none object-contain"
         />
 
-        {/* Box matching the contained image, so wheels, tint and hotspots line up with it.
+        {/* Box matching the contained image, so tint and hotspots line up with it.
             Centred with flex, not a transform: a transform would isolate the tint's blend. */}
         <div className="pointer-events-none absolute inset-0 flex justify-center">
           <div className="relative h-full max-w-full" style={{ aspectRatio: model.imageAspect }}>
-            {!reducedMotion &&
-              model.wheels.map((wheel) => (
-                <Wheel
-                  // Both wheels draw the same sprite, so the cover is what tells them apart.
-                  key={wheel.cover}
-                  wheel={wheel}
-                  travel={travel}
-                  riding={riding}
-                  photoWidth={photoWidth}
-                />
-              ))}
-
             {/* Paint tint, masked to the photo. `hue` only shifts saturated paint (tyres
                 and seat stay neutral); greys need `color`. */}
             <motion.div
@@ -310,76 +285,5 @@ function Rider({
         </div>
       </motion.div>
     </motion.div>
-  );
-}
-
-/**
- * One wheel, in three layers: the photo underneath, a whole rebuilt wheel on top of it that
- * spins, and the parts that cover it here — mudguard and fork, or motor housing — laid back
- * over both, which is what makes it look like the wheel turns *behind* them.
- *
- * The outer element carries the fixed foreshortening (rotate, then squash), so the wheel
- * spins plainly inside its own plane and the silhouette never changes shape.
- */
-function Wheel({
-  wheel,
-  travel,
-  riding,
-  photoWidth,
-}: {
-  wheel: Model["wheels"][number];
-  travel: MotionValue<number>;
-  riding: boolean;
-  photoWidth: number;
-}) {
-  /*
-   * Travel is a percentage of the photo's width, so distance in photo pixels divided by
-   * the wheel's radius in photo pixels gives the turn in radians — the wheel rolls with
-   * the scooter rather than spinning to its own clock. Negative: moving left rolls
-   * anticlockwise on screen.
-   */
-  const spin = useTransform(travel, (pct) => {
-    const travelled = ((100 - pct) / 100) * photoWidth;
-    return -(travelled / wheel.radiusPx) * (180 / Math.PI) * SPIN_GAIN;
-  });
-
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div
-        className="absolute"
-        style={{
-          left: wheel.cx,
-          top: wheel.cy,
-          width: wheel.size,
-          aspectRatio: "1",
-          translate: "-50% -50%",
-          rotate: `${wheel.tilt}deg`,
-          scale: `1 ${wheel.squash}`,
-        }}
-      >
-        <motion.img
-          src={wheel.sprite}
-          alt=""
-          className="h-full w-full select-none"
-          style={{ rotate: spin, filter: wheel.dim ? `brightness(${wheel.dim})` : undefined }}
-          initial={false}
-          animate={{ opacity: riding ? 1 : 0 }}
-          transition={{ duration: 0.12 }}
-        />
-      </div>
-      {/* eslint-disable-next-line @next/next/no-img-element -- a fixed-size sprite, already sized */}
-      <img
-        src={wheel.cover}
-        alt=""
-        className="absolute select-none"
-        style={{
-          left: wheel.cx,
-          top: wheel.cy,
-          width: wheel.coverSize,
-          aspectRatio: "1",
-          translate: "-50% -50%",
-        }}
-      />
-    </div>
   );
 }

@@ -15,7 +15,7 @@ export function useHeroState() {
     if (index === activeIndex) return;
     setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
-    setColorIndex(0); // the photo's own colour
+    setColorIndex(0); // the photo's own colour, when it has one
   }
 
   return {

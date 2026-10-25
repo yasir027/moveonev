@@ -1,3 +1,5 @@
+import { FINISH, formatPrice, getModel } from "@/lib/models";
+
 export interface Model {
   id: string;
   /** Its page: /models/<slug> (a slug from lib/models.ts). */
@@ -9,33 +11,13 @@ export interface Model {
   image: string;
   /** The photo's own aspect ratio, so overlays can match the contained image. */
   imageAspect: string;
-  /** Wheels cut out by scripts/build-wheel-sprites.mjs, so they can really turn. */
-  wheels: {
-    /** One rebuilt wheel, shared by both positions. */
-    sprite: string;
-    /** What sits in front of the wheel here — mudguard and fork, or motor housing. */
-    cover: string;
-    /** Centre of the wheel, in % of the photo. */
-    cx: string;
-    cy: string;
-    /** Box sizes, in % of the photo's width. */
-    size: string;
-    coverSize: string;
-    /** Brightness for a wheel sitting in the bike's shade, so it doesn't look pasted on. */
-    dim?: number;
-    /** The ellipse the wheel projects to: rotate by `tilt`, then squash. */
-    tilt: number;
-    squash: number;
-    /** Photo pixels, so spin can follow the distance travelled. */
-    radiusPx: number;
-  }[];
   accent: string;
   range: string;
   topSpeed: string;
   priceFrom: string;
   costPerKm: string;
-  // The first colour is the one in the photo and is shown untinted.
-  colors: { name: string; hex: string }[];
+  // `inPhoto`: the photo's own paint, shown untinted. Every other colour is tinted on.
+  colors: { name: string; hex: string; inPhoto: boolean }[];
   // Positions are % of the image itself (not the stage).
   hotspots: { x: string; y: string; label: string }[];
 }
@@ -46,112 +28,83 @@ export const RIDER_COUNT = "2,400+";
 export const GOOGLE_RATING = "4.9";
 export const PETROL_COST_PER_KM = "RS 12";
 
-// Prepared by scripts/prepare-hero-photo.mjs: cropped to the subject and cut out, with its
-// floor shadow kept as a translucent one.
-const HERO_IMAGE = "/Hero/Xdoublelight.webp";
+// Photos prepared by scripts/prepare-hero-photo.mjs, which pads every one to this canvas.
 const HERO_IMAGE_ASPECT = "1065/1123";
 
-// Printed by scripts/build-wheel-sprites.mjs — re-run it after changing the photo.
-const SHARED_WHEELS: Model["wheels"] = [
-  {
-    sprite: "/Hero/veloce-l-wheel.webp",
-    cover: "/Hero/veloce-l-cover-front.webp",
-    cx: "19.249%",
-    cy: "78.540%",
-    size: "38.122%",
-    coverSize: "39.249%",
-    tilt: 121.9,
-    squash: 0.8128,
-    radiusPx: 203,
-  },
-  {
-    sprite: "/Hero/veloce-l-wheel.webp",
-    cover: "/Hero/veloce-l-cover-rear.webp",
-    cx: "83.099%",
-    cy: "74.354%",
-    size: "22.160%",
-    coverSize: "23.286%",
-    tilt: 121.9,
-    squash: 0.8128,
-    radiusPx: 118,
-    dim: 0.78,
-  },
-];
+const HOTSPOT_LABELS = [
+  "Full-LED projector headlamps",
+  "Swappable battery under the seat",
+  "Disc brake with regen braking",
+] as const;
 
-const SHARED_HOTSPOTS: Model["hotspots"] = [
-  { x: "20%", y: "46%", label: "Full-LED projector headlamps" },
-  { x: "66%", y: "41%", label: "Swappable battery under the seat" },
-  { x: "24%", y: "74%", label: "Disc brake with regen braking" },
-];
+/** Headlamp, battery, brake — in that order — measured on each model's own photo. */
+const hotspots = (...spots: [string, string][]): Model["hotspots"] =>
+  spots.map(([x, y], index) => ({ x, y, label: HOTSPOT_LABELS[index] }));
+
+/*
+ * Colours, figures and price come from lib/models.ts (the XIDAA catalogue), so the hero
+ * can't drift from the rest of the site. `photoFinish` is the paint in the photo: it goes
+ * first and shows untinted. Leave it out when the photo isn't a catalogue colour.
+ */
+function catalogue(slug: string, photoFinish?: string) {
+  const model = getModel(slug);
+  if (!model) throw new Error(`No model "${slug}" in lib/models.ts`);
+  const finishes = photoFinish
+    ? [photoFinish, ...model.finishes.filter((name) => name !== photoFinish)]
+    : model.finishes;
+  return {
+    slug,
+    colors: finishes.map((name) => ({ name, hex: FINISH[name], inPhoto: name === photoFinish })),
+    // "Up to 170 km" → "170 KM"
+    range: model.range.replace(/^up to\s*/i, "").toUpperCase(),
+    topSpeed: model.topSpeed.toUpperCase(),
+    priceFrom: formatPrice(model.price),
+  };
+}
 
 export const MODELS: Model[] = [
   {
     id: "double-light",
-    slug: "x-double-light",
+    ...catalogue("x-double-light", "Glossy Red"),
     code: "DOUBLE LIGHT",
     name: "X-DOUBLE LIGHT",
     tagline: "Smooth. Comfortable. Reliable.",
     description: "Designed with advanced technology and premium styling to deliver a smooth, comfortable and reliable riding experience.",
-    image: HERO_IMAGE,
+    image: "/Hero/Xdoublelight.webp",
     imageAspect: HERO_IMAGE_ASPECT,
-    wheels: SHARED_WHEELS,
     accent: "#42CE00",
-    range: "150 KM",
-    topSpeed: "80 KM/H",
-    priceFrom: "₹45,000",
     costPerKm: "RS 2",
-    colors: [
-      { name: "Crimson Matte", hex: "#8B1A1F" },
-      { name: "Graphite", hex: "#2C2C2C" },
-      { name: "Arctic White", hex: "#F5F5F5" },
-      { name: "Volt Green", hex: "#42CE00" },
-    ],
-    hotspots: SHARED_HOTSPOTS,
+    hotspots: hotspots(["20%", "46%"], ["66%", "41%"], ["24%", "74%"]),
   },
   {
     id: "torvo",
-    slug: "x-torvo",
+    // The photo is olive, which the catalogue doesn't list, so every colour is a tint
+    // until a photo in a catalogue colour arrives.
+    ...catalogue("x-torvo"),
     code: "TORVO",
     name: "X-TORVO",
     tagline: "Performance. Comfort. Smart.",
     description: "A perfect combination of performance, comfort and smart features for modern urban mobility.",
-    image: "/hero/Xtorvo.wepg",
+    // A new name, not the old file overwritten: browsers keep serving a cached photo at the
+    // same address while the tint mask loads the new one, and the two stop lining up.
+    image: "/Hero/XtorvoOlive.webp",
     imageAspect: HERO_IMAGE_ASPECT,
-    wheels: SHARED_WHEELS,
     accent: "#00A86B",
-    range: "190 KM",
-    topSpeed: "95 KM/H",
-    priceFrom: "₹75,000",
     costPerKm: "RS 2.2",
-    colors: [
-      { name: "Crimson", hex: "#8B0000" },
-      { name: "Midnight Blue", hex: "#1A2530" },
-      { name: "Emerald", hex: "#00A86B" },
-    ],
-    hotspots: SHARED_HOTSPOTS,
+    hotspots: hotspots(["30%", "60%"], ["75%", "63%"], ["22%", "86%"]),
   },
   {
     id: "robox",
-    slug: "x-robox",
+    ...catalogue("x-robox", "Golden Yellow"),
     code: "ROBOX",
     name: "X-ROBOX",
     tagline: "Comfort. Performance. Function.",
     description: "Designed to redefine urban commuting with comfort, performance and advanced functionality.",
-    image: HERO_IMAGE,
+    image: "/Hero/Xrobox.webp",
     imageAspect: HERO_IMAGE_ASPECT,
-    wheels: SHARED_WHEELS,
     accent: "#7DFF40",
-    range: "220 KM",
-    topSpeed: "110 KM/H",
-    priceFrom: "₹1,05,000",
     costPerKm: "RS 2.5",
-    colors: [
-      { name: "Crimson Matte", hex: "#8B1A1F" },
-      { name: "Carbon Black", hex: "#111111" },
-      { name: "Titanium Silver", hex: "#C0C0C0" },
-      { name: "Neon Pulse", hex: "#7DFF40" },
-    ],
-    hotspots: SHARED_HOTSPOTS,
+    hotspots: hotspots(["29%", "45%"], ["72%", "38%"], ["24%", "82%"]),
   },
 ];
 

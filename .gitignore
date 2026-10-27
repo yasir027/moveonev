@@ -19,6 +19,7 @@
 
 # production
 /build
+/site.zip
 
 # misc
 .DS_Store

@@ -10,7 +10,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { LUXURY_EASE, isNeutral, type Model } from "@/lib/heroModels";
+import { LUXURY_EASE, type Model } from "@/lib/heroModels";
 import { useIsCompact } from "@/lib/motion";
 
 interface ScooterStageProps {
@@ -27,10 +27,13 @@ interface ScooterStageProps {
 const RIDE_OUT = { duration: 0.6, ease: [0.45, 0, 0.9, 0.55] as const };
 const RIDE_IN = { duration: 0.75, delay: 0.32, ease: LUXURY_EASE };
 const RIDE_MS = 1150;
+/** Changing colour fades the new photo in over the old one. */
+const COLOR_FADE = 0.45;
 
 /**
- * The hero scooter. Changing model rides the old one out and the new one in. Also handles
- * the idle float, cursor tilt, paint tint and hotspots.
+ * The hero scooter. Changing model rides the old one out and the new one in; changing
+ * colour cross-fades to that colour's photo. Also handles the idle float, cursor tilt and
+ * hotspots.
  */
 export function ScooterStage({
   model,
@@ -45,10 +48,6 @@ export function ScooterStage({
   const reducedMotion = useReducedMotion();
   // Phones: a smaller idle float. The ride itself is in % of the box, so it already scales.
   const compact = useIsCompact();
-
-  const color = model.colors[colorIndex];
-  const tinted = !color.inPhoto;
-  const neutralPaint = isNeutral(color.hex);
 
   if (model.id !== shownId) {
     setShownId(model.id);
@@ -126,8 +125,6 @@ export function ScooterStage({
             key={model.id}
             model={model}
             colorIndex={colorIndex}
-            tinted={tinted}
-            neutralPaint={neutralPaint}
             boxClassName={boxClassName}
             primary={primary}
             reducedMotion={!!reducedMotion}
@@ -147,8 +144,6 @@ export function ScooterStage({
 function Rider({
   model,
   colorIndex,
-  tinted,
-  neutralPaint,
   boxClassName,
   primary,
   reducedMotion,
@@ -160,8 +155,6 @@ function Rider({
 }: {
   model: Model;
   colorIndex: number;
-  tinted: boolean;
-  neutralPaint: boolean;
   boxClassName: string;
   primary: boolean;
   reducedMotion: boolean;
@@ -171,8 +164,6 @@ function Rider({
   openHotspot: number | null;
   setOpenHotspot: (index: number | null) => void;
 }) {
-  const color = model.colors[colorIndex];
-
   return (
     <motion.div
       initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: "100%" }}
@@ -204,45 +195,50 @@ function Rider({
         style={{ transformOrigin: "78% 85%" }}
         className="relative h-full w-full"
       >
-        <Image
-          src={model.image}
-          alt={model.name}
-          fill
-          priority={primary}
-          data-hero-scooter={primary ? "" : undefined}
-          sizes="(min-width: 1024px) 55vw, 100vw"
-          // Cut out with its own soft floor shadow baked in, so it needs no drop-shadow.
-          className="select-none object-contain"
-        />
-
-        {/* Box matching the contained image, so tint and hotspots line up with it.
-            Centred with flex, not a transform: a transform would isolate the tint's blend. */}
-        <div className="pointer-events-none absolute inset-0 flex justify-center">
-          <div className="relative h-full max-w-full" style={{ aspectRatio: model.imageAspect }}>
-            {/* Paint tint, masked to the photo. `hue` only shifts saturated paint (tyres
-                and seat stay neutral); greys need `color`. */}
+        {/* Every colour's photo is stacked and loaded up front, so a swap never waits on
+            the network. The chosen one fades in on top; the old one stays solid underneath
+            until it has, so the scooter never goes see-through halfway. */}
+        {model.colors.map((color, index) => {
+          const active = index === colorIndex;
+          return (
             <motion.div
-              aria-hidden
+              key={color.image}
+              aria-hidden={!active}
               className="absolute inset-0"
+              style={{ zIndex: active ? 1 : 0 }}
               initial={false}
-              animate={{ opacity: tinted ? 0.9 : 0, backgroundColor: color.hex }}
-              transition={{ duration: 0.6, ease: LUXURY_EASE }}
-              style={{
-                mixBlendMode: neutralPaint ? "color" : "hue",
-                maskImage: `url(${model.image})`,
-                WebkitMaskImage: `url(${model.image})`,
-                maskSize: "100% 100%",
-                WebkitMaskSize: "100% 100%",
-              }}
-            />
+              animate={{ opacity: active ? 1 : 0 }}
+              transition={
+                active || reducedMotion
+                  ? { duration: reducedMotion ? 0 : COLOR_FADE, ease: LUXURY_EASE }
+                  : { duration: 0, delay: COLOR_FADE }
+              }
+            >
+              <Image
+                src={color.image}
+                alt={active ? `${model.name} in ${color.name}` : ""}
+                fill
+                priority={primary && index === 0}
+                loading={primary && index === 0 ? undefined : "eager"}
+                data-hero-scooter={primary && active ? "" : undefined}
+                sizes="(min-width: 1024px) 55vw, 100vw"
+                className="select-none object-contain"
+              />
+            </motion.div>
+          );
+        })}
 
+        {/* Box matching the contained image, so the hotspots line up with it. */}
+        <div className="pointer-events-none absolute inset-0 z-[2] flex justify-center">
+          <div className="relative h-full max-w-full" style={{ aspectRatio: model.imageAspect }}>
             {showHotspots &&
               model.hotspots.map((spot, index) => {
                 const open = openHotspot === index;
                 return (
                   <motion.div
                     key={spot.label}
-                    className="pointer-events-auto absolute z-10 -translate-x-1/2 -translate-y-1/2"
+                    // Not on phones: at that size the dots read as smudges on a small scooter.
+                    className="pointer-events-auto absolute z-10 hidden -translate-x-1/2 -translate-y-1/2 sm:block"
                     style={{ left: spot.x, top: spot.y }}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: riding ? 0 : 1, scale: 1 }}

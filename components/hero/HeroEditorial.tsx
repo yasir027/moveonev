@@ -86,23 +86,30 @@ export function HeroEditorial() {
   );
 }
   return (
-    // Reduced pt-24 to pt-20, and lg:pb-10 to lg:pb-8
-    <section className="w-full bg-white px-4 pb-8 pt-2 sm:px-6 sm:pt-20 lg:px-8 lg:pb-8">
+    // Phones clear the navbar here (the hero is the first thing on the page); from sm the
+    // same 5rem as before.
+    <section className="w-full bg-white px-4 pb-8 pt-20 sm:px-6 lg:px-8 lg:pb-8">
       <div className="mx-auto max-w-[1600px]">
         <div className="relative flex flex-col overflow-hidden rounded-[40px] bg-[#F6F7F6] lg:h-[calc(100svh-8.5rem)] lg:min-h-[620px]">
 
-          <div className="grid flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,6.5fr)]">
+          {/*
+           * Phones get their own order, one screen tall: model buttons, the photo with the
+           * name on it, the description, and the test-ride button last, where a thumb rests.
+           * The left column dissolves (`contents`) so its pieces can be ordered around the
+           * photo; each piece carries its own data-intro for the same reason. From sm the
+           * layout is as it was.
+           */}
+          <div className="flex min-h-[calc(100svh-5rem)] flex-1 flex-col sm:grid sm:min-h-0 sm:grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,6.5fr)]">
 
             {/* LEFT: type */}
             <div
-              data-intro="hero"
               // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8. On lg the facts bar floats over
               // the bottom 16% of the card, so the copy is centred in the space above it.
-              className="flex flex-col justify-between gap-5 px-6 pb-2 pt-6 sm:gap-6 sm:px-10 sm:pt-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-14   lg:pl-20"
+              className="contents sm:flex sm:flex-col sm:justify-between sm:gap-6 sm:px-10 sm:pb-2 sm:pt-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-20"
             >
               {/* Model selector */}
-<div>
-  <div role="tablist" aria-label="Model" className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 sm:mx-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
+<div data-intro="hero" className="order-1 px-3 pt-3 sm:order-none sm:p-0">
+  <div role="tablist" aria-label="Model" className="no-scrollbar flex gap-1.5 overflow-x-auto sm:flex-wrap sm:gap-3 sm:overflow-visible">
     {MODELS.map((model, index) => {
       const isActive = index === activeIndex;
       return (
@@ -111,14 +118,15 @@ export function HeroEditorial() {
           role="tab"
           aria-selected={isActive}
           onClick={() => selectModel(index)}
-          className={`flex shrink-0 items-center gap-3 rounded-full p-1.5 pr-5 transition-all duration-300 ${
+          // Phones: text only, so all three fit across.
+          className={`flex shrink-0 items-center gap-3 rounded-full px-3.5 py-2.5 transition-all duration-300 sm:p-1.5 sm:pr-5 ${
             isActive
               ? "bg-carbon text-white shadow-md"
               : "bg-white text-carbon/60 shadow-sm hover:bg-white/80 hover:text-carbon"
           }`}
         >
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+            className={`hidden h-8 w-8 items-center justify-center rounded-full transition-colors sm:flex ${
               isActive ? "bg-white/10" : "bg-carbon/5"
             }`}
           >
@@ -130,7 +138,7 @@ export function HeroEditorial() {
               className="object-contain"
             />
           </div>
-          <span className="font-display text-xs font-semibold tracking-wide">
+          <span className="font-display text-[11px] font-semibold tracking-wide sm:text-xs">
             {model.name}
           </span>
         </button>
@@ -139,30 +147,34 @@ export function HeroEditorial() {
   </div>
 </div>
 
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={active.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: LUXURY_EASE }}
-                >
-                  <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
-                    {active.tagline}
-                  </p>
-                 <h1 className="mt-2 font-display text-[36px] font-extrabold sm:mt-4 sm:text-[clamp(2.5rem,4.5vw,5rem)] leading-[0.86] tracking-[-0.055em] text-carbon">
-  <span className="type-outline" style={{ "--outline-fill": "#F6F7F6" } as CSSProperties}>
-    X&#8202;-
-  </span>
-  {active.code}
-</h1>
-                  <p className="mt-3 line-clamp-2 max-w-[400px] text-[15px] leading-relaxed text-carbon/60 sm:mt-6 sm:line-clamp-none">
-                    {active.description}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+              <div data-intro="hero" className="order-3 px-6 pt-4 sm:order-none sm:p-0">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={active.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, ease: LUXURY_EASE }}
+                  >
+                    {/* On phones the tagline and name sit on the photo instead (below). */}
+                    <div className="hidden sm:block">
+                      <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
+                        {active.tagline}
+                      </p>
+                      <h1 className="mt-4 font-display text-[clamp(2.5rem,4.5vw,5rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
+                        <HeroName code={active.code} />
+                      </h1>
+                    </div>
+                    <p className="max-w-[400px] text-[15px] leading-relaxed text-carbon/60 sm:mt-6">
+                      {active.description}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-              <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
+              {/* Phones: the explore link first, then the test-ride button at the bottom of
+                  the screen, short enough to stop before the WhatsApp button beside it. */}
+              <div data-intro="hero" className="order-4 flex flex-col-reverse items-start gap-4 px-6 pb-5 pt-3 sm:order-none sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-7 sm:gap-y-4 sm:p-0">
                 <Magnetic>
                   <a
                     href={whatsappUrl(active)}
@@ -187,20 +199,42 @@ export function HeroEditorial() {
               </div>
             </div>
 
-            {/* RIGHT: product panel, inset inside the stage */}
-            <div className="relative m-3 h-[38svh] min-h-[280px] overflow-hidden sm:h-[50svh] sm:min-h-[380px] rounded-[32px] bg-gradient-to-br from-[#E4E8E4] via-[#EDF0ED] to-[#DCE1DC] lg:m-4 lg:ml-0 lg:h-auto lg:min-h-0">
+            {/* RIGHT: product panel, inset inside the stage. On phones it takes whatever the
+                screen has left between the buttons and the text. */}
+            <div className="relative order-2 mx-3 mt-3 min-h-[300px] flex-1 overflow-hidden rounded-[32px] bg-gradient-to-br from-[#E4E8E4] via-[#EDF0ED] to-[#DCE1DC] sm:order-none sm:m-3 sm:h-[50svh] sm:min-h-[380px] sm:flex-none lg:m-4 lg:ml-0 lg:h-auto lg:min-h-0">
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#D3D8D3]/70 to-transparent" />
 
-              {/* Shot close: the box runs past the bottom and right edges, so the panel crops it */}
+              {/* Phones: the name over the photo, top left. */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active.id}
+                  data-intro="hero"
+                  className="pointer-events-none absolute left-5 right-5 top-5 z-20 sm:hidden"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.45, ease: LUXURY_EASE }}
+                >
+                  <p className="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-carbon/50">
+                    {active.tagline}
+                  </p>
+                  <h1 className="mt-1.5 whitespace-nowrap font-display text-[28px] font-extrabold leading-none tracking-[-0.05em] text-carbon">
+                    <HeroName code={active.code} />
+                  </h1>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Shot close: the box runs past the bottom and right edges, so the panel crops it.
+                  Phones show the whole scooter, between the name and the paint row. */}
               <ScooterStage
                 primary
                 model={active}
                 colorIndex={colorIndex}
-                boxClassName="-bottom-[7%] left-[4%] right-[4%] top-[5%]"
+                boxClassName="bottom-[17%] left-[3%] right-[3%] top-[19%] sm:-bottom-[7%] sm:left-[4%] sm:right-[4%] sm:top-[5%]"
               />
 
-              {/* Paint */}
-              <div data-intro="hero" className="absolute left-5 top-5 z-20 flex items-center gap-3 lg:left-7 lg:top-7">
+              {/* Paint: along the bottom on phones, top left from sm */}
+              <div data-intro="hero" className="absolute bottom-4 left-4 z-20 flex items-center gap-3 sm:bottom-auto sm:left-5 sm:top-5 lg:left-7 lg:top-7">
                 <div className="glass-liquid flex gap-0.5 rounded-full p-1">
                   {active.colors.map((color, index) => (
                     <button
@@ -286,5 +320,17 @@ export function HeroEditorial() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** The model name with its outlined "X-", as the hero writes it at every size. */
+function HeroName({ code }: { code: string }) {
+  return (
+    <>
+      <span className="type-outline" style={{ "--outline-fill": "#F6F7F6" } as CSSProperties}>
+        X&#8202;-
+      </span>
+      {code}
+    </>
   );
 }

@@ -1,5 +1,8 @@
 # MOVE ON — handoff & context
 
+> **Superseded (2026-10-26):** see [docs/HANDOVER.md](docs/HANDOVER.md) and
+> [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md). This file is kept for history.
+
 Written 2026-10-22 when Maryum moved to a new Claude account. It condenses ~25 Claude Code
 sessions on this repo (2026-09-19 → 2026-10-17) plus the git history, so a fresh Claude can
 pick up without the old transcripts. Facts below were checked against the repo on the date

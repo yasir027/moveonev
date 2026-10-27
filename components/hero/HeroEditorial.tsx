@@ -62,19 +62,19 @@ export function HeroEditorial() {
     <div
       className={
         floating
-          ? "flex flex-col justify-center gap-0.5 px-8 py-2 text-center"
+          ? "flex flex-col justify-center gap-0.5 px-6 py-1.5 text-center min-[1600px]:px-8 min-[1600px]:py-2"
           : "flex flex-col justify-center gap-0.5 bg-[#FBFBFA] px-5 py-3 sm:gap-1 sm:px-8 sm:py-5"
       }
     >
-      <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/">
+      <p className="font-display text-[10px] lg:text-[9px] min-[1600px]:text-[10px] font-bold uppercase tracking-[0.16em] text-carbon/">
         {fact.label}
       </p>
-<p className="font-display text-lg font-bold tracking-tight text-carbon sm:text-xl lg:text-[22px]">
+<p className="font-display text-lg font-bold tracking-tight text-carbon sm:text-xl lg:text-[18px] min-[1600px]:text-[22px]">
           {fact.value}
       </p>
       {fact.note && (
         <p
-          className={`text-xs text-carbon/55 ${
+          className={`text-xs text-xs text-carbon/55 ${
             // Phones keep the facts to one line each; the notes come back from sm.
             floating ? "flex justify-center" : "hidden sm:block"
           }`}
@@ -88,9 +88,9 @@ export function HeroEditorial() {
   return (
     // Phones clear the navbar here (the hero is the first thing on the page); from sm the
     // same 5rem as before.
-    <section className="w-full bg-white px-4 pb-8 pt-20 sm:px-6 lg:px-8 lg:pb-8">
+    <section className="w-full bg-white px-4 pb-8 pt-20 sm:px-6 lg:px-6 lg:pb-6 min-[1600px]:px-8 min-[1600px]:pb-8">
       <div className="mx-auto max-w-[1600px]">
-        <div className="relative flex flex-col overflow-hidden rounded-[40px] bg-[#F6F7F6] lg:h-[calc(100svh-8.5rem)] lg:min-h-[620px]">
+        <div className="relative flex flex-col overflow-hidden rounded-[40px] lg:rounded-[32px] min-[1600px]:rounded-[40px] bg-[#F6F7F6] lg:h-[calc(100svh-11rem)] lg:min-h-[560px] min-[1600px]:h-[calc(100svh-8.5rem)] min-[1600px]:min-h-[620px]">
 
           {/*
            * Phones get their own order, one screen tall: model buttons, the photo with the
@@ -105,11 +105,11 @@ export function HeroEditorial() {
             <div
               // Reduced gap-9 to gap-7, and lg:py-12 to lg:py-8. On lg the facts bar floats over
               // the bottom 16% of the card, so the copy is centred in the space above it.
-              className="contents sm:flex sm:flex-col sm:justify-between sm:gap-6 sm:px-10 sm:pb-2 sm:pt-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:pl-20"
+              className="contents sm:flex sm:flex-col sm:justify-between sm:gap-6 sm:px-10 sm:pb-2 sm:pt-10 lg:pb-[calc(max(104px,(100svh-8.5rem)*0.16)+4rem)] lg:gap-4 lg:pl-14 lg:pr-6 min-[1600px]:gap-6 min-[1600px]:pl-20 min-[1600px]:pr-10"
             >
               {/* Model selector */}
 <div data-intro="hero" className="order-1 px-3 pt-3 sm:order-none sm:p-0">
-  <div role="tablist" aria-label="Model" className="no-scrollbar flex gap-1.5 overflow-x-auto sm:flex-wrap sm:gap-3 sm:overflow-visible">
+  <div role="tablist" aria-label="Model" className="no-scrollbar flex gap-1.5 overflow-x-auto sm:flex-wrap sm:gap-3 sm:overflow-visible lg:gap-2 min-[1600px]:gap-3">
     {MODELS.map((model, index) => {
       const isActive = index === activeIndex;
       return (
@@ -119,14 +119,14 @@ export function HeroEditorial() {
           aria-selected={isActive}
           onClick={() => selectModel(index)}
           // Phones: text only, so all three fit across.
-          className={`flex shrink-0 items-center gap-3 rounded-full px-3.5 py-2.5 transition-all duration-300 sm:p-1.5 sm:pr-5 ${
+          className={`flex shrink-0 items-center gap-3 rounded-full px-3.5 py-2.5 transition-all duration-300 sm:p-1.5 sm:pr-5 lg:p-1.5 lg:pr-5 min-[1600px]:p-1.5 min-[1600px]:pr-5 ${
             isActive
               ? "bg-carbon text-white shadow-md"
               : "bg-white text-carbon/60 shadow-sm hover:bg-white/80 hover:text-carbon"
           }`}
         >
           <div
-            className={`hidden h-8 w-8 items-center justify-center rounded-full transition-colors sm:flex ${
+            className={`hidden h-8 w-8 lg:h-7 lg:w-7 min-[1600px]:h-8 min-[1600px]:w-8 items-center justify-center rounded-full transition-colors sm:flex ${
               isActive ? "bg-white/10" : "bg-carbon/5"
             }`}
           >
@@ -138,7 +138,7 @@ export function HeroEditorial() {
               className="object-contain"
             />
           </div>
-          <span className="font-display text-[11px] font-semibold tracking-wide sm:text-xs">
+          <span className="font-display text-[11px] font-semibold tracking-wide sm:text-xs lg:text-[11px] min-[1600px]:text-xs">
             {model.name}
           </span>
         </button>
@@ -158,14 +158,14 @@ export function HeroEditorial() {
                   >
                     {/* On phones the tagline and name sit on the photo instead (below). */}
                     <div className="hidden sm:block">
-                      <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
+                      <p className="font-display text-xs text-xs font-bold uppercase tracking-[0.22em] text-carbon/50">
                         {active.tagline}
                       </p>
-                      <h1 className="mt-4 font-display text-[clamp(2.5rem,4.5vw,5rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
+                      <h1 className="mt-4 lg:mt-3 min-[1600px]:mt-4 font-display text-[clamp(2.5rem,4.5vw,5rem)] text-[clamp(2.5rem,4.5vw,5rem)] font-extrabold leading-[0.86] tracking-[-0.055em] text-carbon">
                         <HeroName code={active.code} />
                       </h1>
                     </div>
-                    <p className="max-w-[400px] text-[15px] leading-relaxed text-carbon/60 sm:mt-6">
+                    <p className="max-w-[400px] text-[15px] leading-relaxed text-carbon/60 sm:mt-6 lg:mt-4 lg:max-w-[340px] text-[15px] max-w-[400px] min-[1600px]:text-[15px]">
                       {active.description}
                     </p>
                   </motion.div>
@@ -176,26 +176,26 @@ export function HeroEditorial() {
                   the screen, short enough to stop before the WhatsApp button beside it. */}
               <div data-intro="hero" className="order-4 flex flex-col-reverse items-start gap-4 px-6 pb-5 pt-3 sm:order-none sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-7 sm:gap-y-4 sm:p-0">
                 <Magnetic>
-                  <a
-                    href={whatsappUrl(active)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex h-14 items-center gap-3 rounded-full bg-volt pl-6 pr-2 font-display text-sm font-bold text-carbon transition-colors duration-300 hover:bg-[#3bbd00]"
-                  >
-                    Book a free test ride
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-carbon text-white transition-transform duration-300 group-hover:translate-x-0.5">
-                      <ArrowRight size={16} strokeWidth={2.2} />
-                    </span>
-                  </a>
-                </Magnetic>
-                {/* The model on screen, on its own page. */}
-                <TransitionLink
-                  href={`/models/${active.slug}`}
-                  className="group inline-flex items-center gap-1.5 font-display text-sm font-semibold text-carbon/70 transition-colors hover:text-carbon"
-                >
-                  Explore {active.name}
-                  <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
-                </TransitionLink>
+  <a
+    href={whatsappUrl(active)}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group inline-flex h-14 items-center gap-3 rounded-full bg-volt pl-6 pr-2 font-display text-sm font-bold text-carbon transition-colors duration-300 hover:bg-[#3bbd00] lg:h-11 lg:pl-5 lg:text-[13px] min-[1600px]:h-14 min-[1600px]:pl-6 min-[1600px]:text-sm"
+  >
+    Book a free test ride
+    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-carbon text-white transition-transform duration-300 group-hover:translate-x-0.5 lg:h-8 lg:w-8 min-[1600px]:h-10 min-[1600px]:w-10">
+      <ArrowRight size={16} strokeWidth={2.2} />
+    </span>
+  </a>
+</Magnetic>
+{/* The model on screen, on its own page. */}
+<TransitionLink
+  href={`/models/${active.slug}`}
+  className="group inline-flex items-center gap-1.5 font-display text-sm font-semibold text-carbon/70 transition-colors hover:text-carbon lg:text-[13px] min-[1600px]:text-sm"
+>
+  Explore {active.name}
+  <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+</TransitionLink>
               </div>
             </div>
 
@@ -234,7 +234,7 @@ export function HeroEditorial() {
               />
 
               {/* Paint: along the bottom on phones, top left from sm */}
-              <div data-intro="hero" className="absolute bottom-4 left-4 z-20 flex items-center gap-3 sm:bottom-auto sm:left-5 sm:top-5 lg:left-7 lg:top-7">
+              <div data-intro="hero" className="absolute bottom-4 left-4 z-20 flex items-center gap-3 sm:bottom-auto sm:left-5 sm:top-5 lg:left-5 lg:top-5 min-[1600px]:left-7 min-[1600px]:top-7">
                 <div className="glass-liquid flex gap-0.5 rounded-full p-1">
                   {active.colors.map((color, index) => (
                     <button
@@ -242,7 +242,7 @@ export function HeroEditorial() {
                       onClick={() => setColorIndex(index)}
                       aria-label={color.name}
                       aria-pressed={index === colorIndex}
-                      className="relative flex h-8 w-8 items-center justify-center rounded-full"
+                      className="relative flex h-8 w-8 items-center justify-center rounded-full lg:h-6 lg:w-6 min-[1600px]:h-8 min-[1600px]:w-8"
                     >
                       {index === colorIndex && (
                         <motion.span
@@ -252,13 +252,13 @@ export function HeroEditorial() {
                         />
                       )}
                       <span
-                        className="h-5 w-5 rounded-full ring-1 ring-inset ring-carbon/15"
+                        className="h-5 w-5 rounded-full ring-1 ring-inset ring-carbon/15 lg:h-4 lg:w-4 min-[1600px]:h-5 min-[1600px]:w-5"
                         style={{ backgroundColor: color.hex }}
                       />
                     </button>
                   ))}
                 </div>
-                <span className="text-xs font-medium text-carbon/70">{activeColor.name}</span>
+                <span className="text-xs font-medium text-carbon/70 text-xs">{activeColor.name}</span>
               </div>
             </div>
           </div>
@@ -311,7 +311,7 @@ export function HeroEditorial() {
   data-intro="hero"
   className="absolute inset-x-0 bottom-6 z-20 hidden px-6 lg:block"
 >
-  <div className="glass-frost mx-auto grid max-w-[1200px] grid-cols-4 divide-x divide-carbon/10 rounded-full py-1 shadow-[0_12px_40px_-12px_rgba(16,20,18,0.28)]">
+  <div className="glass-frost mx-auto grid max-w-[960px] min-[1600px]:max-w-[1200px] grid-cols-4 divide-x divide-carbon/10 rounded-full py-1 shadow-[0_12px_40px_-12px_rgba(16,20,18,0.28)]">
     {facts.map((fact) => (
       <FactCell key={fact.label} fact={fact} floating />
     ))}

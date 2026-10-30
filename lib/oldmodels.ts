@@ -92,6 +92,7 @@ export const models: Model[] = [
       "Designed with advanced technology and premium styling to deliver a smooth, comfortable and reliable riding experience.",
     pricing: {
       "30ah": { mrp: 66000, offer: 61999 },
+      "55ah": { mrp: 88000, offer: 82999 },
     },
     motor: "1000 W",
     finishes: [

@@ -18,8 +18,43 @@ export const metadata: Metadata = {
   },
 };
 
-/* /blogs — the latest article large, the rest in a grid. All posts come from lib/blogs.ts.
-   Motion kept light: the heading rises, the cards fade up once in a short stagger. */
+/* /blogs: placeholder while the articles are being written. The full page is kept
+   commented out below. */
+export default function BlogsPage() {
+  return (
+    <main className="relative isolate flex min-h-[100svh] flex-col justify-center overflow-x-clip bg-white pb-20 pt-[88px]">
+      <BlueprintBg
+        name="rear"
+        className="right-[-26%] top-[96px] h-[420px] sm:right-[-6%] sm:h-[560px] lg:right-[2%] lg:top-[70px] lg:h-[720px]"
+      />
+
+      <header className="px-[7%] pb-10 pt-2 sm:pt-12 lg:pb-12 lg:pt-16">
+        <p className="mb-3 font-display text-[13px] font-bold uppercase tracking-[0.16em] text-leaf">
+          Blog
+        </p>
+        <RevealHeading
+          as="h1"
+          base="max-w-[18ch] font-display text-[clamp(2.25rem,4.2vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.035em]"
+          className="text-carbon"
+          lines={["Stay tuned."]}
+        />
+        <Reveal as="p" delay={0.2} className="mt-5 max-w-[56ch] text-[17px] leading-relaxed text-[#475569]">
+          Guides on batteries, charging and electric scooter ownership are coming soon.
+        </Reveal>
+        <Reveal delay={0.3} className="mt-6">
+          <span className="inline-flex items-center rounded-full border border-volt bg-volt/15 px-4 py-2 font-display text-[12px] font-bold uppercase tracking-[0.16em] text-carbon">
+            Coming soon
+          </span>
+        </Reveal>
+      </header>
+    </main>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   FULL BLOG PAGE: restore by deleting the placeholder above, un-commenting the two
+   imports at the top, and un-commenting this.
+
 export default function BlogsPage() {
   const [featured, ...rest] = posts;
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-// import { posts } from "@/lib/blogs";
-// import { PostCard } from "@/components/blog/PostCard";
+import { posts } from "@/lib/blogs";
+import { PostCard } from "@/components/blog/PostCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { BlueprintBg } from "@/components/ui/BlueprintBg";
 import { RevealHeading } from "@/components/ui/RevealHeading";
@@ -60,6 +60,7 @@ export default function BlogsPage() {
 
   return (
     <main className="relative isolate overflow-x-clip bg-white pb-20 pt-[88px]">
+      {/* Background art: a big, faint blueprint behind the page (BlueprintBg). */}
       <BlueprintBg
         name="rear"
         className="right-[-26%] top-[96px] h-[420px] sm:right-[-6%] sm:h-[560px] lg:right-[2%] lg:top-[70px] lg:h-[720px]"
@@ -99,4 +100,3 @@ export default function BlogsPage() {
     </main>
   );
 }
---------------------------------------------------------------------------- */

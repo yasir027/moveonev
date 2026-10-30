@@ -54,13 +54,13 @@ export default function BlogsPage() {
 /* ---------------------------------------------------------------------------
    FULL BLOG PAGE: restore by deleting the placeholder above, un-commenting the two
    imports at the top, and un-commenting this.
+ */
 
-export default function BlogsPage() {
+/*export default function BlogsPage() {
   const [featured, ...rest] = posts;
 
   return (
     <main className="relative isolate overflow-x-clip bg-white pb-20 pt-[88px]">
-      {/* Background art: a big, faint blueprint behind the page (BlueprintBg). */}
       <BlueprintBg
         name="rear"
         className="right-[-26%] top-[96px] h-[420px] sm:right-[-6%] sm:h-[560px] lg:right-[2%] lg:top-[70px] lg:h-[720px]"
@@ -100,3 +100,4 @@ export default function BlogsPage() {
     </main>
   );
 }
+*/
